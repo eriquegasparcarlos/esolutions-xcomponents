@@ -1,0 +1,132 @@
+// ==========================================================================
+// XBadge - Estilos del componente
+// ==========================================================================
+@use 'sass:color';
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-badge {
+  --x-badge-padding: #{$x-badge-padding};
+  --x-badge-font-size: #{$x-badge-font-size};
+  --x-badge-border-radius: #{$x-badge-border-radius};
+  --x-badge-font-weight: 500;
+  --x-badge-line-height: 1.4;
+}
+
+// --------------------------------------------------------------------------
+// Base
+// --------------------------------------------------------------------------
+.x-badge {
+  padding: var(--x-badge-padding);
+  font-size: var(--x-badge-font-size);
+  font-weight: var(--x-badge-font-weight);
+  border-radius: var(--x-badge-border-radius);
+  line-height: var(--x-badge-line-height);
+  margin: 0 !important;
+  text-transform: none;
+  letter-spacing: 0.01em;
+}
+
+// --------------------------------------------------------------------------
+// Tipos predefinidos
+// --------------------------------------------------------------------------
+.x-badge-success {
+  background-color: rgba($x-positive, 0.15) !important;
+  color: color.adjust($x-positive, $lightness: -10%) !important;
+}
+
+.x-badge-danger,
+.x-badge-error {
+  background-color: rgba($x-negative, 0.15) !important;
+  color: color.adjust($x-negative, $lightness: -5%) !important;
+}
+
+.x-badge-warning {
+  background-color: rgba($x-warning, 0.2) !important;
+  color: color.adjust($x-warning, $lightness: -25%) !important;
+}
+
+.x-badge-info {
+  background-color: rgba($x-info, 0.15) !important;
+  color: color.adjust($x-info, $lightness: -15%) !important;
+}
+
+.x-badge-primary {
+  background-color: rgba($x-primary, 0.15) !important;
+  color: $x-primary !important;
+}
+
+.x-badge-secondary {
+  background-color: rgba($x-secondary, 0.15) !important;
+  color: color.adjust($x-secondary, $lightness: -10%) !important;
+}
+
+.x-badge-neutral,
+.x-badge-default {
+  background-color: rgba(#000, 0.08) !important;
+  color: $x-text-secondary !important;
+}
+
+// --------------------------------------------------------------------------
+// Variantes de tamanio
+// --------------------------------------------------------------------------
+.x-badge-sm {
+  --x-badge-padding: 2px 6px;
+  --x-badge-font-size: #{$x-font-size-xs};
+}
+
+.x-badge-md {
+  --x-badge-padding: #{$x-badge-padding};
+  --x-badge-font-size: #{$x-badge-font-size};
+}
+
+.x-badge-lg {
+  --x-badge-padding: 6px 12px;
+  --x-badge-font-size: #{$x-font-size-md};
+}
+
+// --------------------------------------------------------------------------
+// Variante outlined
+// --------------------------------------------------------------------------
+.x-badge-outlined {
+  background-color: transparent !important;
+  border: 1px solid currentColor;
+}
+
+// --------------------------------------------------------------------------
+// Variante pill (bordes redondeados)
+// --------------------------------------------------------------------------
+.x-badge-pill {
+  --x-badge-border-radius: 50px;
+}
+
+// --------------------------------------------------------------------------
+// Variante dot (solo circulo)
+// --------------------------------------------------------------------------
+.x-badge-dot {
+  width: 10px;
+  height: 10px;
+  min-width: 10px;
+  min-height: 10px;
+  padding: 0;
+  border-radius: 50%;
+
+  // Ocultar texto
+  font-size: 0;
+  overflow: hidden;
+}
+
+// --------------------------------------------------------------------------
+// Con icono
+// --------------------------------------------------------------------------
+.x-badge-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+
+  .q-icon {
+    font-size: 1em;
+  }
+}

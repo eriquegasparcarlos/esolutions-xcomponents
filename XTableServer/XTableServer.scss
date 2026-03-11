@@ -1,0 +1,59 @@
+.x-table-server {
+  .x-table-server-title {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .q-table thead {
+    color: $table-th-font-color;
+    tr {
+      height: 36px;
+    }
+    th {
+      background-color: $table-thead-bg-color;
+    }
+  }
+
+  .q-table tbody td {
+    color: $table-tbody-td-font-color;
+    padding: $table-td-padding;
+  }
+
+  // Dense: reducir padding vertical de celdas
+  .q-table--dense tbody td {
+    padding-top: 2px;
+    padding-bottom: 2px;
+  }
+
+  .q-card__actions {
+    height: 60px;
+  }
+}
+
+// Mobile header (mismo estilo que thead)
+.x-table-mobile-header {
+  background-color: $table-thead-bg-color;
+  color: $table-th-font-color;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  padding: 8px 16px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+}
+
+// Mobile row styles
+.x-table-server {
+  @media (max-width: 1023px) {
+    .q-table tbody td {
+      padding: 8px 12px;
+    }
+  }
+}
+
+.x-menu-item-label {
+  white-space: nowrap;     /* una sola línea */
+  overflow: visible;       /* que no oculte el texto */
+  text-overflow: clip;     /* NO usar “…” */
+}

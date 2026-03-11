@@ -1,0 +1,100 @@
+// ==========================================================================
+// XLoading - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-loading {
+  --x-loading-overlay-bg: #{$x-loading-overlay-bg};
+  --x-loading-spinner-size: #{$x-loading-spinner-size};
+  --x-loading-message-color: #{$x-text-secondary};
+  --x-loading-message-font-size: #{$x-font-size-md};
+  --x-loading-z-index: 10;
+  --x-loading-transition: #{$x-transition-duration} #{$x-transition-timing};
+}
+
+// --------------------------------------------------------------------------
+// Overlay base
+// --------------------------------------------------------------------------
+.x-loading {
+  background-color: var(--x-loading-overlay-bg);
+  z-index: var(--x-loading-z-index);
+  transition: opacity var(--x-loading-transition);
+
+  // Centrar contenido
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// --------------------------------------------------------------------------
+// Spinner
+// --------------------------------------------------------------------------
+.x-loading .q-spinner {
+  animation: x-loading-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes x-loading-pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Mensaje
+// --------------------------------------------------------------------------
+.x-loading .text-subtitle2 {
+  color: var(--x-loading-message-color);
+  font-size: var(--x-loading-message-font-size);
+  font-style: italic;
+  margin-top: $x-spacing-sm;
+  max-width: 200px;
+  line-height: 1.4;
+}
+
+// --------------------------------------------------------------------------
+// Modo oscuro
+// --------------------------------------------------------------------------
+.x-loading.q-inner-loading--dark {
+  --x-loading-overlay-bg: rgba(0, 0, 0, 0.7);
+  --x-loading-message-color: rgba(255, 255, 255, 0.87);
+}
+
+// --------------------------------------------------------------------------
+// Variantes de tamanio del spinner
+// --------------------------------------------------------------------------
+.x-loading-sm {
+  --x-loading-spinner-size: 30px;
+}
+
+.x-loading-md {
+  --x-loading-spinner-size: 50px;
+}
+
+.x-loading-lg {
+  --x-loading-spinner-size: 70px;
+}
+
+.x-loading-xl {
+  --x-loading-spinner-size: 100px;
+}
+
+// --------------------------------------------------------------------------
+// Sin fondo
+// --------------------------------------------------------------------------
+.x-loading-transparent {
+  --x-loading-overlay-bg: transparent;
+}
+
+// --------------------------------------------------------------------------
+// Fondo blur
+// --------------------------------------------------------------------------
+.x-loading-blur {
+  backdrop-filter: blur(4px);
+}

@@ -1,0 +1,118 @@
+/* XNested.scss
+ * Estilos reutilizables para árbol + acciones al hover
+ */
+
+.x-nested {
+  // reset de listas para que sea consistente
+  ul, ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Cada item del árbol */
+.x-nested__item {
+  border-radius: 10px;
+  transition: background-color .15s ease;
+
+  &:hover {
+    background: rgba(0, 0, 0, .03);
+  }
+}
+
+/* Fila principal: nodo + acciones */
+.x-nested__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px;
+  border-radius: 10px;
+  min-height: 30px;
+}
+
+/* Contenido del nodo */
+.x-nested__node {
+  flex: 1 1 auto;
+  min-width: 0; // permite ellipsis
+}
+
+/* Handle: puedes seguir usando .handle, pero esto mejora UX */
+.x-nested__handle,
+.handle {
+  cursor: grab;
+  opacity: .65;
+  transition: opacity .12s ease;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+
+/* Acciones: por defecto ocultas, aparecen al hover */
+.x-nested__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-4px);
+  transition: opacity .12s ease, transform .12s ease, visibility .12s ease;
+
+  // Hace que no “robe” clicks cuando está oculto
+  pointer-events: none;
+}
+
+/* Mostrar acciones cuando el item está hovered o enfocado (teclado) */
+.x-nested__item:hover .x-nested__actions,
+.x-nested__item:focus-within .x-nested__actions {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* En pantallas táctiles (sin hover), mejor dejarlas visibles */
+@media (hover: none) {
+  .x-nested__actions {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .x-nested__item:hover {
+    background: transparent; // evita “parpadeos” raros en touch
+  }
+}
+
+/* Contenedor hijos (indentación visual) */
+.x-nested__children {
+  padding-left: 18px;
+}
+
+/* Si usas el look de tu proyecto para acciones al hover */
+.x-nested__action-icon {
+  opacity: .85;
+  transition: opacity .12s ease, transform .12s ease;
+
+  &:hover {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+/* Opcional: cuando un nodo está “inactivo” y lo marcas con text-strike */
+.text-strike {
+  opacity: .75;
+}

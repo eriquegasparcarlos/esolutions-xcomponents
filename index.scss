@@ -1,0 +1,30 @@
+// Variables de componentes (usar !default para permitir sobrescritura)
+@import "./variables";
+
+// Componentes X
+@import "./XBadge/XBadge";
+@import "./XCard/XCard";
+@import "./XBanner/XBanner";
+@import "./XButton/XButton";
+@import "./XButtonToggle/XButtonToggle";
+@import "./XCheckbox/XCheckbox";
+@import "./XDatepicker/XDatepicker";
+@import "./XDialog/XDialog";
+@import "./XDialogAction/XDialogAction";
+@import "./XDnd/XDnd";
+@import "./XFile/XFile";
+@import "./XInput/XInput";
+@import "./XInputColor/XInputColor";
+@import "./XInputNumeric/XInputNumeric";
+@import "./XInputOtp/XInputOtp";
+@import "./XInputSearchPerson/XInputSearchPerson";
+@import "./XLoading/XLoading";
+@import "./XMainMenu/XMainMenu";
+@import "./XNested/XNested";
+@import "./XPdfViewer/XPdfViewer";
+@import "./XPriceCalculator/XPriceCalculator";
+@import "./XSelect/XSelect";
+@import "./XTableServer/XTableServer";
+@import "./XToggle/XToggle";
+@import "./XTracking/XTracking";
+@import "./XTreeSelect/XTreeSelect";

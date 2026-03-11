@@ -1,0 +1,23 @@
+.x-banner {
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 10px 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  // Tamaño compacto opcional
+  &.x-banner--dense {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+
+  // Puedes agregar variantes extendidas si lo necesitas
+  &.x-banner--with-icon {
+    .q-icon {
+      font-size: 1.1rem;
+    }
+  }
+}

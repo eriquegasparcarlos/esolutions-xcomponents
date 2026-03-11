@@ -1,0 +1,59 @@
+// ==========================================================================
+// XPdfViewer - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Toolbar de controles
+// --------------------------------------------------------------------------
+.x-pdf-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  &__nav,
+  &__zoom {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  &__page-info,
+  &__zoom-info {
+    font-size: $x-font-size-sm;
+    min-width: 48px;
+    text-align: center;
+    user-select: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Scroll horizontal (solo cuando zoom > 100%)
+// --------------------------------------------------------------------------
+.x-pdf-scroll {
+  // Sin padding propio, q-card-section ya provee 16px uniforme
+}
+
+// --------------------------------------------------------------------------
+// Contenedor del PDF
+// --------------------------------------------------------------------------
+.x-pdf-viewer {
+  &__container {
+    width: fit-content;
+    min-width: 100%;
+    display: flex;
+    justify-content: center;
+
+    canvas {
+      box-shadow: $x-shadow-sm;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+  }
+}

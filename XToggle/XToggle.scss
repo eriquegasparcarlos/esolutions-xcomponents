@@ -1,0 +1,180 @@
+// ==========================================================================
+// XToggle - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-toggle {
+  --x-toggle-width: #{$x-toggle-width};
+  --x-toggle-height: #{$x-toggle-height};
+  --x-toggle-color: #{$x-primary};
+  --x-toggle-track-color: rgba(0, 0, 0, 0.38);
+  --x-toggle-thumb-color: #fafafa;
+  --x-toggle-border-radius: 10px;
+  --x-toggle-label-color: #{$x-text-primary};
+  --x-toggle-label-font-size: #{$x-font-size-md};
+  --x-toggle-hint-color: #{$x-text-secondary};
+  --x-toggle-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  // --------------------------------------------------------------------------
+  // Label superior
+  // --------------------------------------------------------------------------
+  .q-input__label {
+    display: block;
+    font-size: var(--x-toggle-label-font-size);
+    color: var(--x-toggle-label-color);
+    font-weight: 500;
+    line-height: 15px;
+    margin-top: 3px;
+    margin-bottom: 2px;
+  }
+
+  // --------------------------------------------------------------------------
+  // Toggle base
+  // --------------------------------------------------------------------------
+  .q-toggle {
+    min-height: 40px;
+    line-height: 40px;
+
+    .q-toggle__inner {
+      width: var(--x-toggle-width);
+      height: var(--x-toggle-height);
+      padding: 0;
+    }
+
+    // Track (fondo)
+    .q-toggle__track {
+      height: var(--x-toggle-height);
+      border-radius: var(--x-toggle-border-radius);
+      background-color: var(--x-toggle-track-color);
+      opacity: 1;
+      transition: background-color var(--x-toggle-transition);
+    }
+
+    // Thumb (circulo)
+    .q-toggle__thumb {
+      width: calc(var(--x-toggle-height) - 4px);
+      height: calc(var(--x-toggle-height) - 4px);
+      top: 2px;
+      left: 2px;
+      border-radius: 50%;
+      background-color: var(--x-toggle-thumb-color);
+      box-shadow: $x-shadow-sm;
+      transition: left var(--x-toggle-transition), background-color var(--x-toggle-transition);
+
+      &::after {
+        display: none; // Ocultar el circulo extra de Quasar
+      }
+    }
+
+    // Label del toggle
+    .q-toggle__label {
+      color: var(--x-toggle-label-color);
+      font-size: var(--x-toggle-label-font-size);
+      padding-left: $x-spacing-sm;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Estados
+  // --------------------------------------------------------------------------
+  // Checked/Active
+  .q-toggle--checked,
+  .q-toggle[aria-checked="true"] {
+    .q-toggle__track {
+      background-color: var(--x-toggle-color) !important;
+      opacity: 1;
+    }
+
+    .q-toggle__thumb {
+      left: calc(var(--x-toggle-width) - var(--x-toggle-height) + 2px);
+      background-color: white;
+    }
+  }
+
+  // Hover
+  .q-toggle:not(.disabled):hover {
+    .q-toggle__thumb {
+      box-shadow: $x-shadow-md;
+    }
+  }
+
+  // Disabled
+  .q-toggle.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+
+    .q-toggle__track {
+      background-color: rgba(0, 0, 0, 0.12);
+    }
+  }
+
+  // Focus
+  .q-toggle:focus-visible,
+  .q-toggle.q-focusable--focused {
+    .q-toggle__inner::before {
+      opacity: 0.12;
+      background-color: var(--x-toggle-color);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Hint
+  // --------------------------------------------------------------------------
+  .text-caption.text-secondary {
+    color: var(--x-toggle-hint-color);
+    font-size: $x-font-size-sm;
+    margin-top: $x-spacing-xs;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Colores predefinidos
+// --------------------------------------------------------------------------
+.x-toggle-primary {
+  --x-toggle-color: #{$x-primary};
+}
+
+.x-toggle-secondary {
+  --x-toggle-color: #{$x-secondary};
+}
+
+.x-toggle-positive,
+.x-toggle-success {
+  --x-toggle-color: #{$x-positive};
+}
+
+.x-toggle-negative,
+.x-toggle-error {
+  --x-toggle-color: #{$x-negative};
+}
+
+.x-toggle-warning {
+  --x-toggle-color: #{$x-warning};
+}
+
+.x-toggle-info {
+  --x-toggle-color: #{$x-info};
+}
+
+// --------------------------------------------------------------------------
+// Variantes de tamanio
+// --------------------------------------------------------------------------
+.x-toggle-sm {
+  --x-toggle-width: 30px;
+  --x-toggle-height: 16px;
+  --x-toggle-label-font-size: #{$x-font-size-sm};
+}
+
+.x-toggle-md {
+  --x-toggle-width: #{$x-toggle-width};
+  --x-toggle-height: #{$x-toggle-height};
+}
+
+.x-toggle-lg {
+  --x-toggle-width: 48px;
+  --x-toggle-height: 26px;
+  --x-toggle-label-font-size: #{$x-font-size-lg};
+}

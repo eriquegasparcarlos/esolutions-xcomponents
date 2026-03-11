@@ -1,0 +1,162 @@
+// ==========================================================================
+// XCheckbox - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.custom-checkbox {
+  --x-checkbox-size: #{$x-checkbox-size};
+  --x-checkbox-color: #{$x-primary};
+  --x-checkbox-border-color: #{$x-border-color};
+  --x-checkbox-border-radius: #{$x-border-radius};
+  --x-checkbox-label-color: #{$x-text-primary};
+  --x-checkbox-label-font-size: #{$x-font-size-md};
+  --x-checkbox-hint-color: #{$x-text-secondary};
+  --x-checkbox-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  // --------------------------------------------------------------------------
+  // Label superior
+  // --------------------------------------------------------------------------
+  .q-input__label {
+    display: block;
+    font-size: var(--x-checkbox-label-font-size);
+    color: var(--x-checkbox-label-color);
+    font-weight: 500;
+    margin-bottom: $x-spacing-xs;
+    line-height: 15px;
+  }
+
+  // --------------------------------------------------------------------------
+  // Checkbox base
+  // --------------------------------------------------------------------------
+  .q-checkbox {
+    min-height: auto;
+
+    .q-checkbox__inner {
+      width: var(--x-checkbox-size);
+      height: var(--x-checkbox-size);
+      font-size: var(--x-checkbox-size);
+    }
+
+    // Borde del checkbox
+    .q-checkbox__bg {
+      border-radius: calc(var(--x-checkbox-border-radius) / 2);
+      border-color: var(--x-checkbox-border-color);
+      transition: border-color var(--x-checkbox-transition), background-color var(--x-checkbox-transition);
+    }
+
+    // Label del checkbox
+    .q-checkbox__label {
+      color: var(--x-checkbox-label-color);
+      font-size: var(--x-checkbox-label-font-size);
+      padding-left: $x-spacing-sm;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Estados
+  // --------------------------------------------------------------------------
+  // Hover
+  .q-checkbox:not(.disabled):hover {
+    .q-checkbox__bg {
+      border-color: var(--x-checkbox-color);
+    }
+  }
+
+  // Checked
+  .q-checkbox--checked {
+    .q-checkbox__bg {
+      background-color: var(--x-checkbox-color) !important;
+      border-color: var(--x-checkbox-color) !important;
+    }
+
+    .q-checkbox__svg {
+      color: white;
+    }
+  }
+
+  // Indeterminate
+  .q-checkbox--indeterminate {
+    .q-checkbox__bg {
+      background-color: var(--x-checkbox-color) !important;
+      border-color: var(--x-checkbox-color) !important;
+    }
+  }
+
+  // Disabled
+  .q-checkbox.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    .q-checkbox__bg {
+      background-color: #f5f5f5;
+    }
+  }
+
+  // Focus
+  .q-checkbox:focus-visible,
+  .q-checkbox.q-focusable--focused {
+    .q-checkbox__inner::before {
+      opacity: 0.12;
+      background-color: var(--x-checkbox-color);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Hint
+  // --------------------------------------------------------------------------
+  .text-caption.text-secondary {
+    color: var(--x-checkbox-hint-color);
+    font-size: $x-font-size-sm;
+    margin-top: $x-spacing-xs;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Colores predefinidos
+// --------------------------------------------------------------------------
+.custom-checkbox-primary {
+  --x-checkbox-color: #{$x-primary};
+}
+
+.custom-checkbox-secondary {
+  --x-checkbox-color: #{$x-secondary};
+}
+
+.custom-checkbox-positive,
+.custom-checkbox-success {
+  --x-checkbox-color: #{$x-positive};
+}
+
+.custom-checkbox-negative,
+.custom-checkbox-error {
+  --x-checkbox-color: #{$x-negative};
+}
+
+.custom-checkbox-warning {
+  --x-checkbox-color: #{$x-warning};
+}
+
+.custom-checkbox-info {
+  --x-checkbox-color: #{$x-info};
+}
+
+// --------------------------------------------------------------------------
+// Variantes de tamanio
+// --------------------------------------------------------------------------
+.custom-checkbox-sm {
+  --x-checkbox-size: 16px;
+  --x-checkbox-label-font-size: #{$x-font-size-sm};
+}
+
+.custom-checkbox-md {
+  --x-checkbox-size: #{$x-checkbox-size};
+  --x-checkbox-label-font-size: #{$x-font-size-md};
+}
+
+.custom-checkbox-lg {
+  --x-checkbox-size: 24px;
+  --x-checkbox-label-font-size: #{$x-font-size-lg};
+}

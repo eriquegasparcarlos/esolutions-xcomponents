@@ -1,0 +1,150 @@
+// ==========================================================================
+// XInputOtp - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-input-otp-container {
+  --x-otp-input-size: #{$x-otp-input-size};
+  --x-otp-input-height: 56px;
+  --x-otp-input-font-size: #{$x-otp-input-font-size};
+  --x-otp-input-gap: #{$x-otp-input-gap};
+  --x-otp-border-color: #{$x-border-color};
+  --x-otp-border-color-focus: #{$x-border-color-focus};
+  --x-otp-border-color-error: #{$x-border-color-error};
+  --x-otp-border-radius: #{$x-border-radius};
+  --x-otp-transition: #{$x-transition-duration} #{$x-transition-timing};
+}
+
+// --------------------------------------------------------------------------
+// Contenedor principal
+// --------------------------------------------------------------------------
+.x-input-otp-container {
+  display: flex;
+  justify-content: center;
+  gap: var(--x-otp-input-gap);
+}
+
+// --------------------------------------------------------------------------
+// Input individual
+// --------------------------------------------------------------------------
+.x-input-otp {
+  width: var(--x-otp-input-size);
+  flex-shrink: 0;
+
+  .q-field__control {
+    height: var(--x-otp-input-height);
+    border-radius: var(--x-otp-border-radius);
+    transition: border-color var(--x-otp-transition), box-shadow var(--x-otp-transition);
+
+    &::before {
+      border-color: var(--x-otp-border-color);
+      transition: border-color var(--x-otp-transition);
+    }
+  }
+
+  // Input interno
+  input {
+    text-align: center;
+    font-size: var(--x-otp-input-font-size);
+    font-weight: 700;
+    letter-spacing: 0;
+    padding: 0;
+    color: $x-text-primary;
+    caret-color: $x-primary;
+  }
+
+  // Placeholder
+  input::placeholder {
+    color: $x-text-hint;
+    font-weight: 400;
+  }
+
+  // Estado focus
+  &.q-field--focused .q-field__control::before {
+    border-color: var(--x-otp-border-color-focus);
+    border-width: 2px;
+  }
+
+  // Sombra en focus
+  &.q-field--focused .q-field__control {
+    box-shadow: 0 0 0 3px rgba($x-primary, 0.15);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estado de error
+// --------------------------------------------------------------------------
+.x-input-otp-error {
+  .q-field__control::before {
+    border-color: var(--x-otp-border-color-error) !important;
+  }
+
+  &.q-field--focused .q-field__control {
+    box-shadow: 0 0 0 3px rgba($x-negative, 0.15);
+  }
+
+  input {
+    color: $x-negative;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estado disabled
+// --------------------------------------------------------------------------
+.x-input-otp.q-field--disabled {
+  .q-field__control {
+    opacity: 0.6;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+  }
+
+  input {
+    cursor: not-allowed;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Input lleno (con valor)
+// --------------------------------------------------------------------------
+.x-input-otp-filled {
+  .q-field__control::before {
+    border-color: $x-primary;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Animacion de shake en error
+// --------------------------------------------------------------------------
+@keyframes otp-shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+  20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.x-input-otp-shake {
+  animation: otp-shake 0.5s ease-in-out;
+}
+
+// --------------------------------------------------------------------------
+// Responsivo
+// --------------------------------------------------------------------------
+@media (max-width: 599px) {
+  .x-input-otp-container {
+    --x-otp-input-size: 42px;
+    --x-otp-input-height: 48px;
+    --x-otp-input-font-size: 20px;
+    --x-otp-input-gap: 6px;
+  }
+}
+
+@media (max-width: 380px) {
+  .x-input-otp-container {
+    --x-otp-input-size: 36px;
+    --x-otp-input-height: 42px;
+    --x-otp-input-font-size: 18px;
+    --x-otp-input-gap: 4px;
+  }
+}

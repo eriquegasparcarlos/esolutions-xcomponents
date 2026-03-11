@@ -1,0 +1,152 @@
+<script setup>
+import { ref, watch, computed, getCurrentInstance } from 'vue'
+import { useQuasar } from 'quasar'
+
+import XCellRenderer from 'components/XTableServer/XCellRenderer.vue'
+
+// registra aquí tus componentes interactivos
+import XToggle from 'components/XToggle/XToggle.vue'
+import XCheckbox from 'components/XCheckbox/XCheckbox.vue'
+import XInput from 'components/XInput/XInput.vue'
+import XSelect from 'components/XSelect/XSelect.vue'
+
+defineOptions({ name: 'XCellColumnRenderer' })
+
+const props = defineProps({
+  cell: { type: [Object, String, Number], default: null },
+  row: { type: Object, default: null },
+})
+
+const emit = defineEmits(['refresh'])
+
+const { proxy } = getCurrentInstance()
+const $q = useQuasar()
+
+const componentsMap = {
+  XToggle,
+  XCheckbox,
+  XInput,
+  XSelect,
+}
+
+const isComponentCell = computed(() =>
+  props.cell && typeof props.cell === 'object' && props.cell.type_input === 'component'
+)
+
+const localValue = ref(null)
+const saving = ref(false)
+let debounceTimer = null
+
+watch(
+  () => props.cell,
+  (c) => {
+    if (c && typeof c === 'object' && c.type_input === 'component') {
+      localValue.value = c.modelValue
+    }
+  },
+  { immediate: true }
+)
+
+function resolveUrl(url) {
+  if (!url) return url
+  const id = props.row?.id ?? ''
+  return String(url).replaceAll('{id}', id)
+}
+
+/**
+ * Reemplaza '$value' en data plano (suficiente para 90% de casos).
+ * Si quieres soportar nested arrays/objects, se puede hacer recursivo.
+ */
+function buildData(template, value) {
+  if (!template || typeof template !== 'object') return {}
+  const out = {}
+  for (const k in template) {
+    out[k] = template[k] === '$value' ? value : template[k]
+  }
+  return out
+}
+
+async function runAction(nextValue) {
+  const c = props.cell
+  const action = c?.action
+  if (!action || action.type !== 'api') return
+
+  const prev = localValue.value
+  localValue.value = nextValue
+
+  const method = (action.method || 'post').toLowerCase()
+  const url = resolveUrl(action.url)
+  const data = buildData(action.data, nextValue)
+  const refresh = action.refresh !== false
+  const optimistic = action.optimistic !== false
+
+  // confirm opcional
+  if (action.confirm?.title || action.confirm?.message) {
+    try {
+      await $q.dialog({
+        title: action.confirm.title || proxy.$t('common.confirm'),
+        message: action.confirm.message || proxy.$t('common.wantToContinue'),
+        cancel: true,
+        persistent: true,
+      })
+    } catch {
+      // cancelado
+      localValue.value = prev
+      return
+    }
+  }
+
+  try {
+    saving.value = true
+    await proxy.$api.request({ method, url, data })
+
+    // notify opcional
+    if (action.notify?.success) {
+      $q.notify({ type: 'success', message: action.notify.success })
+    }
+
+    if (refresh) emit('refresh')
+  } catch (err) {
+    if (optimistic) localValue.value = prev
+
+    const msg =
+      err?.response?.data?.message ||
+      err?.message ||
+      proxy.$t('common.actionError')
+
+    $q.notify({ type: 'negative', message: msg })
+  } finally {
+    saving.value = false
+  }
+}
+
+function onUpdateModelValue(val) {
+  const action = props.cell?.action
+  const debounceMs = Number(action?.debounce || 0)
+
+  if (debounceMs > 0) {
+    if (debounceTimer) clearTimeout(debounceTimer)
+    debounceTimer = setTimeout(() => runAction(val), debounceMs)
+    return
+  }
+  runAction(val)
+}
+</script>
+
+<template>
+  <!-- 1) Celda interactiva -->
+  <template v-if="isComponentCell">
+    <component
+      :is="componentsMap[cell.component]"
+      v-model="localValue"
+      v-bind="cell.props"
+      :disable="(cell.props?.disable ?? false) || saving"
+      @update:modelValue="onUpdateModelValue"
+    />
+  </template>
+
+  <!-- 2) Celda normal (tu renderer actual) -->
+  <template v-else>
+    <x-cell-renderer :cell="cell" />
+  </template>
+</template>

@@ -1,0 +1,187 @@
+// ==========================================================================
+// XTracking - Estilos del componente
+// ==========================================================================
+@use 'sass:color';
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-tracking {
+  --x-tracking-min-height: 100px;
+  --x-tracking-line-color: #{$x-secondary};
+  --x-tracking-dot-size: 15px;
+  --x-tracking-title-font-size: #{$x-font-size-md};
+  --x-tracking-title-font-weight: 600;
+  --x-tracking-subtitle-font-size: #{$x-font-size-sm};
+  --x-tracking-subtitle-color: #{$x-text-secondary};
+  --x-tracking-content-font-size: #{$x-font-size-md};
+  --x-tracking-caption-color: #{$x-text-hint};
+  --x-tracking-spacing: #{$x-spacing-md};
+  --x-tracking-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  min-height: var(--x-tracking-min-height);
+
+  // --------------------------------------------------------------------------
+  // Timeline entry
+  // --------------------------------------------------------------------------
+  .q-timeline__entry {
+    padding-bottom: var(--x-tracking-spacing);
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Dot (punto en la linea)
+  // --------------------------------------------------------------------------
+  .q-timeline__dot {
+    width: var(--x-tracking-dot-size);
+    height: var(--x-tracking-dot-size);
+
+    &::before {
+      width: var(--x-tracking-dot-size);
+      height: var(--x-tracking-dot-size);
+    }
+
+    &::after {
+      left: calc(var(--x-tracking-dot-size) / 2 - 1px);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Titulo
+  // --------------------------------------------------------------------------
+  .q-timeline__title {
+    font-size: var(--x-tracking-title-font-size);
+    font-weight: var(--x-tracking-title-font-weight);
+    margin-bottom: $x-spacing-xs;
+  }
+
+  // --------------------------------------------------------------------------
+  // Subtitulo (fecha)
+  // --------------------------------------------------------------------------
+  .q-timeline__subtitle {
+    font-size: var(--x-tracking-subtitle-font-size);
+    color: var(--x-tracking-subtitle-color);
+    margin-bottom: $x-spacing-sm;
+  }
+
+  // --------------------------------------------------------------------------
+  // Contenido
+  // --------------------------------------------------------------------------
+  .q-timeline__content {
+    padding-top: $x-spacing-xs;
+  }
+
+  .q-item {
+    min-height: auto;
+    padding: 0;
+
+    .q-item__section {
+      padding: 0;
+    }
+
+    .q-item__label {
+      font-size: var(--x-tracking-content-font-size);
+      color: $x-text-primary;
+    }
+
+    .q-item__label--caption {
+      font-size: var(--x-tracking-subtitle-font-size);
+      color: var(--x-tracking-caption-color);
+      margin-top: $x-spacing-xs;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estados de color por status
+// --------------------------------------------------------------------------
+.x-tracking {
+  // Positivo (exito)
+  .q-timeline__entry--positive {
+    .q-timeline__dot::before {
+      background-color: $x-positive;
+    }
+
+    .q-timeline__title {
+      color: color.adjust($x-positive, $lightness: -10%);
+    }
+  }
+
+  // Negativo (error)
+  .q-timeline__entry--negative {
+    .q-timeline__dot::before {
+      background-color: $x-negative;
+    }
+
+    .q-timeline__title {
+      color: color.adjust($x-negative, $lightness: -5%);
+    }
+  }
+
+  // Warning
+  .q-timeline__entry--warning {
+    .q-timeline__dot::before {
+      background-color: $x-warning;
+    }
+  }
+
+  // Info
+  .q-timeline__entry--info {
+    .q-timeline__dot::before {
+      background-color: $x-info;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante compacta
+// --------------------------------------------------------------------------
+.x-tracking-compact {
+  --x-tracking-spacing: #{$x-spacing-sm};
+  --x-tracking-dot-size: 12px;
+  --x-tracking-title-font-size: #{$x-font-size-sm};
+  --x-tracking-subtitle-font-size: #{$x-font-size-xs};
+}
+
+// --------------------------------------------------------------------------
+// Variante con iconos
+// --------------------------------------------------------------------------
+.x-tracking-with-icons {
+  .q-timeline__dot {
+    .q-icon {
+      font-size: 10px;
+      color: white;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Animacion de entrada
+// --------------------------------------------------------------------------
+.x-tracking-animated {
+  .q-timeline__entry {
+    animation: tracking-fade-in 0.3s ease-out forwards;
+    opacity: 0;
+
+    @for $i from 1 through 20 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+
+@keyframes tracking-fade-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

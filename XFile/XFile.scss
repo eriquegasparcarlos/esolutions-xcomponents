@@ -1,0 +1,189 @@
+// ==========================================================================
+// XFile - Estilos del componente
+// ==========================================================================
+@use 'sass:color';
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-file {
+  --x-file-height: #{$x-input-height-dense};
+  --x-file-border-color: #{$x-border-color};
+  --x-file-border-color-focus: #{$x-border-color-focus};
+  --x-file-border-color-error: #{$x-border-color-error};
+  --x-file-border-radius: #{$x-border-radius};
+  --x-file-label-color: #{$x-input-label-color};
+  --x-file-icon-color: #{$x-file-icon-color};
+  --x-file-font-size: #{$x-font-size-md};
+  --x-file-placeholder-color: #{$x-input-placeholder-color};
+  --x-file-transition: #{$x-transition-duration} #{$x-transition-timing};
+}
+
+// --------------------------------------------------------------------------
+// Base
+// --------------------------------------------------------------------------
+.x-file {
+  .q-field__control {
+    min-height: var(--x-file-height);
+    border-radius: var(--x-file-border-radius);
+    cursor: pointer;
+    transition: border-color var(--x-file-transition);
+
+    &::before {
+      border-color: var(--x-file-border-color);
+      transition: border-color var(--x-file-transition);
+    }
+  }
+
+  // Label flotante
+  .q-field__label {
+    color: var(--x-file-label-color);
+    font-size: var(--x-file-font-size);
+  }
+
+  // Texto del archivo / placeholder
+  .q-field__native {
+    font-size: var(--x-file-font-size);
+    cursor: pointer;
+
+    span {
+      color: $x-text-primary;
+    }
+  }
+
+  // Placeholder
+  .q-field__native[data-autofocus]::before,
+  .q-field:not(.q-field--float) .q-field__native::before {
+    color: var(--x-file-placeholder-color);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estados
+// --------------------------------------------------------------------------
+// Focus / hover
+.x-file {
+  .q-field--focused .q-field__control,
+  &:hover .q-field__control {
+    &::before {
+      border-color: var(--x-file-border-color-focus);
+    }
+  }
+
+  // Error
+  .q-field--error .q-field__control {
+    &::before {
+      border-color: var(--x-file-border-color-error);
+    }
+  }
+
+  // Disabled
+  .q-field--disabled {
+    .q-field__control {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Icono
+// --------------------------------------------------------------------------
+.x-file {
+  .q-field__append {
+    .q-icon {
+      color: var(--x-file-icon-color);
+      font-size: 20px;
+      transition: color var(--x-file-transition), transform var(--x-file-transition);
+    }
+
+    .q-icon:hover {
+      color: color.adjust($x-primary, $lightness: -10%);
+      transform: rotate(15deg);
+    }
+  }
+
+  // Icono de limpiar
+  .q-field__clearable .q-icon {
+    font-size: 18px;
+    color: $x-text-secondary;
+
+    &:hover {
+      color: $x-negative;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Mensaje de error
+// --------------------------------------------------------------------------
+.x-file {
+  .q-field__bottom {
+    font-size: $x-font-size-sm;
+    padding-top: $x-spacing-xs;
+  }
+
+  .q-field__messages {
+    color: $x-negative;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Chips para archivos multiples
+// --------------------------------------------------------------------------
+.x-file-multiple {
+  .q-field__native {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $x-spacing-xs;
+    padding: $x-spacing-xs 0;
+  }
+
+  .q-chip {
+    margin: 2px;
+    max-width: 150px;
+
+    .q-chip__content {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante drag & drop
+// --------------------------------------------------------------------------
+.x-file-dropzone {
+  .q-field__control {
+    min-height: 120px;
+    border: 2px dashed var(--x-file-border-color);
+    background-color: rgba($x-primary, 0.02);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      border-color: var(--x-file-border-color-focus);
+      background-color: rgba($x-primary, 0.05);
+    }
+  }
+
+  &.x-file-dragover .q-field__control {
+    border-color: $x-primary;
+    background-color: rgba($x-primary, 0.1);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante no dense
+// --------------------------------------------------------------------------
+.x-file-large {
+  --x-file-height: #{$x-input-height};
+
+  .q-field__native {
+    font-size: $x-font-size-lg;
+  }
+}

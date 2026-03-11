@@ -1,0 +1,157 @@
+// ==========================================================================
+// XDatepicker - Estilos del componente
+// ==========================================================================
+@use 'sass:color';
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-input-datepicker {
+  --x-datepicker-height: #{$x-input-height-dense};
+  --x-datepicker-border-color: #{$x-border-color};
+  --x-datepicker-border-color-focus: #{$x-border-color-focus};
+  --x-datepicker-border-color-error: #{$x-border-color-error};
+  --x-datepicker-border-radius: #{$x-border-radius};
+  --x-datepicker-label-color: #{$x-input-label-color};
+  --x-datepicker-icon-color: #{$x-datepicker-icon-color};
+  --x-datepicker-font-size: #{$x-font-size-md};
+  --x-datepicker-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  // --------------------------------------------------------------------------
+  // Label
+  // --------------------------------------------------------------------------
+  .q-input__label {
+    display: block;
+    font-size: var(--x-datepicker-font-size);
+    color: var(--x-datepicker-label-color);
+    font-weight: 500;
+    margin-bottom: $x-spacing-xs;
+    line-height: 15px;
+  }
+
+  // --------------------------------------------------------------------------
+  // Input field base
+  // --------------------------------------------------------------------------
+  .q-field__control {
+    min-height: var(--x-datepicker-height);
+    border-radius: var(--x-datepicker-border-radius);
+    cursor: pointer;
+    transition: border-color var(--x-datepicker-transition);
+
+    &::before {
+      border-color: var(--x-datepicker-border-color);
+      transition: border-color var(--x-datepicker-transition);
+    }
+  }
+
+  // Readonly style
+  .q-field__native {
+    cursor: pointer;
+    font-size: var(--x-datepicker-font-size);
+  }
+
+  // --------------------------------------------------------------------------
+  // Estados
+  // --------------------------------------------------------------------------
+  // Focus / hover
+  .q-field--focused .q-field__control,
+  .q-field:hover .q-field__control {
+    &::before {
+      border-color: var(--x-datepicker-border-color-focus);
+    }
+  }
+
+  // Error
+  .q-field--error .q-field__control {
+    &::before {
+      border-color: var(--x-datepicker-border-color-error);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Icono del calendario
+  // --------------------------------------------------------------------------
+  .q-field__append {
+    .q-icon {
+      color: var(--x-datepicker-icon-color);
+      font-size: 20px;
+      transition: color var(--x-datepicker-transition), transform var(--x-datepicker-transition);
+
+      &:hover {
+        color: color.adjust($x-primary, $lightness: -10%);
+        transform: scale(1.1);
+      }
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Boton clear
+  // --------------------------------------------------------------------------
+  .q-field__clearable {
+    .q-icon {
+      font-size: 18px;
+      color: $x-text-secondary;
+
+      &:hover {
+        color: $x-negative;
+      }
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Popup del calendario
+// --------------------------------------------------------------------------
+.q-date {
+  min-width: 290px;
+  border-radius: $x-border-radius;
+  box-shadow: $x-shadow-lg;
+
+  // Header
+  .q-date__header {
+    background-color: $x-primary;
+    color: white;
+    border-radius: $x-border-radius $x-border-radius 0 0;
+  }
+
+  // Dias
+  .q-date__calendar-item {
+    .q-btn {
+      border-radius: 50%;
+      transition: background-color $x-transition-duration $x-transition-timing;
+    }
+  }
+
+  // Dia seleccionado
+  .q-date__calendar-item--active {
+    .q-btn {
+      background-color: $x-primary !important;
+      color: white !important;
+    }
+  }
+
+  // Hover en dias
+  .q-date__calendar-item:not(.q-date__calendar-item--active) {
+    .q-btn:hover {
+      background-color: rgba($x-primary, 0.1);
+    }
+  }
+
+  // Footer con botones
+  .row.items-center.justify-end {
+    padding: $x-spacing-sm;
+    border-top: 1px solid $x-border-color;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante no dense
+// --------------------------------------------------------------------------
+.x-input-datepicker-large {
+  --x-datepicker-height: #{$x-input-height};
+
+  .q-field__native {
+    font-size: $x-font-size-lg;
+  }
+}

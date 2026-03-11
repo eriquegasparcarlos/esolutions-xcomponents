@@ -1,0 +1,20 @@
+.x-dnd-ghost { opacity: 0.35; }
+.x-dnd-chosen { cursor: grabbing; }
+.x-dnd-overlay { pointer-events: none; }
+.x-dnd-overlay__card{
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0,0,0,.18);
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.x-dnd-overlay__title{
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.block-handle { touch-action: none; cursor: grab; }
+.block-handle:active { cursor: grabbing; }

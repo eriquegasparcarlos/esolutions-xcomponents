@@ -1,0 +1,70 @@
+// ==========================================================================
+// XInputColor - Estilos del componente
+// ==========================================================================
+@use 'sass:color';
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-input-color {
+  --x-input-color-preview-size: 20px;
+  --x-input-color-preview-border-radius: 50%;
+  --x-input-color-icon-size: 20px;
+  --x-input-color-transition: #{$x-transition-duration} #{$x-transition-timing};
+}
+
+// --------------------------------------------------------------------------
+// Preview del color
+// --------------------------------------------------------------------------
+.color-preview {
+  width: var(--x-input-color-preview-size, 20px);
+  height: var(--x-input-color-preview-size, 20px);
+  border-radius: var(--x-input-color-preview-border-radius, 50%);
+  border: 1px solid $x-border-color;
+  flex-shrink: 0;
+  transition: transform var(--x-input-color-transition);
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Icono colorize
+// --------------------------------------------------------------------------
+.x-input-color {
+  .q-icon[name="colorize"] {
+    font-size: var(--x-input-color-icon-size);
+    color: $x-primary;
+    transition: color var(--x-input-color-transition);
+
+    &:hover {
+      color: color.adjust($x-primary, $lightness: -10%);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Boton de color completo
+// --------------------------------------------------------------------------
+.full-color-btn {
+  width: 100%;
+  min-height: 36px;
+  border-radius: $x-border-radius;
+  font-weight: 500;
+  text-transform: none;
+  transition: opacity var(--x-input-color-transition);
+
+  &:hover {
+    opacity: 0.9;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Popup del color picker
+// --------------------------------------------------------------------------
+.q-color-picker {
+  border-radius: $x-border-radius;
+  box-shadow: $x-shadow-lg;
+}

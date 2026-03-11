@@ -1,0 +1,146 @@
+// ==========================================================================
+// XInputSearchPerson - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-input-search-person {
+  --x-search-person-gap: #{$x-spacing-sm};
+  --x-search-person-button-min-width: 80px;
+  --x-search-person-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+
+  // --------------------------------------------------------------------------
+  // Input principal
+  // --------------------------------------------------------------------------
+  .x-input {
+    flex: 1;
+  }
+
+  // --------------------------------------------------------------------------
+  // Boton de busqueda
+  // --------------------------------------------------------------------------
+  .x-button {
+    min-width: var(--x-search-person-button-min-width);
+    margin-left: var(--x-search-person-gap);
+    // Alinear con el input cuando tiene label
+    margin-top: 22px;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante sin label (alinear boton)
+// --------------------------------------------------------------------------
+.x-input-search-person-no-label {
+  .x-button {
+    margin-top: 0;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante inline (todo en una linea)
+// --------------------------------------------------------------------------
+.x-input-search-person-inline {
+  .x-input {
+    .q-input__label {
+      display: none;
+    }
+  }
+
+  .x-button {
+    margin-top: 0;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante compacta
+// --------------------------------------------------------------------------
+.x-input-search-person-compact {
+  --x-search-person-gap: #{$x-spacing-xs};
+  --x-search-person-button-min-width: 70px;
+
+  .x-button {
+    padding: 0 $x-spacing-sm;
+    font-size: $x-font-size-sm;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estado loading
+// --------------------------------------------------------------------------
+.x-input-search-person-loading {
+  .x-input {
+    .q-field__control {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Responsivo
+// --------------------------------------------------------------------------
+@media (max-width: 599px) {
+  .x-input-search-person {
+    flex-direction: column;
+
+    .x-button {
+      width: 100%;
+      margin-left: 0;
+      margin-top: $x-spacing-sm;
+    }
+  }
+
+  .x-input-search-person-inline {
+    flex-direction: row;
+
+    .x-button {
+      width: auto;
+      margin-left: var(--x-search-person-gap);
+      margin-top: 0;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Estilos para tipos de documento
+// --------------------------------------------------------------------------
+.x-input-search-person {
+  // RUC (11 digitos)
+  &[data-doc-type="6"] {
+    .x-input input {
+      letter-spacing: 0.5px;
+    }
+  }
+
+  // DNI (8 digitos)
+  &[data-doc-type="1"] {
+    .x-input input {
+      letter-spacing: 1px;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Indicador de tipo de documento
+// --------------------------------------------------------------------------
+.x-input-search-person-with-badge {
+  position: relative;
+
+  .x-search-person-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: $x-font-size-xs;
+    padding: 2px 6px;
+    background-color: rgba($x-primary, 0.1);
+    color: $x-primary;
+    border-radius: $x-border-radius;
+    font-weight: 500;
+  }
+}

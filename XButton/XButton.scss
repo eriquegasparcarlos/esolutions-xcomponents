@@ -1,0 +1,60 @@
+// ==========================================================================
+// XButton Styles
+// ==========================================================================
+@import '../variables';
+
+.x-button {
+  // Variables locales (sobrescribibles)
+  --x-button-height: #{$x-button-height-md};
+  --x-button-padding-x: #{$x-button-padding-x};
+  --x-button-font-weight: #{$x-button-font-weight};
+  --x-button-border-radius: #{$x-border-radius};
+  --x-button-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  min-height: var(--x-button-height);
+  padding-left: var(--x-button-padding-x);
+  padding-right: var(--x-button-padding-x);
+  font-weight: var(--x-button-font-weight);
+  border-radius: var(--x-button-border-radius);
+  transition: all var(--x-button-transition);
+
+  // Tamaños
+  &.q-btn--size-sm {
+    --x-button-height: #{$x-button-height-sm};
+    --x-button-padding-x: 12px;
+  }
+
+  &.q-btn--size-lg {
+    --x-button-height: #{$x-button-height-lg};
+    --x-button-padding-x: 20px;
+  }
+
+  // Estado hover
+  &:not(.disabled):hover {
+    transform: translateY(0);
+    box-shadow: $x-shadow-sm;
+  }
+
+  // Estado activo
+  &:not(.disabled):active {
+    transform: translateY(0);
+  }
+
+  // Estado disabled
+  &.disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  // Variante outline
+  &.q-btn--outline {
+    border-width: $x-border-width;
+  }
+
+  // Variante flat
+  &.q-btn--flat {
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+  }
+}

@@ -1,0 +1,149 @@
+// ==========================================================================
+// XInput - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-input {
+  --x-input-height: #{$x-input-height};
+  --x-input-height-dense: #{$x-input-height-dense};
+  --x-input-border-color: #{$x-border-color};
+  --x-input-border-color-focus: #{$x-border-color-focus};
+  --x-input-border-color-error: #{$x-border-color-error};
+  --x-input-border-radius: #{$x-border-radius};
+  --x-input-label-color: #{$x-input-label-color};
+  --x-input-placeholder-color: #{$x-input-placeholder-color};
+  --x-input-font-size: #{$x-font-size-md};
+  --x-input-padding-x: #{$x-spacing-sm};
+  --x-input-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  // --------------------------------------------------------------------------
+  // Label
+  // --------------------------------------------------------------------------
+  .q-input__label {
+    display: block;
+    font-size: var(--x-input-font-size);
+    color: var(--x-input-label-color);
+    font-weight: 500;
+    margin-bottom: $x-spacing-xs;
+    line-height: 22px;
+  }
+
+  // --------------------------------------------------------------------------
+  // Input field base
+  // --------------------------------------------------------------------------
+  .q-field__control {
+    min-height: var(--x-input-height-dense);
+    border-radius: var(--x-input-border-radius);
+    transition: border-color var(--x-input-transition), box-shadow var(--x-input-transition);
+
+    &::before {
+      border-color: var(--x-input-border-color);
+      transition: border-color var(--x-input-transition);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Estados
+  // --------------------------------------------------------------------------
+  // Focus
+  .q-field--focused .q-field__control {
+    &::before {
+      border-color: var(--x-input-border-color-focus);
+    }
+  }
+
+  // Error
+  .q-field--error .q-field__control {
+    &::before {
+      border-color: var(--x-input-border-color-error);
+    }
+  }
+
+  // Disabled
+  .q-field--disabled {
+    .q-field__control {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Native input
+  // --------------------------------------------------------------------------
+  .q-field__native {
+    font-size: var(--x-input-font-size);
+    //padding: 0 var(--x-input-padding-x);
+
+    &::placeholder {
+      color: var(--x-input-placeholder-color);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Iconos (prepend/append)
+  // --------------------------------------------------------------------------
+  .q-field__prepend,
+  .q-field__append {
+    color: $x-text-secondary;
+    transition: color var(--x-input-transition);
+
+    .q-icon {
+      font-size: 20px;
+    }
+  }
+
+  // Password toggle icon
+  .q-field__append .cursor-pointer {
+    &:hover {
+      color: $x-primary;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Mensaje de error
+  // --------------------------------------------------------------------------
+  .q-field__bottom {
+    font-size: $x-font-size-sm;
+    padding-top: $x-spacing-xs;
+  }
+
+  .q-field__messages {
+    color: $x-negative;
+  }
+
+  // --------------------------------------------------------------------------
+  // Variante large (no dense)
+  // --------------------------------------------------------------------------
+  &.x-input-large {
+    .q-field__control {
+      min-height: var(--x-input-height);
+    }
+
+    .q-field__native {
+      font-size: $x-font-size-lg;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Modo clásico (label dentro del input)
+// --------------------------------------------------------------------------
+.x-input {
+  
+  .q-field--float.q-field--dense .q-field__label {
+    transform: translateY(-40%) scale(0.75);
+  }
+
+  .q-field--float .q-field__label {
+    transform: translateY(-60%) scale(0.75);
+  }
+
+  .q-field__label {
+    font-size: var(--x-input-font-size);
+    color: var(--x-input-label-color);
+    transition: transform var(--x-input-transition), color var(--x-input-transition);
+  }
+}

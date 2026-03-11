@@ -1,0 +1,136 @@
+// ==========================================================================
+// XSelect - Estilos del componente
+// ==========================================================================
+@import '../variables';
+
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+// --------------------------------------------------------------------------
+.x-select {
+  --x-select-height: #{$x-select-height};
+  --x-select-border-color: #{$x-border-color};
+  --x-select-border-color-focus: #{$x-border-color-focus};
+  --x-select-border-color-error: #{$x-border-color-error};
+  --x-select-border-radius: #{$x-border-radius};
+  --x-select-label-color: #{$x-input-label-color};
+  --x-select-font-size: #{$x-font-size-md};
+  --x-select-dropdown-max-height: #{$x-select-dropdown-max-height};
+  --x-select-transition: #{$x-transition-duration} #{$x-transition-timing};
+
+  // --------------------------------------------------------------------------
+  // Label
+  // --------------------------------------------------------------------------
+  .x-select-label {
+    display: block;
+    font-size: var(--x-select-font-size);
+    color: var(--x-select-label-color);
+    font-weight: 500;
+    margin-bottom: $x-spacing-xs;
+    line-height: 22px;
+  }
+
+  // --------------------------------------------------------------------------
+  // Select field base
+  // --------------------------------------------------------------------------
+  .q-field__control {
+    min-height: var(--x-select-height);
+    border-radius: var(--x-select-border-radius);
+    transition: border-color var(--x-select-transition), box-shadow var(--x-select-transition);
+
+    &::before {
+      border-color: var(--x-select-border-color);
+      transition: border-color var(--x-select-transition);
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Estados
+  // --------------------------------------------------------------------------
+  // Focus
+  .q-field--focused .q-field__control {
+    &::before {
+      border-color: var(--x-select-border-color-focus);
+    }
+  }
+
+  // Error
+  .q-field--error .q-field__control {
+    &::before {
+      border-color: var(--x-select-border-color-error);
+    }
+  }
+
+  // Disabled
+  .q-field--disabled {
+    .q-field__control {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Native input / selected value
+  // --------------------------------------------------------------------------
+  .q-field__native {
+    font-size: var(--x-select-font-size);
+    padding: 0;
+  }
+
+  // --------------------------------------------------------------------------
+  // Dropdown arrow
+  // --------------------------------------------------------------------------
+  .q-select__dropdown-icon {
+    color: $x-text-secondary;
+    transition: transform var(--x-select-transition), color var(--x-select-transition);
+  }
+
+  .q-field--focused .q-select__dropdown-icon {
+    color: $x-primary;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Dropdown content (portal)
+// --------------------------------------------------------------------------
+.app-select__content {
+  max-height: var(--x-select-dropdown-max-height, #{$x-select-dropdown-max-height});
+  border-radius: var(--x-select-border-radius, #{$x-border-radius});
+  box-shadow: $x-shadow-md;
+
+  .q-item {
+    min-height: 36px;
+    padding: $x-spacing-sm $x-spacing-md;
+    font-size: $x-font-size-md;
+    transition: background-color $x-transition-duration $x-transition-timing;
+
+    &:hover {
+      background-color: rgba($x-primary, 0.08);
+    }
+
+    &.q-item--active,
+    &.q-manual-focusable--focused {
+      background-color: rgba($x-primary, 0.12);
+    }
+  }
+
+  // Opcion "Agregar nuevo"
+  .q-item.text-primary {
+    border-top: 1px solid $x-border-color;
+    margin-top: $x-spacing-xs;
+    padding-top: $x-spacing-sm + $x-spacing-xs;
+
+    .q-icon {
+      font-size: 20px;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Multiple select chips
+// --------------------------------------------------------------------------
+.v-list-select-multiple {
+  .q-chip {
+    margin: 2px;
+    font-size: $x-font-size-sm;
+  }
+}

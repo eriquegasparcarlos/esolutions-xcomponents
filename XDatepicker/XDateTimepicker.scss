@@ -1,0 +1,18 @@
+.x-input-date-timepicker {
+  .dp__input {
+    height: 40px!important;
+    border: 1px solid rgba(0, 0, 0, 0.24)!important;
+    border-radius: 6px!important;
+  }
+  .dp__input:read-only {
+    border-style: dashed!important;
+  }
+  .q-input__label {
+    line-height: 22px!important;
+    position: relative;
+    display: block!important;
+  }
+  .dp__input_icon {
+    padding: 0 12px;
+  }
+}

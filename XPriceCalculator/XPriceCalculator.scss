@@ -1,0 +1,108 @@
+
+.price-calc {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+.input-wrapper {
+    width: 100%;
+    position: relative;
+    margin-bottom: 12px;
+}
+.currency {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.8rem;
+    color: #bbb;
+    pointer-events: none;
+    z-index: 2;
+}
+.price-calc-input {
+    width: 100%;
+    font-size: 1.8rem;
+    text-align: center;
+    padding: 8px 18px 8px 44px;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    background: #fafbfc;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1;
+}
+.quick-cash-viewport {
+    width: calc(4 * 500px + 3 * 12px);
+    max-width: 100%;
+    overflow-x: auto;
+    margin: 0 auto 12px auto;
+}
+.quick-cash-row {
+    display: flex;
+    flex-direction: row;
+    gap: 12px;
+    min-width: 100%;
+    width: max-content;
+}
+.quick-cash-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #eaf3f1;
+    color: #217871;
+    border: none;
+    font-size: 1.15rem;
+    font-weight: 600;
+    width: 67px;
+    height: 46px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.18s, color 0.18s;
+    white-space: nowrap;
+    outline: none;
+    box-sizing: border-box;
+    text-align: center;
+}
+.quick-cash-btn:active {
+    background: #c3e5dc;
+}
+.price-calc-keypad {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 0;
+}
+.key {
+    height: 46px;
+    width: 100%;
+    font-size: 1.4rem;
+    border: none;
+    background: #f3f3f6;
+    border-radius: 12px;
+    transition: background 0.15s;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+    padding: 0;
+}
+.key:active {
+    background: #ececec;
+}
+.key.action {
+    color: #007bff;
+    font-weight: bold;
+}
+.key:disabled {
+    background: none;
+    cursor: default;
+}
+.fa-backspace {
+    font-size: 2rem;
+    line-height: 1;
+}
