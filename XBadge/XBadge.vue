@@ -1,6 +1,6 @@
 <script setup>
 import { computed, useAttrs } from 'vue'
-import lib from 'src/mixins/lib.js' // Asegúrate de que lightenColor esté bien implementado
+import { resolveColor, lightenColor } from '@esolutions/js-utils'
 
 defineOptions({
   name: 'XBadge',
@@ -30,11 +30,11 @@ const props = defineProps({
 const attrs = useAttrs()
 
 // --- Color resuelto (nombre/alias → hex) ---
-const resolvedColor = computed(() => lib.resolveColor(props.color))
+const resolvedColor = computed(() => resolveColor(props.color))
 
 // --- Color de fondo calculado si se pasa color ---
 const bgColor = computed(() =>
-  resolvedColor.value ? (props.isLightenColor ? lib.lightenColor(resolvedColor.value) : resolvedColor.value) : null
+  resolvedColor.value ? (props.isLightenColor ? lightenColor(resolvedColor.value) : resolvedColor.value) : null
 )
 
 // --- Clase dinámica para el tipo (si se usa sistema de tipo) ---

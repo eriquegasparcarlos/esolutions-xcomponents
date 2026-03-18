@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { numberFormatDecimal } from 'src/mixins/lib'
+import { numberFormatDecimal } from '@esolutions/js-utils'
 
 defineProps({
   label: { type: String, default: '' },
