@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, useAttrs } from 'vue'
-import { formDefaults } from 'src/config/form'
+import { formDefaults } from '@esolutions/js-utils'
 
 // Define las opciones del componente
 defineOptions({

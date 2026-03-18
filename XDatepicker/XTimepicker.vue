@@ -2,7 +2,7 @@
 import {computed} from 'vue'
 import {useAttrs} from 'vue'
 import VueDatepicker from "@vuepic/vue-datepicker"
-import { formDefaults } from 'src/config/form'
+import { formDefaults } from '@esolutions/js-utils'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 const props = defineProps({

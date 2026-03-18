@@ -46,6 +46,9 @@
     "XFormatPrice",
     "themes"
   ],
+  "dependencies": {
+    "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils"
+  },
   "peerDependencies": {
     "vue": "^3.0.0",
     "quasar": "^2.0.0",

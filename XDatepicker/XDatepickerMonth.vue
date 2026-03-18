@@ -1,7 +1,7 @@
 <!-- src/components/XDatepicker/XDatepickerMonth.vue -->
 <script setup>
 import { computed, useAttrs, ref } from 'vue'
-import { formDefaults } from 'src/config/form'
+import { formDefaults } from '@esolutions/js-utils'
 
 defineOptions({ name: 'XDatepickerMonth', inheritAttrs: false })
 

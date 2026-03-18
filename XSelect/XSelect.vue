@@ -1,6 +1,6 @@
 <script setup>
 import { computed, getCurrentInstance, ref, useAttrs, nextTick } from 'vue';
-import { formDefaults } from 'src/config/form'
+import { formDefaults } from '@esolutions/js-utils'
 
 defineOptions({
   name: 'XSelect',

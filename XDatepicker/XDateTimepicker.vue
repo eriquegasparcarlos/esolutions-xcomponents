@@ -2,7 +2,7 @@
 <script setup>
 import { computed, useAttrs } from 'vue'
 import { date as DateUtils } from 'quasar'
-import { formDefaults } from 'src/config/form'
+import { formDefaults } from '@esolutions/js-utils'
 
 defineOptions({ name: 'XDateTimepicker', inheritAttrs: false })
 
