@@ -1,0 +1,423 @@
+// ==========================================================================
+// Tema shadcn/ui — Overrides CSS (cascade)
+// Se importa en app.scss AL FINAL para ganar por cascade sobre Quasar.
+// Solo estructura visual. Los colores los maneja ColorPalette (runtime).
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// Body
+// --------------------------------------------------------------------------
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// --------------------------------------------------------------------------
+// Cards — sin sombra, borde sutil
+// --------------------------------------------------------------------------
+.q-card {
+  box-shadow: none;
+  border: 1px solid #e2e8f0;
+}
+
+// --------------------------------------------------------------------------
+// Header — sin sombra, borde inferior
+// --------------------------------------------------------------------------
+.q-header {
+  box-shadow: none;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+// --------------------------------------------------------------------------
+// Drawer — sin sombra, borde derecho
+// --------------------------------------------------------------------------
+.q-drawer {
+  box-shadow: none;
+  border-right: 1px solid #e2e8f0;
+}
+
+// --------------------------------------------------------------------------
+// Tabla — borde exterior, radius, th sin uppercase, bordes sutiles
+// --------------------------------------------------------------------------
+.q-table__container {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.q-table {
+  thead th {
+    text-transform: none;
+    font-weight: 500;
+    font-size: 13px;
+    letter-spacing: normal;
+  }
+
+  tbody td {
+    border-bottom: 1px solid #f1f5f9; // slate-100
+  }
+
+  // Ultima fila sin borde inferior (el container ya tiene borde)
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Separator
+// --------------------------------------------------------------------------
+.q-separator {
+  background-color: #e2e8f0;
+}
+
+// --------------------------------------------------------------------------
+// Tabs — sin uppercase, font-weight 500
+// --------------------------------------------------------------------------
+.q-tabs .q-tab {
+  text-transform: none;
+  font-weight: 500;
+}
+
+// --------------------------------------------------------------------------
+// Items hover
+// --------------------------------------------------------------------------
+.q-item:hover {
+  background-color: #f1f5f9; // slate-100
+}
+
+// --------------------------------------------------------------------------
+// Dialog backdrop — oscuro con blur
+// --------------------------------------------------------------------------
+.q-dialog__backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+// --------------------------------------------------------------------------
+// Toast notifications — estilo Flowbite
+// --------------------------------------------------------------------------
+.x-toast.q-notification {
+  background-color: #ffffff !important;
+  color: #1f2937 !important; // gray-800
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  padding: 14px 16px;
+  min-width: 320px;
+  max-width: 420px;
+  border-left: 0px solid transparent;
+
+  .q-notification__icon {
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+  }
+
+  .q-notification__message {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0;
+    color: #1f2937 !important;
+  }
+
+  // --- Success ---
+  &.x-toast--success {
+    border-left-color: #22c55e;
+
+    .q-notification__icon {
+      background-color: #f0fdf4;
+      color: #16a34a;
+    }
+    .q-notification__message {
+      color: #1f2937 !important;
+    }
+  }
+
+  // --- Error ---
+  &.x-toast--error {
+    border-left-color: #ef4444;
+
+    .q-notification__icon {
+      background-color: #fef2f2;
+      color: #dc2626;
+    }
+    .q-notification__message {
+      color: #1f2937 !important;
+    }
+  }
+
+  // --- Warning ---
+  &.x-toast--warning {
+    border-left-color: #f59e0b;
+
+    .q-notification__icon {
+      background-color: #fffbeb;
+      color: #d97706;
+    }
+    .q-notification__message {
+      color: #1f2937 !important;
+    }
+  }
+
+  // --- Info ---
+  &.x-toast--info {
+    border-left-color: #3b82f6;
+
+    .q-notification__icon {
+      background-color: #eff6ff;
+      color: #2563eb;
+    }
+    .q-notification__message {
+      color: #1f2937 !important;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Drawer menu — fondo blanco, item activo con bg primario sutil
+// --------------------------------------------------------------------------
+.q-drawer {
+  background-color: #ffffff;
+
+  .q-item.q-router-link--active,
+  .q-item--active {
+    background-color: rgba(var(--q-primary-rgb, 26, 86, 219), 0.08);
+    border-radius: 0;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Botones — transicion suave
+// --------------------------------------------------------------------------
+.q-btn {
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+// --------------------------------------------------------------------------
+// Layout header — light/dark compatible
+// --------------------------------------------------------------------------
+.layout-header {
+  background-color: #ffffff;
+  color: #374151; // grey-700
+}
+
+// ==========================================================================
+// DARK MODE — shadcn/ui slate palette
+// ==========================================================================
+.body--dark {
+  // --- Body ---
+  background-color: #0f172a; // slate-900
+  color: #f1f5f9; // slate-100
+
+  // --- Layout header ---
+  .layout-header,
+  .q-header {
+    background-color: #0f172a;
+    border-bottom-color: #334155; // slate-700
+    color: #f1f5f9;
+  }
+
+  // --- Drawer ---
+  .q-drawer {
+    background-color: #0f172a;
+    border-right-color: #334155;
+
+    .q-item.q-router-link--active,
+    .q-item--active {
+      background-color: rgba(var(--q-primary-rgb, 26, 86, 219), 0.15);
+    }
+  }
+
+  // --- Cards ---
+  .q-card {
+    background-color: #1e293b; // slate-800
+    border-color: #334155;
+    color: #f1f5f9;
+  }
+
+  // --- Tables ---
+  .q-table__container {
+    border-color: #334155;
+  }
+
+  .q-table {
+    thead th {
+      background-color: #1e293b;
+      color: #94a3b8; // slate-400
+      border-bottom-color: #334155;
+    }
+
+    tbody td {
+      color: #cbd5e1; // slate-300
+      border-bottom-color: #334155;
+    }
+
+    tbody tr:hover td {
+      background-color: #334155;
+    }
+  }
+
+  // --- Dialog ---
+  .x-dialog-title,
+  .x-dialog-actions {
+    background-color: #1e293b;
+    border-color: #334155;
+  }
+
+  .x-dialog-content-header {
+    background-color: #1e293b;
+    border-color: #334155;
+  }
+
+  .q-dialog__backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  // --- Inputs / Fields ---
+  .q-field {
+    .q-field__control {
+      border-color: #334155;
+      color: #f1f5f9;
+    }
+
+    .q-field__label {
+      color: #94a3b8;
+    }
+
+    .q-field__native,
+    .q-field__prefix,
+    .q-field__suffix {
+      color: #f1f5f9;
+    }
+
+    &.q-field--outlined .q-field__control:before {
+      border-color: #334155;
+    }
+
+    &.q-field--outlined .q-field__control:hover:before {
+      border-color: #94a3b8;
+    }
+  }
+
+  // --- Separator ---
+  .q-separator {
+    background-color: #334155;
+  }
+
+  // --- Items hover ---
+  .q-item:hover {
+    background-color: #334155;
+  }
+
+  // --- Menu popup ---
+  .q-menu {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    color: #f1f5f9;
+  }
+
+  // --- Tabs ---
+  .q-tabs .q-tab {
+    color: #94a3b8;
+  }
+
+  // --- Flat buttons hover ---
+  .q-btn--flat:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  // --- Scrollbars ---
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0f172a;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #475569; // slate-600
+    border-radius: 4px;
+  }
+
+  // --- Loading overlay ---
+  .x-loading {
+    background-color: rgba(15, 23, 42, 0.7);
+  }
+
+  // --- Select dropdown ---
+  .q-select__dropdown-icon {
+    color: #94a3b8;
+  }
+
+  // --- Toolbar title ---
+  .q-toolbar__title {
+    color: #f1f5f9;
+  }
+
+  // --- Chip ---
+  .q-chip {
+    background-color: #334155;
+    color: #f1f5f9;
+  }
+
+  // --- Tooltip ---
+  .q-tooltip {
+    background-color: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #334155;
+  }
+
+  // --- Page container bg ---
+  .q-page {
+    background-color: #0f172a;
+  }
+
+  // --- Expansion item ---
+  .q-expansion-item__content {
+    background-color: #0f172a;
+  }
+
+  // --- Banner ---
+  .q-banner {
+    background-color: #1e293b;
+    color: #f1f5f9;
+  }
+
+  // --- Toasts ---
+  .x-toast.q-notification {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: #334155;
+
+    .q-notification__message {
+      color: #f1f5f9 !important;
+    }
+
+    &.x-toast--success .q-notification__icon {
+      background-color: rgba(34, 197, 94, 0.15);
+      color: #4ade80;
+    }
+
+    &.x-toast--error .q-notification__icon {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #f87171;
+    }
+
+    &.x-toast--warning .q-notification__icon {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #fbbf24;
+    }
+
+    &.x-toast--info .q-notification__icon {
+      background-color: rgba(59, 130, 246, 0.15);
+      color: #60a5fa;
+    }
+  }
+}
