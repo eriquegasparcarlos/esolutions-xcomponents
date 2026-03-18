@@ -44,7 +44,8 @@
     "select",
     "store",
     "XFormatPrice",
-    "themes"
+    "themes",
+    "i18n"
   ],
   "dependencies": {
     "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils"

@@ -1,0 +1,24 @@
+{
+  "auth": {
+    "enterPassword": "Enter your password",
+    "passwordRequired": "Password is required"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "columns": "Columns",
+    "download": "Download",
+    "print": "Print",
+    "actionError": "Error executing action",
+    "exportExcelError": "Error exporting Excel",
+    "wantToContinue": "Do you want to continue?"
+  },
+  "components": {
+    "dateFrom": "Date from",
+    "dateTo": "Date to",
+    "monthFrom": "Month from",
+    "monthTo": "Month to",
+    "dialogLoadError": "Error loading content",
+    "pdfLoadError": "Error loading PDF"
+  }
+}

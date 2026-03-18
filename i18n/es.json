@@ -1,0 +1,24 @@
+{
+  "auth": {
+    "enterPassword": "Ingresa tu contraseña",
+    "passwordRequired": "La contraseña es requerida"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "columns": "Columnas",
+    "download": "Descargar",
+    "print": "Imprimir",
+    "actionError": "Error al ejecutar la acción",
+    "exportExcelError": "Error al exportar Excel",
+    "wantToContinue": "¿Deseas continuar?"
+  },
+  "components": {
+    "dateFrom": "Fecha desde",
+    "dateTo": "Fecha hasta",
+    "monthFrom": "Mes desde",
+    "monthTo": "Mes hasta",
+    "dialogLoadError": "Error al cargar el contenido",
+    "pdfLoadError": "Error al cargar el PDF"
+  }
+}
