@@ -43,7 +43,8 @@
     "input",
     "select",
     "store",
-    "XFormatPrice"
+    "XFormatPrice",
+    "themes"
   ],
   "peerDependencies": {
     "vue": "^3.0.0",
