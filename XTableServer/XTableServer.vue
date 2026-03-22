@@ -22,7 +22,7 @@ const props = defineProps({
 
 const { proxy } = getCurrentInstance()
 const $q = useQuasar()
-const emit = defineEmits(['actions'])
+const emit = defineEmits(['actions', 'ready'])
 
 const refDialogDeleteForm = ref()
 const refDialogActiveForm = ref()
@@ -322,6 +322,7 @@ const fetchColumnsAndData = async () => {
       mobileConfigBackend.value = response.data.mobileConfig
     }
 
+    emit('ready')
     await fetchData()
   } catch (err) {
     error.value = err.message
@@ -495,7 +496,20 @@ onMounted(() => {
   fetchColumnsAndData()
 })
 
-defineExpose({ filterData })
+const getFilterValues = () => {
+  return filters.value.map(f => ({ name: f.name, value: f.value }))
+}
+
+const setFilterValues = (savedFilters) => {
+  if (!savedFilters || !Array.isArray(savedFilters)) return
+  savedFilters.forEach(sf => {
+    const filter = filters.value.find(f => f.name === sf.name)
+    if (filter) filter.value = sf.value
+  })
+  filterData()
+}
+
+defineExpose({ filterData, getFilterValues, setFilterValues })
 </script>
 
 <template>
