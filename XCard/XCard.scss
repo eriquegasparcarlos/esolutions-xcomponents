@@ -32,4 +32,13 @@
   .x-form-section-content {
     padding: 0;
   }
+
+  // --------------------------------------------------------------------------
+  // Tables inside card: remove border-radius and side borders
+  // --------------------------------------------------------------------------
+  .q-markup-table {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 }
