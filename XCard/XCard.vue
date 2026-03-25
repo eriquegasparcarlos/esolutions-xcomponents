@@ -22,7 +22,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
-  contentFlush: {
+  contentPadding: {
     type: Boolean,
     default: false,
   },
@@ -44,7 +44,7 @@ const hasHeader = computed(() => props.title || props.icon || hasHeaderButtons.v
         <slot name="header-buttons"/>
       </div>
     </q-card-section>
-    <q-card-section class="x-form-section-content" :class="{ 'q-pa-none': contentFlush }">
+    <q-card-section class="x-form-section-content" :class="contentPadding ? 'q-pa-md' : 'q-pa-none'">
       <slot/>
     </q-card-section>
   </q-card>
