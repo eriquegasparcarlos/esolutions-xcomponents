@@ -607,7 +607,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
       </div>
     </q-card-section>
 
-    <q-card-section v-if="filters.length > 0" class="q-py-sm">
+    <q-card-section v-if="filters.length > 0" class="q-py-md">
       <div class="row q-col-gutter-md">
         <div v-for="filter in filters" :key="filter.name" :class="filter.class">
           <x-input
