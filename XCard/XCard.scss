@@ -22,11 +22,11 @@
   // Section title
   // --------------------------------------------------------------------------
   .x-card-section-title {
+    height: 60px;
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: space-between;
     padding: 0;
-    min-height: var(--x-card-title-min-height);
   }
 
   // --------------------------------------------------------------------------
