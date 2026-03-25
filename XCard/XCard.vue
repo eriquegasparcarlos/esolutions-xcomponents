@@ -34,7 +34,7 @@ const hasHeader = computed(() => props.title || props.icon || hasHeaderButtons.v
 </script>
 
 <template>
-  <q-card :flat="flat" class="x-card" :class="{ 'full-height': fullHeight }">
+  <q-card :flat="flat" class="x-card q-pa-none" :class="{ 'full-height': fullHeight }">
     <q-card-section v-if="hasHeader" class="q-py-none x-card-section-title">
       <div class="text-h6">
         <q-icon v-if="icon" :name="icon" class="q-mr-sm"/>
