@@ -50,6 +50,10 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false,
+  },
+  contentFlush: {
+    type: Boolean,
+    default: false,
   }
 });
 
@@ -122,14 +126,14 @@ const onClose = () => {
 
       <!-- Contenido con scroll dinámico si isFullHeight -->
       <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullHeight">
-        <q-card-section class="q-pa-md x-dialog-section-full-height">
+        <q-card-section :class="contentFlush ? 'q-pa-none' : 'q-pa-md'" class="x-dialog-section-full-height">
           <slot name="content"/>
         </q-card-section>
       </q-scroll-area>
 
       <!-- Contenido fijo si no es scrollable -->
       <div style="max-height:60vh; overflow-y:auto;" v-else>
-        <q-card-section>
+        <q-card-section :class="{ 'q-pa-none': contentFlush }">
             <slot name="content"/>
         </q-card-section>
       </div>
