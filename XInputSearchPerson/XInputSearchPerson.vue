@@ -95,8 +95,9 @@ const handleButtonClick = async () => {
              :maxlength="calculatedMaxlength"
              :readonly="readonly"
              @keyup.enter="handleButtonClick">
-      <template #after v-if="showButton">
+      <template #append v-if="showButton">
         <x-button label="Buscar"
+                  dense flat
                   @click="handleButtonClick"
                   :loading="buttonLoading"
                   :disable="buttonDisable || !canSearch"
