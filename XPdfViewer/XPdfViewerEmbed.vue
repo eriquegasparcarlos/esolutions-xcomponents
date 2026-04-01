@@ -59,6 +59,7 @@ const handleOpen = async () => {
         'history',
         'capture',
         'pan',
+        'insert',
       ],
     }
 
