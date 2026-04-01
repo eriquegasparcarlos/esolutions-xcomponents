@@ -145,7 +145,7 @@ const onClose = () => {
 
       <!-- Contenido con scroll dinámico si isFullHeight o fullScreen -->
       <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullView">
-        <q-card-section :class="contentFlush ? 'q-pa-none' : 'q-pa-md'" class="x-dialog-section-full-height">
+        <q-card-section :class="[contentFlush ? 'content-flush' : 'q-pa-md']" class="x-dialog-section-full-height">
           <slot name="content"/>
         </q-card-section>
       </q-scroll-area>

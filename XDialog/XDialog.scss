@@ -95,6 +95,10 @@
 .x-dialog-section-full-height {
   padding: var(--x-dialog-content-padding);
   min-height: 100%;
+
+  &.content-flush {
+    padding: 0;
+  }
 }
 
 .x-dialog-full-height .q-scrollarea__content {
