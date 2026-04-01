@@ -143,8 +143,15 @@ const onClose = () => {
           <slot name="content-header"/>
       </div>
 
-      <!-- Contenido con scroll dinámico si isFullHeight o fullScreen -->
-      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullView">
+      <!-- Contenido full-view flush: sin scroll-area (el contenido maneja su propio scroll) -->
+      <div v-if="isFullView && contentFlush" :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflow: 'hidden' }">
+        <q-card-section class="x-dialog-section-full-height content-flush" style="height: 100%;">
+          <slot name="content"/>
+        </q-card-section>
+      </div>
+
+      <!-- Contenido full-view con scroll dinámico -->
+      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-else-if="isFullView">
         <q-card-section :class="[contentFlush ? 'content-flush' : 'q-pa-md']" class="x-dialog-section-full-height">
           <slot name="content"/>
         </q-card-section>
