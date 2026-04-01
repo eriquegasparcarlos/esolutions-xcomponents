@@ -4,49 +4,38 @@
 }
 
 /* Wrap en varias filas */
-.x-button-toggle--wrap :deep(.q-btn-group) {
+.x-button-toggle--wrap .q-btn-group {
   flex-wrap: wrap;
 }
 
 /* Scroll horizontal */
-.x-button-toggle--scroll :deep(.q-btn-group) {
+.x-button-toggle--scroll .q-btn-group {
   flex-wrap: nowrap;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
-.x-button-toggle--scroll :deep(.q-btn) {
+.x-button-toggle--scroll .q-btn {
   flex: 0 0 auto;
 }
 
-/* ✅ Cuando el grupo es unelevated: prepara borde (sin saltos) */
+/* Cuando el grupo es unelevated: prepara borde (sin saltos) */
 .x-button-toggle--unelevated .q-btn.q-btn--unelevated.q-btn-item:before {
   box-sizing: border-box;
-  border: 1px solid transparent !important; /* importante: Quasar suele pisar borders */
+  border: 1px solid transparent !important;
 }
 
-/* ✅ NO seleccionados (aria-pressed=false) */
+/* NO seleccionados (aria-pressed=false) */
 .x-button-toggle--unelevated .q-btn[aria-pressed="false"].q-btn-item:before {
   border-color: var(--x-button-toggle-border, rgba(0, 0, 0, 0.18)) !important;
 }
 
-/* ✅ Seleccionado (aria-pressed=true) */
-.x-button-toggle--unelevated :deep(.q-btn[aria-pressed="true"]).q-btn-item:before {
+/* Seleccionado (aria-pressed=true) */
+.x-button-toggle--unelevated .q-btn[aria-pressed="true"].q-btn-item:before {
   border-color: transparent !important;
 }
 
 /* Dark */
-:global(.body--dark) .x-button-toggle--unelevated :deep(.q-btn[aria-pressed="false"]) {
+.body--dark .x-button-toggle--unelevated .q-btn[aria-pressed="false"] {
   border-color: var(--x-button-toggle-border-dark, rgba(255, 255, 255, 0.22)) !important;
 }
-//
-///* DEBUG: borde rojo en NO seleccionados */
-//.x-button-toggle--unelevated :deep(.q-btn-group.q-btn-toggle.x-button-toggle--unelevated .q-btn[aria-pressed="false"]) {
-//  box-shadow: inset 0 0 0 2px red !important;
-//  border: 0 !important; /* por si Quasar lo anula o lo tapa */
-//}
-//
-///* si quieres también en el seleccionado para probar */
-//.x-button-toggle--unelevated :deep(.q-btn-group.q-btn-toggle.x-button-toggle--unelevated .q-btn[aria-pressed="true"]) {
-//  box-shadow: inset 0 0 0 2px red !important;
-//}
