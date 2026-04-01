@@ -60,6 +60,8 @@ const handleOpen = async () => {
         'capture',
         'pan',
         'insert',
+        'search',
+        'comment',
       ],
     }
 
