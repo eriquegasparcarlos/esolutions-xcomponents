@@ -14,9 +14,9 @@ const $q = useQuasar();
 const slots = useSlots();
 
 // Alturas fijas de las secciones (px)
-const TITLE_HEIGHT = 48;
+const TITLE_HEIGHT = 60;
 const CONTENT_HEADER_HEIGHT = 52;
-const ACTIONS_HEIGHT = 52;
+const ACTIONS_HEIGHT = 60;
 
 // Props del componente
 const props = defineProps({
