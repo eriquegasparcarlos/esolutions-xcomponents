@@ -95,6 +95,13 @@
 .x-dialog-section-full-height {
   padding: var(--x-dialog-content-padding);
   min-height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > * {
+    flex: 1;
+    min-height: 0;
+  }
 
   &.content-flush {
     padding: 0;
