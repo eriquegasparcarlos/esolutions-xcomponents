@@ -54,6 +54,10 @@ const props = defineProps({
   contentFlush: {
     type: Boolean,
     default: false,
+  },
+  fullScreen: {
+    type: Boolean,
+    default: false,
   }
 });
 
@@ -65,7 +69,7 @@ const isOpen = ref(false);
 // Calcula el ancho y clase del diálogo
 const dialogWidth = computed(() => ($q.screen.xs ? '95vw' : props.width));
 const dialogPosition = computed(() => props.position);
-const classDialog = computed(() => props.isFullHeight ? 'x-dialog x-dialog-full-height' : 'x-dialog x-dialog-standard');
+const classDialog = computed(() => (props.isFullHeight || props.fullScreen) ? 'x-dialog x-dialog-full-height' : 'x-dialog x-dialog-standard');
 
 // Detección de slots
 const hasActionButtonsSlot = computed(() => !!slots['action-buttons']);
@@ -105,9 +109,13 @@ const onClose = () => {
             transition-hide="scale"
             :position="dialogPosition"
             :full-height="isFullHeight"
+            :maximized="fullScreen"
             :class="classDialog">
 
-    <q-card class="q-pa-none" :style="{ width: dialogWidth, 'max-width': dialogWidth }">
+    <q-card class="q-pa-none"
+            :style="fullScreen
+              ? { width: '100vw', maxWidth: '100vw', height: '100vh', maxHeight: '100vh' }
+              : { width: dialogWidth, maxWidth: dialogWidth }">
 
       <!-- Título del diálogo -->
       <q-card-section class="q-py-none x-dialog-title" v-if="title">
@@ -125,7 +133,7 @@ const onClose = () => {
       </q-card-section>
 
       <!-- Contenido con scroll dinámico si isFullHeight -->
-      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullHeight">
+      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullHeight || fullScreen">
         <q-card-section :class="contentFlush ? 'q-pa-none' : 'q-pa-md'" class="x-dialog-section-full-height">
           <slot name="content"/>
         </q-card-section>
