@@ -13,6 +13,11 @@ defineOptions({
 const $q = useQuasar();
 const slots = useSlots();
 
+// Alturas fijas de las secciones (px)
+const TITLE_HEIGHT = 48;
+const CONTENT_HEADER_HEIGHT = 52;
+const ACTIONS_HEIGHT = 52;
+
 // Props del componente
 const props = defineProps({
   modelValue: Boolean,
@@ -66,18 +71,24 @@ const emit = defineEmits(['update:modelValue', 'before-show', 'show', 'confirm',
 // Control interno del estado abierto/cerrado del diálogo
 const isOpen = ref(false);
 
+const isFullView = computed(() => props.isFullHeight || props.fullScreen);
+
 // Calcula el ancho y clase del diálogo
 const dialogWidth = computed(() => ($q.screen.xs ? '95vw' : props.width));
 const dialogPosition = computed(() => props.position);
-const classDialog = computed(() => (props.isFullHeight || props.fullScreen) ? 'x-dialog x-dialog-full-height' : 'x-dialog x-dialog-standard');
+const classDialog = computed(() => isFullView.value ? 'x-dialog x-dialog-full-height' : 'x-dialog x-dialog-standard');
 
 // Detección de slots
 const hasActionButtonsSlot = computed(() => !!slots['action-buttons']);
 const hasContentHeaderSlot = computed(() => !!slots['content-header']);
 
-// Altura dinámica del scroll-area
+// Altura dinámica del scroll-area: resta las secciones visibles
 const scrollAreaHeight = computed(() => {
-  return 51 + (hasActionButtonsSlot.value ? 60 : 0) + (hasContentHeaderSlot.value ? 50 : 0);
+  let usedHeight = 0;
+  if (props.title) usedHeight += TITLE_HEIGHT;
+  if (hasContentHeaderSlot.value) usedHeight += CONTENT_HEADER_HEIGHT;
+  if (hasActionButtonsSlot.value) usedHeight += ACTIONS_HEIGHT;
+  return usedHeight;
 });
 
 // Sincroniza la visibilidad con modelValue
@@ -118,22 +129,22 @@ const onClose = () => {
               : { width: dialogWidth, maxWidth: dialogWidth }">
 
       <!-- Título del diálogo -->
-      <q-card-section class="q-py-none x-dialog-title" v-if="title">
-        <div class="text-h6">{{ title }}</div>
+      <div class="x-dialog-title" v-if="title" :style="{ height: TITLE_HEIGHT + 'px' }">
+        <div class="x-dialog-title__text">{{ title }}</div>
         <q-icon v-if="showButtonClose"
                 name="fal fa-xmark"
                 @click="emit('action-button-close')"
-                size="28px"
+                size="20px"
                 class="cursor-pointer x-dialog-button-close"/>
-      </q-card-section>
+      </div>
 
       <!-- Header adicional si se define el slot -->
-      <q-card-section v-if="hasContentHeaderSlot" class="q-py-none x-dialog-content-header">
+      <div v-if="hasContentHeaderSlot" class="x-dialog-content-header" :style="{ height: CONTENT_HEADER_HEIGHT + 'px' }">
           <slot name="content-header"/>
-      </q-card-section>
+      </div>
 
-      <!-- Contenido con scroll dinámico si isFullHeight -->
-      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullHeight || fullScreen">
+      <!-- Contenido con scroll dinámico si isFullHeight o fullScreen -->
+      <q-scroll-area :style="{ height: `calc(100vh - ${scrollAreaHeight}px)` }" v-if="isFullView">
         <q-card-section :class="contentFlush ? 'q-pa-none' : 'q-pa-md'" class="x-dialog-section-full-height">
           <slot name="content"/>
         </q-card-section>
@@ -147,11 +158,12 @@ const onClose = () => {
       </div>
 
       <!-- Botones de acción -->
-      <q-card-section class="q-py-none x-dialog-actions"
-                      :class="{'justify-end': alignActionButtons === 'right', 'justify-between': alignActionButtons=== 'between'}"
-                      v-if="hasActionButtonsSlot">
+      <div class="x-dialog-actions"
+           :class="{'justify-end': alignActionButtons === 'right', 'justify-between': alignActionButtons === 'between'}"
+           :style="{ height: ACTIONS_HEIGHT + 'px' }"
+           v-if="hasActionButtonsSlot">
         <slot name="action-buttons"/>
-      </q-card-section>
+      </div>
 
       <!-- Componente de loading reutilizable -->
       <x-loading :loading="loading"/>
