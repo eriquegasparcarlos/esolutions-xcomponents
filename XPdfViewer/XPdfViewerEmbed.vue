@@ -59,9 +59,11 @@ const handleOpen = async () => {
         'history',
         'capture',
         'pan',
-        'insert',
         'search',
-        'comment',
+        'bookmark',
+        'attachment',
+        'selection',
+        'thumbnail',
       ],
     }
 
