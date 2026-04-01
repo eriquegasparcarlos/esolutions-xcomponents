@@ -89,9 +89,8 @@ const handleButtonClick = async () => {
 </script>
 
 <template>
-  <div class="x-input-search-person flex items-end no-wrap">
+  <div class="x-input-search-person">
     <x-input v-model="innerValue"
-             class="flex-grow-1"
              :label="label"
              :maxlength="calculatedMaxlength"
              :readonly="readonly"
@@ -99,7 +98,6 @@ const handleButtonClick = async () => {
     </x-input>
     <x-button v-if="showButton"
               label="Buscar"
-              class="q-ml-sm"
               @click="handleButtonClick"
               :loading="buttonLoading"
               :disable="buttonDisable || !canSearch"
