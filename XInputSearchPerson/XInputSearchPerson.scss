@@ -12,7 +12,7 @@
   --x-search-person-transition: #{$x-transition-duration} #{$x-transition-timing};
 
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   width: 100%;
 
   // --------------------------------------------------------------------------
@@ -28,8 +28,6 @@
   .x-button {
     min-width: var(--x-search-person-button-min-width);
     margin-left: var(--x-search-person-gap);
-    // Alinear con el input cuando tiene label
-    margin-top: 22px;
   }
 }
 
