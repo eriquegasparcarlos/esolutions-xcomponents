@@ -97,6 +97,16 @@
   min-height: 100%;
 }
 
+.x-dialog-full-height .q-scrollarea__content {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  > .x-dialog-section-full-height {
+    flex: 1;
+  }
+}
+
 // --------------------------------------------------------------------------
 // Acciones (footer)
 // --------------------------------------------------------------------------
