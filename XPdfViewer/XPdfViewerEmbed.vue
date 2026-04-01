@@ -103,7 +103,7 @@ defineExpose({ openDialog })
       <PDFViewer
         v-if="blobUrl && !hasError"
         :config="viewerConfig"
-        :style="{ width: '100%', height: '70vh' }"
+        :style="{ width: '100%', height: '100vh' }"
       />
 
       <div v-else-if="hasError" class="x-pdf-viewer__empty">
