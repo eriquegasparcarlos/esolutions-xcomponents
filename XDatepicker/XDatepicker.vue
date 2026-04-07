@@ -1,6 +1,6 @@
 <!-- src/components/XDatepicker/XDatepicker.vue -->
 <script setup>
-import { computed, useAttrs } from 'vue'
+import { computed, ref, useAttrs } from 'vue'
 import { date as DateUtils } from 'quasar'
 import { formDefaults } from '@esolutions/js-utils'
 
@@ -21,11 +21,14 @@ const props = defineProps({
 
   // QDate options(dateString 'YYYY/MM/DD') => boolean
   options: { type: Function, default: null },
+
+  autoClose: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])
 
 const attrs = useAttrs()
+const popupRef = ref(null)
 
 const fallbackId = Math.random().toString(36).substring(2, 9)
 
@@ -56,6 +59,9 @@ function updateFromPicker(val) {
   const next = val ?? ''
   emit('update:modelValue', next)
   emit('change', next)
+  if (props.autoClose) {
+    popupRef.value?.hide()
+  }
 }
 
 function clear() {
@@ -95,14 +101,14 @@ function clear() {
     >
       <template #append>
         <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+          <q-popup-proxy ref="popupRef" cover transition-show="scale" transition-hide="scale">
             <q-date
               :model-value="normalizedValue"
               :mask="props.valueMask"
               :options="props.options || undefined"
               @update:model-value="updateFromPicker"
             >
-              <div class="row items-center justify-end q-gutter-sm">
+              <div v-if="!autoClose" class="row items-center justify-end q-gutter-sm">
                 <q-btn v-close-popup label="OK" flat />
               </div>
             </q-date>
