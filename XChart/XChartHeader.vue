@@ -57,10 +57,10 @@ const trendColorClass = computed(() => {
   <div class="x-chart-header row items-center full-width no-wrap">
     <!-- Left: icon | title + subtitle -->
     <div class="col row items-center no-wrap">
-      <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-sm flex-shrink-0"/>
+      <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-md flex-shrink-0"/>
       <div>
-        <div class="text-h6">{{ title }}</div>
-        <div v-if="subtitle" class="text-caption text-grey-5 q-mt-xs">{{ subtitle }}</div>
+        <div class="text-h6" style="margin-bottom: 0; line-height: 1.2">{{ title }}</div>
+        <div v-if="subtitle" class="text-caption text-grey-5">{{ subtitle }}</div>
       </div>
     </div>
 
