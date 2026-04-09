@@ -54,59 +54,33 @@ const trendColorClass = computed(() => {
 </script>
 
 <template>
-  <div class="x-chart-header">
-    <div class="row items-start justify-between no-wrap">
-      <!-- Left: Icon + KPI + Title -->
-      <div class="col row items-start no-wrap q-gutter-x-md">
-        <!-- Optional icon -->
-        <div v-if="icon" class="col-auto">
-          <q-avatar
-            :icon="icon"
-            :color="iconColor"
-            text-color="white"
-            size="42px"
-            font-size="20px"
-          />
-        </div>
-
-        <div class="col">
-          <div class="row items-center q-gutter-x-sm no-wrap">
-            <div v-if="value" class="text-h5 text-weight-bold">
-              {{ value }}
-            </div>
-            <q-badge
-              v-if="percentage"
-              :class="trendColorClass"
-              class="x-chart-trend-badge"
-              rounded
-              outline
-            >
-              <q-icon
-                v-if="trendIcon"
-                :name="trendIcon"
-                size="10px"
-                class="q-mr-xs"
-              />
-              {{ percentage }}
-            </q-badge>
-          </div>
-          <div v-if="title" class="text-caption text-grey-7 q-mt-xs">
-            {{ title }}
-          </div>
-          <div v-if="subtitle" class="text-caption text-grey-5 q-mt-xs">
-            {{ subtitle }}
-          </div>
-        </div>
+  <div class="x-chart-header row items-center full-width no-wrap">
+    <!-- Left: icon + title + subtitle -->
+    <div class="col">
+      <div class="text-h6">
+        <q-icon v-if="icon" :name="icon" class="q-mr-sm" size="20px"/>
+        {{ title }}
       </div>
-
-      <!-- Right: slot for actions -->
-      <div class="col-auto row items-center no-wrap q-gutter-x-sm">
-        <slot name="actions" />
-      </div>
+      <div v-if="subtitle" class="text-caption text-grey-5 q-mt-xs">{{ subtitle }}</div>
     </div>
 
-    <!-- Extra slot for custom content below header -->
-    <slot />
+    <!-- Right: value + trend + actions -->
+    <div class="col-auto row items-center no-wrap q-gutter-x-sm">
+      <div v-if="value || percentage" class="row items-center q-gutter-x-xs">
+        <span v-if="value" class="text-h6 text-weight-bold">{{ value }}</span>
+        <q-badge
+          v-if="percentage"
+          :class="trendColorClass"
+          class="x-chart-trend-badge"
+          rounded
+          outline
+        >
+          <q-icon v-if="trendIcon" :name="trendIcon" size="10px" class="q-mr-xs"/>
+          {{ percentage }}
+        </q-badge>
+      </div>
+      <slot name="actions"/>
+    </div>
   </div>
 </template>
 

@@ -207,7 +207,7 @@ function deepMerge(target, source) {
     class="x-card"
   >
     <!-- Header -->
-    <q-card-section v-if="hasHeader || $slots.header || $slots['header-right']" class="x-card-section-title">
+    <q-card-section v-if="hasHeader || $slots.header || $slots['header-right']" class="q-py-none x-card-section-title">
       <slot name="header">
         <x-chart-header
           :title="title"
