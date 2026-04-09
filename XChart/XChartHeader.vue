@@ -55,13 +55,13 @@ const trendColorClass = computed(() => {
 
 <template>
   <div class="x-chart-header row items-center full-width no-wrap">
-    <!-- Left: icon + title + subtitle -->
-    <div class="col">
-      <div class="text-h6">
-        <q-icon v-if="icon" :name="icon" class="q-mr-sm" size="20px"/>
-        {{ title }}
+    <!-- Left: icon | title + subtitle -->
+    <div class="col row items-center no-wrap">
+      <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-sm flex-shrink-0"/>
+      <div>
+        <div class="text-h6">{{ title }}</div>
+        <div v-if="subtitle" class="text-caption text-grey-5 q-mt-xs">{{ subtitle }}</div>
       </div>
-      <div v-if="subtitle" class="text-caption text-grey-5 q-mt-xs">{{ subtitle }}</div>
     </div>
 
     <!-- Right: value + trend + actions -->

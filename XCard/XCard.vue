@@ -10,6 +10,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  subtitle: {
+    type: String,
+    default: '',
+  },
   icon: {
     type: String,
     default: '',
@@ -30,17 +34,20 @@ const props = defineProps({
 
 const slots = useSlots()
 const hasHeaderButtons = computed(() => !!slots['header-buttons'])
-const hasHeader = computed(() => props.title || props.icon || hasHeaderButtons.value)
+const hasHeader = computed(() => props.title || props.subtitle || props.icon || hasHeaderButtons.value)
 </script>
 
 <template>
   <q-card :flat="flat" class="x-card" :class="{ 'full-height': fullHeight }">
     <q-card-section v-if="hasHeader" class="q-py-none x-card-section-title">
-      <div class="text-h6">
-        <q-icon v-if="icon" :name="icon" class="q-mr-sm"/>
-        {{ title }}
+      <div class="row items-center no-wrap col">
+        <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-sm flex-shrink-0"/>
+        <div>
+          <div class="text-h6">{{ title }}</div>
+          <div v-if="subtitle" class="text-caption text-grey-5">{{ subtitle }}</div>
+        </div>
       </div>
-      <div v-if="hasHeaderButtons">
+      <div v-if="hasHeaderButtons" class="flex-shrink-0">
         <slot name="header-buttons"/>
       </div>
     </q-card-section>
