@@ -89,7 +89,7 @@ const props = defineProps({
   // Card style
   bordered: {
     type: Boolean,
-    default: true,
+    default: false,
   },
   flat: {
     type: Boolean,
@@ -204,10 +204,10 @@ function deepMerge(target, source) {
     v-bind="attrs"
     :bordered="bordered"
     :flat="flat"
-    class="x-chart"
+    class="x-card"
   >
     <!-- Header -->
-    <q-card-section v-if="hasHeader || $slots.header || $slots['header-right']">
+    <q-card-section v-if="hasHeader || $slots.header || $slots['header-right']" class="x-card-section-title">
       <slot name="header">
         <x-chart-header
           :title="title"
@@ -227,12 +227,12 @@ function deepMerge(target, source) {
     </q-card-section>
 
     <!-- Extra content slot -->
-    <q-card-section v-if="$slots.default" class="q-pt-none">
+    <q-card-section v-if="$slots.default" class="x-form-section-content q-pa-none">
       <slot />
     </q-card-section>
 
     <!-- Chart -->
-    <q-card-section class="q-pt-none">
+    <q-card-section class="x-form-section-content q-pa-none">
       <div v-if="loading" class="x-chart-loading row justify-center items-center" :style="{ height: height + 'px' }">
         <q-spinner-dots color="primary" size="40px" />
       </div>
@@ -276,10 +276,6 @@ function deepMerge(target, source) {
 </template>
 
 <style scoped>
-.x-chart {
-  border-radius: 8px;
-}
-
 .x-chart-loading,
 .x-chart-empty {
   min-height: 200px;
