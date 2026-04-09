@@ -23,7 +23,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 #{$x-spacing-md};
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px #{$x-spacing-md};
   }
 
   // --------------------------------------------------------------------------
