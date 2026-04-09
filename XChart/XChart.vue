@@ -126,14 +126,30 @@ const mergedOptions = computed(() => {
     xaxis: {
       categories: props.categories,
       labels: {
+        rotate: -45,
+        hideOverlappingLabels: true,
         style: {
-          fontSize: '12px',
+          fontSize: '11px',
           colors: '#9CA3AF',
         },
       },
       axisBorder: { show: false },
       axisTicks: { show: false },
     },
+    responsive: [
+      {
+        breakpoint: 1024,
+        options: {
+          xaxis: { tickAmount: 10 },
+        },
+      },
+      {
+        breakpoint: 600,
+        options: {
+          xaxis: { tickAmount: 6 },
+        },
+      },
+    ],
     yaxis: {
       labels: {
         style: {
