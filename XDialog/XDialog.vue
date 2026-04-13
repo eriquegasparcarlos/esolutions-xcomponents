@@ -123,7 +123,7 @@ const onClose = () => {
             :maximized="fullScreen"
             :class="classDialog">
 
-    <q-card class="q-pa-none"
+    <q-card class="q-pa-none x-dialog-card"
             :style="fullScreen
               ? { width: '100vw', maxWidth: '100vw', height: '100vh', maxHeight: '100vh' }
               : { width: dialogWidth, maxWidth: dialogWidth }">

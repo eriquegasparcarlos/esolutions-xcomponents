@@ -20,7 +20,7 @@
 // --------------------------------------------------------------------------
 // Card base
 // --------------------------------------------------------------------------
-.x-dialog .q-card {
+.x-dialog .x-dialog-card {
   border-radius: var(--x-dialog-border-radius);
   box-shadow: var(--x-dialog-shadow);
   overflow: hidden;
@@ -143,7 +143,7 @@
 // Variante full-height
 // --------------------------------------------------------------------------
 .x-dialog-full-height {
-  .q-card {
+  .x-dialog-card {
     height: 100vh;
     max-height: 100vh;
     border-radius: 0;
@@ -158,7 +158,7 @@
 // Variante standard
 // --------------------------------------------------------------------------
 .x-dialog-standard {
-  .q-card {
+  .x-dialog-card {
     max-height: 90vh;
   }
 }
@@ -169,7 +169,7 @@
 .q-dialog--modal {
   // Standard (center)
   &:not([class*="q-dialog__inner--"]) {
-    .q-card {
+    .x-dialog-card {
       animation: dialog-scale-in var(--x-dialog-transition);
     }
   }
@@ -177,7 +177,7 @@
 
 // Posicion right
 .q-dialog__inner--right {
-  .x-dialog .q-card {
+  .x-dialog .x-dialog-card {
     border-radius: var(--x-dialog-border-radius) 0 0 var(--x-dialog-border-radius);
     height: 100vh;
     max-height: 100vh;
@@ -186,7 +186,7 @@
 
 // Posicion left
 .q-dialog__inner--left {
-  .x-dialog .q-card {
+  .x-dialog .x-dialog-card {
     border-radius: 0 var(--x-dialog-border-radius) var(--x-dialog-border-radius) 0;
     height: 100vh;
     max-height: 100vh;
@@ -195,14 +195,14 @@
 
 // Posicion top
 .q-dialog__inner--top {
-  .x-dialog .q-card {
+  .x-dialog .x-dialog-card {
     border-radius: 0 0 var(--x-dialog-border-radius) var(--x-dialog-border-radius);
   }
 }
 
 // Posicion bottom
 .q-dialog__inner--bottom {
-  .x-dialog .q-card {
+  .x-dialog .x-dialog-card {
     border-radius: var(--x-dialog-border-radius) var(--x-dialog-border-radius) 0 0;
   }
 }
@@ -225,7 +225,7 @@
 // Responsivo
 // --------------------------------------------------------------------------
 @media (max-width: 599px) {
-  .x-dialog .q-card {
+  .x-dialog .x-dialog-card {
     width: 95vw !important;
     max-width: 95vw !important;
   }
