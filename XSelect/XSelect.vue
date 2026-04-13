@@ -56,6 +56,8 @@ const props = defineProps({
   blurOnSelect: { type: Boolean, default: true },
   // Cerrar popup al perder foco (por tab, click afuera, etc.)
   closeOnBlur: { type: Boolean, default: true },
+  truncateLabel: { type: Boolean, default: false },
+  truncateWidth: { type: [String, Number], default: null },
 });
 
 const fallbackId = `app-select-${Math.random().toString(36).substring(2, 9)}`;
@@ -66,6 +68,12 @@ const popupContentClass = computed(() => {
   const base = 'app-inner-list app-select__content v-select__content';
   return attrs.multiple !== undefined ? `${base} v-list-select-multiple` : base;
 });
+
+const truncateStyle = computed(() => {
+  if (!props.truncateLabel || !props.truncateWidth) return {}
+  const w = typeof props.truncateWidth === 'number' ? `${props.truncateWidth}px` : props.truncateWidth
+  return { maxWidth: w }
+})
 
 const ADD_NEW_OPTION = computed(() => ({
   label: props.addNewLabel,
@@ -253,7 +261,8 @@ function onSelect(val) {
 
 <template>
   <div class="app-select flex-grow-1 x-select"
-       :class="attrs.class"
+       :class="[attrs.class, { 'x-select--truncate': truncateLabel }]"
+       :style="truncateStyle"
        @keydown.enter.stop.prevent
        @keyup.enter.stop>
     <label v-if="label" :for="elementId" class="x-select-label q-mb-xs" style="line-height: 22px">

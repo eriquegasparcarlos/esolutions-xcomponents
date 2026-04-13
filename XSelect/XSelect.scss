@@ -77,6 +77,20 @@
   }
 
   // --------------------------------------------------------------------------
+  // Truncate selected label
+  // --------------------------------------------------------------------------
+  &.x-select--truncate {
+    .q-field__native > span,
+    .q-field__native span {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      display: block;
+      min-width: 0;
+    }
+  }
+
+  // --------------------------------------------------------------------------
   // Dropdown arrow
   // --------------------------------------------------------------------------
   .q-select__dropdown-icon {
