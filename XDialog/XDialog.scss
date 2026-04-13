@@ -186,6 +186,9 @@
   &.q-dialog__inner--fullheight {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    .x-dialog .x-dialog-card {
+      border: none;
+    }
   }
 }
 
@@ -199,6 +202,9 @@
   &.q-dialog__inner--fullheight {
     padding-top: 0 !important;
     padding-bottom: 0 !important;
+    .x-dialog .x-dialog-card {
+      border: none;
+    }
   }
 }
 
