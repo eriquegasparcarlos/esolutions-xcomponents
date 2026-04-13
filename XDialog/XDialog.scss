@@ -182,6 +182,11 @@
     height: 100vh;
     max-height: 100vh;
   }
+  // Quasar agrega padding: 24px en --minimized; eliminar top/bottom para full-height
+  &.q-dialog__inner--fullheight {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
 }
 
 // Posicion left
@@ -190,6 +195,10 @@
     border-radius: 0 var(--x-dialog-border-radius) var(--x-dialog-border-radius) 0;
     height: 100vh;
     max-height: 100vh;
+  }
+  &.q-dialog__inner--fullheight {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
   }
 }
 
