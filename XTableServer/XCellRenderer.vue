@@ -69,10 +69,10 @@ defineProps({
 
     <!-- AVATAR -->
     <q-avatar v-else-if="cell.type_input === 'avatar'"
-              :src="cell.src"
               :size="cell.size || '32px'"
-              :alt="cell.alt || ''"
-              class="q-mx-xs"/>
+              class="q-mx-xs">
+      <img :src="cell.src" :alt="cell.alt || ''" />
+    </q-avatar>
 
     <!-- LINK -->
     <a v-else-if="cell.type_input === 'link'"
