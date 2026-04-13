@@ -28,6 +28,11 @@
   flex-direction: column;
 }
 
+// Inner q-cards en el contenido: solo overflow:hidden para respetar border-radius en hovers
+.x-dialog .x-dialog-card .q-card {
+  overflow: hidden;
+}
+
 // --------------------------------------------------------------------------
 // Titulo del dialogo
 // --------------------------------------------------------------------------
