@@ -152,7 +152,7 @@ const onClose = () => {
 
       <!-- Contenido full-view con scroll dinámico -->
       <div v-else-if="isFullView" :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflowY: 'auto' }">
-        <q-card-section :class="[contentFlush ? 'content-flush' : 'q-pa-md']" class="x-dialog-section-full-height">
+        <q-card-section class="q-pa-md">
           <slot name="content"/>
         </q-card-section>
       </div>
