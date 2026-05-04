@@ -2,7 +2,7 @@
 import XBadge from '../XBadge/XBadge.vue';
 
 defineProps({
-  cell: {type: [Object, String, Number], default: null}
+  cell: {type: [Object, String, Number, Boolean], default: null}
 });
 </script>
 
