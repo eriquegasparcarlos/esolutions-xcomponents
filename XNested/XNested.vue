@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import XDnd from 'components/XDnd/XDnd.vue'
+import XDnd from '../XDnd/XDnd.vue'
 
 defineOptions({ name: 'XNested' })
 

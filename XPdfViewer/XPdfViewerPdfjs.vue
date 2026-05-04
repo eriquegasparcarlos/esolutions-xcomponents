@@ -2,7 +2,7 @@
 import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { api } from 'src/services/api'
 import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs'
-import XDialog from 'components/XDialog/XDialog.vue'
+import XDialog from '../XDialog/XDialog.vue'
 
 // Configurar worker
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(

@@ -1,5 +1,5 @@
 <script setup>
-import XSelect from 'components/XSelect/XSelect.vue'
+import XSelect from '../XSelect/XSelect.vue'
 import { ref, onMounted } from 'vue'
 import { api } from 'src/services/api'
 defineProps({

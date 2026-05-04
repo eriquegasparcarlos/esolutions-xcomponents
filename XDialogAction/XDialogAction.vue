@@ -1,9 +1,9 @@
 <script setup>
 import {getCurrentInstance, ref} from 'vue';
 import {useQuasar} from 'quasar';
-import XInput from 'components/XInput/XInput.vue';
-import XDialog from 'components/XDialog/XDialog.vue';
-import XButton from 'components/XButton/XButton.vue';
+import XInput from '../XInput/XInput.vue';
+import XDialog from '../XDialog/XDialog.vue';
+import XButton from '../XButton/XButton.vue';
 
 // Define las opciones del componente
 defineOptions({

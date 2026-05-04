@@ -1,7 +1,7 @@
 <script setup>
 import {ref, computed, watchEffect, useSlots} from 'vue';
 import {useQuasar} from 'quasar';
-import XLoading from 'components/XLoading/XLoading.vue';
+import XLoading from '../XLoading/XLoading.vue';
 
 // Define las opciones del componente
 defineOptions({

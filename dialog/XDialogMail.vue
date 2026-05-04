@@ -2,9 +2,9 @@
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { api } from 'src/services/api'
-import XDialog from 'components/XDialog/XDialog.vue'
-import XInput from 'components/XInput/XInput.vue'
-import XButton from 'components/XButton/XButton.vue'
+import XDialog from '../XDialog/XDialog.vue'
+import XInput from '../XInput/XInput.vue'
+import XButton from '../XButton/XButton.vue'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },

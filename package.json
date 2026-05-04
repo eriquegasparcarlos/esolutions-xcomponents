@@ -1,8 +1,12 @@
 {
   "name": "@esolutions/x-components",
-  "version": "1.0.33",
+  "version": "2.0.0",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
+  "exports": {
+    ".": "./index.js",
+    "./*": "./*"
+  },
   "files": [
     "components",
     "index.js",

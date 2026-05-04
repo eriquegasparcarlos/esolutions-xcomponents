@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { api } from 'src/services/api'
 import { Notify } from 'quasar'
 import XDialog from './XDialog.vue'
-import XButton from 'components/XButton/XButton.vue'
+import XButton from '../XButton/XButton.vue'
 
 defineOptions({ name: 'XDeleteDialog' })
 

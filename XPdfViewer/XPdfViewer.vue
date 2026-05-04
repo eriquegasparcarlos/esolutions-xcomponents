@@ -2,7 +2,7 @@
 import { ref, computed, watch, nextTick } from 'vue'
 import { api } from 'src/services/api'
 import VuePdfEmbed from 'vue-pdf-embed'
-import XDialog from 'components/XDialog/XDialog.vue'
+import XDialog from '../XDialog/XDialog.vue'
 
 const props = defineProps({
   src: { type: String, default: '' },

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, useAttrs } from 'vue'
-import XInput from 'components/XInput/XInput.vue'
+import XInput from '../XInput/XInput.vue'
 
 const props = defineProps({
   modelValue: {

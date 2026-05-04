@@ -1,5 +1,5 @@
 <script setup>
-import XDatepicker from 'components/XDatepicker/XDatepicker.vue'
+import XDatepicker from '../XDatepicker/XDatepicker.vue'
 defineProps({
   modelValue: { type: String, default: null },
   label: { type: String, default: 'Fecha' },

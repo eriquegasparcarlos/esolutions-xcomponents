@@ -2,13 +2,13 @@
 import { ref, watch, computed, getCurrentInstance } from 'vue'
 import { useQuasar } from 'quasar'
 
-import XCellRenderer from 'components/XTableServer/XCellRenderer.vue'
+import XCellRenderer from './XCellRenderer.vue'
 
 // registra aquí tus componentes interactivos
-import XToggle from 'components/XToggle/XToggle.vue'
-import XCheckbox from 'components/XCheckbox/XCheckbox.vue'
-import XInput from 'components/XInput/XInput.vue'
-import XSelect from 'components/XSelect/XSelect.vue'
+import XToggle from '../XToggle/XToggle.vue'
+import XCheckbox from '../XCheckbox/XCheckbox.vue'
+import XInput from '../XInput/XInput.vue'
+import XSelect from '../XSelect/XSelect.vue'
 
 defineOptions({ name: 'XCellColumnRenderer' })
 

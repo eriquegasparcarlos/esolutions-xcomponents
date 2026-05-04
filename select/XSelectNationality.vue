@@ -1,5 +1,5 @@
 <script setup>
-import XSelect from 'components/XSelect/XSelect.vue'
+import XSelect from '../XSelect/XSelect.vue'
 defineProps({
   modelValue: { type: String, default: 'PE' },
   label: { type: String, default: 'Nacionalidad' },
