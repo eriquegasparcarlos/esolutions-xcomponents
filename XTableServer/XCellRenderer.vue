@@ -1,5 +1,5 @@
 <script setup>
-import XBadge from "components/XBadge/XBadge.vue";
+import XBadge from '../XBadge/XBadge.vue';
 
 defineProps({
   cell: {type: [Object, String, Number], default: null}
