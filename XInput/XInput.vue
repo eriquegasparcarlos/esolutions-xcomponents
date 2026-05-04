@@ -1,5 +1,5 @@
 <script setup>
-import { computed, useAttrs, ref } from 'vue'
+import { computed, useAttrs, ref, toValue } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
 
 defineOptions({ name: 'XInput', inheritAttrs: false })
@@ -8,7 +8,7 @@ const props = defineProps({
   modelValue: { type: [String, Number], default: '' },
   isClassic: { type: Boolean, default: formDefaults.isClassic },
   dense: { type: Boolean, default: formDefaults.dense },
-  error: { type: String, default: null },
+  error: { type: [String, Array], default: null },
   autofocus: { type: Boolean, default: false },
   /** Solo muestra asterisco/aria, no activa validación nativa */
   isRequired: { type: Boolean, default: false },
@@ -21,6 +21,13 @@ const fallbackId = `app-q-input-${Math.random().toString(36).substring(2, 9)}`
 const elementId = computed(() => (attrs.id ? `app-q-input-${attrs.id}` : fallbackId))
 const elementLabel = computed(() => (props.isClassic ? attrs.label : undefined))
 const label = computed(() => (props.isClassic ? null : attrs.label))
+
+// Normaliza error: acepta String o Array (formato Laravel 422)
+const errorMessage = computed(() => {
+  const e = toValue(props.error)
+  if (!e) return null
+  return Array.isArray(e) ? e[0] : e
+})
 
 // --- PASSWORD TOGGLE ---
 const isPwdType = computed(() => (attrs.type || 'text').toLowerCase() === 'password')
@@ -63,10 +70,10 @@ const filteredAttrs = computed(() => {
         'aria-required': props.isRequired ? 'true' : null
       }"
       :model-value="modelValue"
-      :error="!!error"
-      :error-message="error"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
       no-error-icon
-      :hide-bottom-space="!error"
+      :hide-bottom-space="!errorMessage"
       :label-slot="!!elementLabel"
       @update:model-value="val => emit('update:modelValue', val)"
       @input="e => emit('input', e)"
