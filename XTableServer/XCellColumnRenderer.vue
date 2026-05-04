@@ -13,7 +13,7 @@ import XSelect from '../XSelect/XSelect.vue'
 defineOptions({ name: 'XCellColumnRenderer' })
 
 const props = defineProps({
-  cell: { type: [Object, String, Number], default: null },
+  cell: { type: [Object, String, Number, Boolean], default: null },
   row: { type: Object, default: null },
 })
 
