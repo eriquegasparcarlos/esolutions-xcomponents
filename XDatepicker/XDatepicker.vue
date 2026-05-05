@@ -10,7 +10,7 @@ const props = defineProps({
   modelValue: { type: [String, null], default: '' }, // puede venir null desde el padre
   isClassic: { type: Boolean, default: formDefaults.isClassic },
 
-  dense: { type: Boolean, default: true },
+  dense: { type: Boolean, default: formDefaults.dense },
   outlined: { type: Boolean, default: formDefaults.outlined },
   clearable: { type: Boolean, default: false },
 
@@ -71,7 +71,7 @@ function clear() {
 </script>
 
 <template>
-  <div class="app-q-input flex-grow-1 x-input-datepicker" :class="attrs.class">
+  <div class="app-q-input flex-grow-1 x-input-datepicker" :class="[{ 'x-input-datepicker-large': !props.dense }, attrs.class]">
     <label
       v-if="label"
       :for="elementId"

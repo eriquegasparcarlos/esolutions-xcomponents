@@ -1,9 +1,24 @@
+@import '../variables';
+
 .x-input-numeric {
   .q-input__label {
     font-size: 0.85rem;
     font-weight: 500;
     display: inline-block;
     line-height: 1.2;
+  }
+
+  // --------------------------------------------------------------------------
+  // Variante large (no dense) — equipara altura con XInput
+  // --------------------------------------------------------------------------
+  &.x-input-numeric--large {
+    .q-field__control {
+      min-height: $x-input-height;
+    }
+
+    .q-field__native {
+      font-size: $x-font-size-lg;
+    }
   }
 }
 
@@ -13,5 +28,5 @@
 }
 
 .vue-number-input--inline > input {
-  width: 100%!important;
+  width: 100% !important;
 }

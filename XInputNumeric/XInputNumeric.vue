@@ -46,7 +46,7 @@ defineExpose({ focus, select, focusAndSelect })
 </script>
 
 <template>
-  <div class="app-q-input flex-grow-1 x-input-numeric" :class="attrs.class">
+  <div class="app-q-input flex-grow-1 x-input-numeric" :class="[{ 'x-input-numeric--large': !props.dense }, attrs.class]">
     <!-- Label manual (no classic) -->
     <label
       v-if="label"
