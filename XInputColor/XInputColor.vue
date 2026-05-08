@@ -22,6 +22,10 @@ const props = defineProps({
   asButton: {
     type: Boolean,
     default: false
+  },
+  dense: {
+    type: Boolean,
+    default: true
   }
 })
 
@@ -81,6 +85,7 @@ const textColor = computed(() => {
       v-model="inputValue"
       :label="label"
       :class="customClass"
+      :dense="dense"
       readonly
     >
       <template #prepend>
