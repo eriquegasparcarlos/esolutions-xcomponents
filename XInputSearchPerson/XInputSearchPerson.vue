@@ -1,12 +1,15 @@
 <script setup>
 import {computed, getCurrentInstance, ref} from 'vue'
 import {useQuasar} from 'quasar'
+import {formDefaults} from '@esolutions/js-utils'
 import XInput from '../XInput/XInput.vue'
 import XButton from '../XButton/XButton.vue'
 
 defineOptions({
   name: 'XInputSearchPerson',
 })
+
+const dense = formDefaults.dense
 
 const props = defineProps({
   modelValue: {
@@ -89,15 +92,17 @@ const handleButtonClick = async () => {
 </script>
 
 <template>
-  <div class="x-input-search-person">
+  <div class="x-input-search-person" :class="{ 'is-dense': dense }">
     <x-input v-model="innerValue"
              :label="label"
+             :dense="dense"
              :maxlength="calculatedMaxlength"
              :readonly="readonly"
              @keyup.enter="handleButtonClick">
     </x-input>
     <x-button v-if="showButton"
               label="Buscar"
+              :dense="dense"
               @click="handleButtonClick"
               :loading="buttonLoading"
               :disable="buttonDisable || !canSearch"

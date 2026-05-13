@@ -23,11 +23,19 @@
   }
 
   // --------------------------------------------------------------------------
-  // Boton de busqueda
+  // Boton de busqueda — altura fija para emparejar con q-input outlined
+  // No-dense: control height = 56px | Dense: control height = 40px
   // --------------------------------------------------------------------------
   .x-button {
     min-width: var(--x-search-person-button-min-width);
     margin-left: var(--x-search-person-gap);
+    height: 56px;   // alinea con q-input no-dense (outlined)
+  }
+
+  &.is-dense {
+    .x-button {
+      height: 40px; // alinea con q-input dense (outlined)
+    }
   }
 }
 
