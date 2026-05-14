@@ -17,7 +17,7 @@ const props = defineProps({
   row: { type: Object, default: null },
 })
 
-const emit = defineEmits(['refresh'])
+const emit = defineEmits(['refresh', 'loading'])
 
 const { proxy } = getCurrentInstance()
 const $q = useQuasar()
@@ -98,6 +98,7 @@ async function runAction(nextValue) {
 
   try {
     saving.value = true
+    emit('loading', true)
     const res = await proxy.$api.request({ method, url, data })
 
     // notify: showNotify lee el mensaje del backend; notify.success usa texto fijo
@@ -121,6 +122,7 @@ async function runAction(nextValue) {
     $q.notify({ type: 'negative', message: msg })
   } finally {
     saving.value = false
+    emit('loading', false)
   }
 }
 

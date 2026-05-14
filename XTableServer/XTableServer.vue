@@ -766,7 +766,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
       <!-- DESKTOP VIEW: Renderizado normal -->
       <template v-else v-slot:body-cell="props">
         <q-td :props="props">
-          <x-cell-column-renderer :cell="props.value" :row="props.row" @refresh="fetchData" />
+          <x-cell-column-renderer :cell="props.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" />
         </q-td>
       </template>
 
