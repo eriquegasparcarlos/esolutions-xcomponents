@@ -1,46 +1,57 @@
 <script setup>
-import { useAttrs } from 'vue';
+import { computed, useAttrs } from 'vue'
+import { QSpinnerDots, QSpinnerBars, QSpinnerCube, QSpinnerGears, QSpinnerHourglass, QSpinnerPuff, QSpinnerTail } from 'quasar'
 
 defineOptions({
   name: 'XLoading',
   inheritAttrs: false,
-});
+})
 
-defineProps({
+const spinnerMap = {
+  dots:      QSpinnerDots,
+  bars:      QSpinnerBars,
+  cube:      QSpinnerCube,
+  gears:     QSpinnerGears,
+  hourglass: QSpinnerHourglass,
+  puff:      QSpinnerPuff,
+  tail:      QSpinnerTail,
+}
+
+const props = defineProps({
   loading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   color: {
     type: String,
-    default: 'primary'
+    default: 'primary',
   },
   size: {
     type: String,
-    default: '50px'
+    default: '50px',
   },
   spinner: {
     type: String,
-    default: 'dots' // Opciones: 'dots', 'bars', 'cube', etc.
+    default: 'dots',
+    validator: (v) => Object.keys(spinnerMap).includes(v),
   },
   dark: {
     type: Boolean,
-    default: false
+    default: false,
   },
   message: {
     type: String,
-    default: ''
-  }
-});
+    default: '',
+  },
+})
 
-const attrs = useAttrs();
+const attrs = useAttrs()
+const spinnerComponent = computed(() => spinnerMap[props.spinner] ?? QSpinnerDots)
 </script>
 
 <template>
   <q-inner-loading v-bind="{ ...attrs }" :showing="loading" :dark="dark" class="x-loading">
-    <component :is="`q-spinner-${spinner}`" :color="color" :size="size" />
-
-    <!-- Slot de mensaje opcional -->
+    <component :is="spinnerComponent" :color="color" :size="size" />
     <div v-if="message" class="q-mt-sm text-subtitle2 text-center text-italic">{{ message }}</div>
   </q-inner-loading>
 </template>
