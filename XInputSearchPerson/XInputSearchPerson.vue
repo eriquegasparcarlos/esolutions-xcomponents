@@ -27,6 +27,10 @@ const props = defineProps({
   readonly: {
     type: Boolean,
     default: false
+  },
+  url: {
+    type: String,
+    default: '/store/customer-search-service'
   }
 })
 
@@ -72,7 +76,7 @@ const handleButtonClick = async () => {
   buttonDisable.value = true
 
   try {
-    const {data} = await proxy.$api.post('/store/customer-search-service', {
+    const {data} = await proxy.$api.post(props.url, {
       identity_document_type_id: props.identityDocumentTypeId,
       number: innerValue.value
     })
