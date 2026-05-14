@@ -35,6 +35,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  loadingIcon: {
+    type: String,
+    default: '',
+  },
 })
 
 const slots = useSlots()
@@ -59,6 +63,6 @@ const hasHeader = computed(() => props.title || props.subtitle || props.icon || 
     <q-card-section class="x-form-section-content" :class="contentPadding ? 'q-pa-md' : 'q-pa-none'">
       <slot/>
     </q-card-section>
-    <x-loading :loading="loading"/>
+    <x-loading :loading="loading" :icon="loadingIcon"/>
   </q-card>
 </template>

@@ -42,6 +42,10 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  icon: {
+    type: String,
+    default: '',
+  },
 })
 
 const attrs = useAttrs()
@@ -50,7 +54,23 @@ const spinnerComponent = computed(() => spinnerMap[props.spinner] ?? QSpinnerDot
 
 <template>
   <q-inner-loading v-bind="{ ...attrs }" :showing="loading" :dark="dark" class="x-loading">
-    <component :is="spinnerComponent" :color="color" :size="size" />
+    <template v-if="icon">
+      <q-icon :name="icon" :color="color" :style="{ fontSize: size }" class="x-loading-icon" />
+    </template>
+    <template v-else>
+      <component :is="spinnerComponent" :color="color" :size="size" />
+    </template>
     <div v-if="message" class="q-mt-sm text-subtitle2 text-center text-italic">{{ message }}</div>
   </q-inner-loading>
 </template>
+
+<style scoped>
+.x-loading-icon {
+  animation: x-loading-pulse 1s ease-in-out infinite;
+}
+
+@keyframes x-loading-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.85); }
+}
+</style>

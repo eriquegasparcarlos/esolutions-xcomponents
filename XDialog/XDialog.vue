@@ -56,6 +56,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  loadingIcon: {
+    type: String,
+    default: '',
+  },
   contentFlush: {
     type: Boolean,
     default: false,
@@ -173,7 +177,7 @@ const onClose = () => {
       </div>
 
       <!-- Componente de loading reutilizable -->
-      <x-loading :loading="loading"/>
+      <x-loading :loading="loading" :icon="loadingIcon"/>
     </q-card>
   </q-dialog>
 </template>
