@@ -103,7 +103,8 @@ async function runAction(nextValue) {
     // notify: showNotify lee el mensaje del backend; notify.success usa texto fijo
     if (action.showNotify) {
       const msg = res?.data?.message
-      if (msg) $q.notify({ type: 'positive', message: msg })
+      const success = res?.data?.success !== false
+      if (msg) $q.notify({ type: success ? 'positive' : 'negative', message: msg })
     } else if (action.notify?.success) {
       $q.notify({ type: 'positive', message: action.notify.success })
     }
