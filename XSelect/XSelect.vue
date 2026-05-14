@@ -46,6 +46,7 @@ const props = defineProps({
   addNewLabel: { type: String, default: 'Agregar nuevo' },
   addNewIcon: { type: String, default: 'add_circle_outline' },
   addNewClass: { type: String, default: 'text-primary' },
+  showAddButton: Boolean,
   minChars: { type: Number, default: 2 },
   enforceMinChars: { type: Boolean, default: true },
   innerThrottleMs: { type: Number, default: 0 },
@@ -269,7 +270,9 @@ function onSelect(val) {
       {{ label }}
     </label>
 
+    <div :class="showAddButton ? 'x-select__with-button' : ''">
     <q-select ref="selectRef"
+              :class="showAddButton ? 'x-select__input-grow' : ''"
               v-bind="{
                 ...attrs,
                 class: null,
@@ -314,5 +317,34 @@ function onSelect(val) {
         </q-item>
       </template>
     </q-select>
+
+    <q-btn
+      v-if="showAddButton"
+      flat
+      round
+      dense
+      icon="fal fa-plus"
+      color="primary"
+      class="x-select__add-btn"
+      @click.stop="emit('click-new')"
+    />
+    </div>
   </div>
 </template>
+
+<style scoped>
+.x-select__with-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.x-select__input-grow {
+  flex: 1;
+  min-width: 0;
+}
+
+.x-select__add-btn {
+  flex-shrink: 0;
+}
+</style>
