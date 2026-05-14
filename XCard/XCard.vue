@@ -1,5 +1,6 @@
 <script setup>
-import {computed, useSlots} from 'vue'
+import { computed, useSlots } from 'vue'
+import XLoading from '../XLoading/XLoading.vue'
 
 defineOptions({
   name: 'XCard',
@@ -30,6 +31,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  loading: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const slots = useSlots()
@@ -54,5 +59,6 @@ const hasHeader = computed(() => props.title || props.subtitle || props.icon || 
     <q-card-section class="x-form-section-content" :class="contentPadding ? 'q-pa-md' : 'q-pa-none'">
       <slot/>
     </q-card-section>
+    <x-loading :loading="loading"/>
   </q-card>
 </template>
