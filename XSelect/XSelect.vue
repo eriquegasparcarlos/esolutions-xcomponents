@@ -270,9 +270,7 @@ function onSelect(val) {
       {{ label }}
     </label>
 
-    <div :class="showAddButton ? 'x-select__with-button' : ''">
     <q-select ref="selectRef"
-              :class="showAddButton ? 'x-select__input-grow' : ''"
               v-bind="{
                 ...attrs,
                 class: null,
@@ -316,35 +314,17 @@ function onSelect(val) {
           </q-item-section>
         </q-item>
       </template>
-    </q-select>
 
-    <q-btn
-      v-if="showAddButton"
-      flat
-      round
-      dense
-      icon="fal fa-plus"
-      color="primary"
-      class="x-select__add-btn"
-      @click.stop="emit('click-new')"
-    />
-    </div>
+      <template v-if="showAddButton" #after>
+        <q-btn
+          flat
+          round
+          dense
+          icon="fal fa-plus"
+          color="primary"
+          @click.stop="emit('click-new')"
+        />
+      </template>
+    </q-select>
   </div>
 </template>
-
-<style scoped>
-.x-select__with-button {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.x-select__input-grow {
-  flex: 1;
-  min-width: 0;
-}
-
-.x-select__add-btn {
-  flex-shrink: 0;
-}
-</style>
