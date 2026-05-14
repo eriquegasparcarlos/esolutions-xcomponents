@@ -552,7 +552,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
 
           <template v-else>
             <q-btn
-              v-if="button.label && !isMobileView"
+              v-if="button.label && !$q.platform.is.mobile"
               :color="button.color"
               :disable="button.disable"
               unelevated
