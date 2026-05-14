@@ -117,7 +117,8 @@ const onShow = () => {
       const selector = typeof props.autofocus === 'string' && props.autofocus.length > 0
         ? props.autofocus
         : 'input:not([type="hidden"]), select'
-      const el = dialogCardRef.value?.querySelector(selector)
+      const root = dialogCardRef.value?.$el ?? dialogCardRef.value
+      const el = root?.querySelector(selector)
       el?.focus()
     })
   }
