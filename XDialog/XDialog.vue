@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, watchEffect, useSlots} from 'vue';
+import {ref, computed, watchEffect, useSlots, nextTick} from 'vue';
 import {useQuasar} from 'quasar';
 import XLoading from '../XLoading/XLoading.vue';
 
@@ -67,13 +67,18 @@ const props = defineProps({
   fullScreen: {
     type: Boolean,
     default: false,
-  }
+  },
+  autofocus: {
+    type: [Boolean, String],
+    default: false,
+  },
 });
 
 const emit = defineEmits(['update:modelValue', 'before-show', 'show', 'confirm', 'cancel', 'action-button-close']);
 
 // Control interno del estado abierto/cerrado del diálogo
 const isOpen = ref(false);
+const dialogCardRef = ref(null);
 
 const isFullView = computed(() => props.isFullHeight || props.fullScreen);
 
@@ -105,7 +110,18 @@ const onBeforeShow = () => {
   emit('before-show');
 };
 
-const onShow = () => { emit('show') };
+const onShow = () => {
+  emit('show')
+  if (props.autofocus) {
+    nextTick(() => {
+      const selector = typeof props.autofocus === 'string' && props.autofocus.length > 0
+        ? props.autofocus
+        : 'input:not([type="hidden"]), select'
+      const el = dialogCardRef.value?.querySelector(selector)
+      el?.focus()
+    })
+  }
+};
 
 // Emitir evento de cancelación y cerrar
 const onClose = () => {
@@ -127,7 +143,7 @@ const onClose = () => {
             :maximized="fullScreen"
             :class="classDialog">
 
-    <q-card class="q-pa-none x-dialog-card"
+    <q-card ref="dialogCardRef" class="q-pa-none x-dialog-card"
             :style="fullScreen
               ? { width: '100vw', maxWidth: '100vw', height: '100vh', maxHeight: '100vh' }
               : { width: dialogWidth, maxWidth: dialogWidth }">
