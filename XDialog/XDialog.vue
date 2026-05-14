@@ -120,6 +120,7 @@ const onShow = () => {
       const root = dialogCardRef.value?.$el ?? dialogCardRef.value
       const el = root?.querySelector(selector)
       el?.focus()
+      el?.select()
     })
   }
 };
