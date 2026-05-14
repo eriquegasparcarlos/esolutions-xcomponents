@@ -98,11 +98,14 @@ async function runAction(nextValue) {
 
   try {
     saving.value = true
-    await proxy.$api.request({ method, url, data })
+    const res = await proxy.$api.request({ method, url, data })
 
-    // notify opcional
-    if (action.notify?.success) {
-      $q.notify({ type: 'success', message: action.notify.success })
+    // notify: showNotify lee el mensaje del backend; notify.success usa texto fijo
+    if (action.showNotify) {
+      const msg = res?.data?.message
+      if (msg) $q.notify({ type: 'positive', message: msg })
+    } else if (action.notify?.success) {
+      $q.notify({ type: 'positive', message: action.notify.success })
     }
 
     if (refresh) emit('refresh')
