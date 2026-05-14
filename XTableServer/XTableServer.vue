@@ -682,6 +682,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
             :include-all-option="
               filter.hasOwnProperty('includeAllOption') ? filter.includeAllOption : false
             "
+            :placeholder="filter.placeholder || undefined"
             @update:model-value="onFilterChange(filter)"
           />
 
