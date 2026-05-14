@@ -33,7 +33,6 @@ const props = defineProps({
   spinner: {
     type: String,
     default: 'dots',
-    validator: (v) => Object.keys(spinnerMap).includes(v),
   },
   dark: {
     type: Boolean,
