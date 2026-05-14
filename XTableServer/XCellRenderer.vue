@@ -50,6 +50,18 @@ defineProps({
              :is-lighten-color="cell.is_lighten_color"
              class="q-mx-xs x-badge"></x-badge>
 
+    <!-- BADGE LINK -->
+    <a v-else-if="cell.type_input === 'badge_link'"
+       :href="cell.url"
+       :target="cell.target || '_blank'"
+       style="text-decoration: none">
+      <x-badge :color="cell.color"
+               :type="cell.type"
+               :label="cell.label"
+               :is-lighten-color="cell.is_lighten_color"
+               class="q-mx-xs x-badge cursor-pointer"/>
+    </a>
+
     <!-- CHIP -->
     <q-chip v-else-if="cell.type_input === 'chip'"
             :color="cell.color || 'primary'"
