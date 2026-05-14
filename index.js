@@ -22,6 +22,8 @@ export { default as XInputSearchPerson } from './XInputSearchPerson/XInputSearch
 export { default as XLoading } from './XLoading/XLoading.vue'
 export { default as XModulesTreePicker } from './XModulesTreePicker/XModulesTreePicker.vue'
 export { default as XNested } from './XNested/XNested.vue'
+export { default as XOptionCard } from './XOptionCard/XOptionCard.vue'
+export { default as XOptionCardGroup } from './XOptionCard/XOptionCardGroup.vue'
 export { default as XPriceCalculator } from './XPriceCalculator/XPriceCalculator.vue'
 export { default as XSelect } from './XSelect/XSelect.vue'
 export { default as XTableServer } from './XTableServer/XTableServer.vue'
