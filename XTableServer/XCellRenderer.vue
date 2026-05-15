@@ -54,12 +54,13 @@ defineProps({
     <a v-else-if="cell.type_input === 'badge_link'"
        :href="cell.url"
        :target="cell.target || '_blank'"
+       class="cursor-pointer"
        style="text-decoration: none">
       <x-badge :color="cell.color"
                :type="cell.type"
                :label="cell.label"
-               :is-lighten-color="cell.is_lighten_color"
-               class="q-mx-xs x-badge cursor-pointer"/>
+               :is-lighten-color="cell.is_lighten_color ?? true"
+               class="q-mx-xs x-badge"/>
     </a>
 
     <!-- CHIP -->
