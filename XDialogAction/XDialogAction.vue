@@ -1,5 +1,5 @@
 <script setup>
-import {getCurrentInstance, ref} from 'vue';
+import {getCurrentInstance, nextTick, ref} from 'vue';
 import {useQuasar} from 'quasar';
 import XInput from '../XInput/XInput.vue';
 import XDialog from '../XDialog/XDialog.vue';
@@ -29,6 +29,7 @@ const $q = useQuasar();
 // Estados reactivos
 const isDialogOpen = ref(false);
 const loading = ref(false);
+const refPasswordInput = ref(null);
 const loadingSubmit = ref(false);
 const title = ref('');
 const errors = ref({});
@@ -74,6 +75,11 @@ const handleOpen = async () => {
     $q.notify({type: 'negative', message: proxy.$t('components.dialogLoadError')});
   } finally {
     loading.value = false;
+    if (form.value.verify_password) {
+      nextTick(() => {
+        refPasswordInput.value?.$el?.querySelector('input')?.focus();
+      });
+    }
   }
 };
 
@@ -131,6 +137,7 @@ defineExpose({openDialog});
           <div class="text-grey-7" style="font-size: 15px;" v-html="form.description"></div>
           <div v-if="form.verify_password" class="q-mt-md">
             <x-input
+              ref="refPasswordInput"
               :label="$t('auth.enterPassword')"
               type="password"
               :dense="false"
