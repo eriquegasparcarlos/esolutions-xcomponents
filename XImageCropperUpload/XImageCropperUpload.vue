@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
 import { useQuasar } from 'quasar'
-import Cropper from 'cropperjs'
+import Cropper from 'cropperjs/dist/cropper.esm.js'
 import 'cropperjs/dist/cropper.min.css'
 import XDialog from '../XDialog/XDialog.vue'
 import XButton from '../XButton/XButton.vue'
