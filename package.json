@@ -52,6 +52,7 @@
     "XFormatPrice",
     "XNotify",
     "XImageUpload",
+    "XImageCropperUpload",
     "themes",
     "i18n"
   ],
