@@ -1,6 +1,8 @@
 <script setup>
 import { ref, computed, nextTick, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import Cropper from 'cropperjs'
+import 'cropperjs/dist/cropper.min.css'
 import XDialog from '../XDialog/XDialog.vue'
 import XButton from '../XButton/XButton.vue'
 
@@ -85,10 +87,8 @@ const initCropper = () => {
     cropperInstance.value.destroy()
     cropperInstance.value = null
   }
-  nextTick(async () => {
+  nextTick(() => {
     if (!cropImageEl.value) return
-    const { default: Cropper } = await import('cropperjs')
-    await import('cropperjs/dist/cropper.min.css')
     cropperInstance.value = new Cropper(cropImageEl.value, {
       viewMode: 1,
       dragMode: 'move',
