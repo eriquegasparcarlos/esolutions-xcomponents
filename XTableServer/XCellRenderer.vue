@@ -74,6 +74,20 @@ defineProps({
       <img :src="cell.src" :alt="cell.alt || ''" />
     </q-avatar>
 
+    <!-- IMAGE (rectangular, object-fit contain) -->
+    <div v-else-if="cell.type_input === 'image'"
+         class="x-cell-image"
+         :style="{
+           width:  cell.width  || '64px',
+           height: cell.height || '36px',
+         }">
+      <img
+        :src="cell.src"
+        :alt="cell.alt || ''"
+        :style="{ borderRadius: cell.radius || '4px' }"
+      />
+    </div>
+
     <!-- LINK -->
     <a v-else-if="cell.type_input === 'link'"
        :href="cell.url"
@@ -97,3 +111,21 @@ defineProps({
   </span>
   </template>
 </template>
+
+<style scoped>
+.x-cell-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.x-cell-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+</style>
