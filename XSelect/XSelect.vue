@@ -28,7 +28,18 @@ defineExpose({
   reset: () => {
     selectRef.value?.updateInputValue?.('');
     selectRef.value?.hidePopup?.();
-  }
+  },
+  /**
+   * Inyecta una opción en remoteOptions para que el select
+   * pueda mostrar su label aunque no haya búsqueda activa.
+   * Útil al crear un registro nuevo y pre-seleccionarlo.
+   */
+  injectOption: (opt) => {
+    const already = remoteOptions.value.find(o => o[props.optionValue] === opt[props.optionValue]);
+    if (!already) {
+      remoteOptions.value = [opt, ...remoteOptions.value];
+    }
+  },
 });
 
 // Props
