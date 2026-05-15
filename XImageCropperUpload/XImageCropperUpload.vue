@@ -5,6 +5,7 @@ import Cropper from 'cropperjs/dist/cropper.esm.js'
 import 'cropperjs/dist/cropper.min.css'
 import XDialog from '../XDialog/XDialog.vue'
 import XButton from '../XButton/XButton.vue'
+import XLoading from '../XLoading/XLoading.vue'
 
 defineOptions({ name: 'XImageCropperUpload' })
 
@@ -15,6 +16,15 @@ const props = defineProps({
   accept:     { type: String,  default: 'image/png,image/jpeg,image/webp,image/svg+xml' },
   maxSizeMb:  { type: Number,  default: 2 },
   withCrop:   { type: Boolean, default: true },
+  /**
+   * 'inline' — fila con thumbnail + texto + botón limpiar (default)
+   * 'card'   — imagen completa con overlay Cambiar / Eliminar
+   */
+  variant:    { type: String,  default: 'inline' },
+  /** Solo para variant="card": mostrar spinner sobre la imagen */
+  loading:    { type: Boolean, default: false },
+  /** Solo para variant="card": altura del contenedor */
+  height:     { type: String,  default: '200px' },
 })
 
 const emit = defineEmits(['change', 'remove'])
@@ -128,14 +138,12 @@ const cancelCrop = () => {
 
 // ── Remove ──
 const onRemove = (e) => {
-  e.stopPropagation()
+  e?.stopPropagation()
   if (localPreview.value) {
-    // Solo preview local, limpiar sin confirmar
     localBlob.value    = null
     localPreview.value = null
     emit('change', null)
   } else {
-    // Imagen guardada en servidor — el padre decide qué hacer
     emit('remove')
   }
 }
@@ -146,29 +154,64 @@ defineExpose({ blob: localBlob, triggerFileInput })
 
 <template>
   <div>
-    <div class="x-image-cropper-upload" @click="triggerFileInput">
-      <!-- Thumbnail -->
-      <div class="x-image-cropper-upload__thumb">
-        <img v-if="displayUrl" :src="displayUrl" class="x-image-cropper-upload__img" />
-        <q-icon v-else name="fa-light fa-image" size="28px" color="grey-5" />
+    <!-- ═══════════════════════════════════════
+         VARIANT: inline (fila con thumbnail)
+    ═══════════════════════════════════════ -->
+    <template v-if="variant === 'inline'">
+      <div class="x-image-cropper-upload" @click="triggerFileInput">
+        <!-- Thumbnail -->
+        <div class="x-image-cropper-upload__thumb">
+          <img v-if="displayUrl" :src="displayUrl" class="x-image-cropper-upload__img" />
+          <q-icon v-else name="fa-light fa-image" size="28px" color="grey-5" />
+        </div>
+
+        <!-- Texto -->
+        <div class="col">
+          <div class="x-image-cropper-upload__label">{{ label }}</div>
+          <div class="x-image-cropper-upload__hint">{{ hintText }}</div>
+        </div>
+
+        <!-- Botón limpiar -->
+        <q-btn
+          v-if="displayUrl"
+          flat round dense
+          icon="fa-light fa-xmark"
+          size="sm"
+          color="grey-6"
+          @click="onRemove"
+        />
+      </div>
+    </template>
+
+    <!-- ═══════════════════════════════════════
+         VARIANT: card (imagen completa + overlay)
+    ═══════════════════════════════════════ -->
+    <template v-else-if="variant === 'card'">
+      <!-- Con imagen: overlay Cambiar / Eliminar -->
+      <div v-if="displayUrl" class="x-icu-card" :style="{ height }">
+        <img :src="displayUrl" class="x-icu-card__img" />
+        <div class="x-icu-card__overlay">
+          <div class="x-icu-card__actions">
+            <div class="x-icu-card__action" @click="triggerFileInput">
+              <q-icon name="fal fa-pen" size="18px" color="white" />
+              <span>Cambiar</span>
+            </div>
+            <div class="x-icu-card__action x-icu-card__action--delete" @click="onRemove">
+              <q-icon name="fal fa-trash" size="18px" color="white" />
+              <span>Eliminar</span>
+            </div>
+          </div>
+        </div>
+        <x-loading :loading="loading" />
       </div>
 
-      <!-- Texto -->
-      <div class="col">
-        <div class="x-image-cropper-upload__label">{{ label }}</div>
-        <div class="x-image-cropper-upload__hint">{{ hintText }}</div>
+      <!-- Sin imagen: zona de upload centrada -->
+      <div v-else class="x-icu-card x-icu-card--empty" :style="{ height }" @click="triggerFileInput">
+        <q-icon name="fa-light fa-image" size="36px" color="grey-5" />
+        <div class="x-icu-card__empty-label">{{ label }}</div>
+        <div class="x-icu-card__empty-hint">{{ hintText }}</div>
       </div>
-
-      <!-- Botón limpiar -->
-      <q-btn
-        v-if="displayUrl"
-        flat round dense
-        icon="fa-light fa-xmark"
-        size="sm"
-        color="grey-6"
-        @click="onRemove"
-      />
-    </div>
+    </template>
 
     <input
       ref="fileInput"
@@ -205,6 +248,7 @@ defineExpose({ blob: localBlob, triggerFileInput })
 </template>
 
 <style scoped>
+/* ─── Variant: inline ─── */
 .x-image-cropper-upload {
   border: 2px dashed #d1d5db;
   border-radius: 8px;
@@ -243,5 +287,81 @@ defineExpose({ blob: localBlob, triggerFileInput })
   font-size: 12px;
   color: #9ca3af;
   margin-top: 2px;
+}
+
+/* ─── Variant: card ─── */
+.x-icu-card {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+.x-icu-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.x-icu-card__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.x-icu-card:hover .x-icu-card__overlay {
+  opacity: 1;
+}
+.x-icu-card__actions {
+  display: flex;
+  gap: 16px;
+}
+.x-icu-card__action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  transition: background 0.15s;
+}
+.x-icu-card__action:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+.x-icu-card__action--delete:hover {
+  background: rgba(220, 38, 38, 0.7);
+}
+
+/* Sin imagen */
+.x-icu-card--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  border: 2px dashed #d1d5db;
+  transition: border-color 0.2s;
+}
+.x-icu-card--empty:hover {
+  border-color: var(--q-primary);
+}
+.x-icu-card__empty-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+.x-icu-card__empty-hint {
+  font-size: 12px;
+  color: #9ca3af;
 }
 </style>
