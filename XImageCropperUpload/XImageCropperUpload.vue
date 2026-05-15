@@ -140,8 +140,8 @@ const onRemove = (e) => {
   }
 }
 
-// ── Expose blob para FormData ──
-defineExpose({ blob: localBlob })
+// ── Expose ──
+defineExpose({ blob: localBlob, triggerFileInput })
 </script>
 
 <template>
