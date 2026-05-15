@@ -48,7 +48,7 @@ const hasHeader = computed(() => props.title || props.subtitle || props.icon || 
 
 <template>
   <q-card :flat="flat" class="x-card" :class="{ 'full-height': fullHeight }">
-    <q-card-section v-if="hasHeader" class="q-py-none x-card-section-title">
+    <q-card-section v-if="hasHeader" class="q-py-none x-card-section-title" :class="{ 'x-card-section-title--with-subtitle': subtitle }">
       <div class="row items-center no-wrap col">
         <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-md flex-shrink-0"/>
         <div>
