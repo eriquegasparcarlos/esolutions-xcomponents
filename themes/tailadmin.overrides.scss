@@ -225,6 +225,37 @@ body {
 }
 
 // --------------------------------------------------------------------------
+// User trigger (boton del usuario en el header con avatar + nombre + chevron)
+// Estilo pill TailAdmin: redondeado, hover sutil
+// --------------------------------------------------------------------------
+.user-trigger {
+  border-radius: 9999px; // pill — sigue la curva del avatar
+  color: #344054; // gray-700
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #f2f4f7; // gray-100
+  }
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(70, 95, 255, 0.15); // focus ring brand-500
+  }
+  &--active {
+    background-color: #f2f4f7;
+  }
+}
+
+.user-avatar {
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #e4e7ec; // gray-200
+}
+
+.user-trigger__chevron {
+  color: #667085; // gray-500
+}
+
+// --------------------------------------------------------------------------
 // Toast notifications — estilo TailAdmin (blanco con border-left de color)
 // --------------------------------------------------------------------------
 .x-toast.q-notification {
@@ -502,6 +533,23 @@ body {
   .q-banner {
     background-color: #1d2939;
     color: #f2f4f7;
+  }
+
+  // --- User trigger (header) ---
+  .user-trigger {
+    color: #f2f4f7;
+
+    &:hover,
+    &--active {
+      background-color: #344054;
+    }
+  }
+  .user-avatar {
+    background: #1d2939;
+    border-color: #344054;
+  }
+  .user-trigger__chevron {
+    color: #98a2b3;
   }
 
   // --- Toasts ---
