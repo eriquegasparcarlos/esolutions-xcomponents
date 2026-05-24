@@ -44,7 +44,6 @@ const emit = defineEmits(['show', 'hide', 'before-show', 'before-hide'])
 
 const slots = useSlots()
 const isOpen = ref(false)
-const menuRef = ref(null)
 
 const hasHeader = computed(() => !!slots.header)
 const hasFooter = computed(() => !!slots.footer)
@@ -64,25 +63,28 @@ const selfPosition = computed(() =>
 )
 
 function close() {
-  menuRef.value?.hide()
+  isOpen.value = false
 }
 
 function open() {
-  menuRef.value?.show()
+  isOpen.value = true
+}
+
+function toggle() {
+  isOpen.value = !isOpen.value
 }
 
 // Exponer metodos para control externo
-defineExpose({ close, open, isOpen })
+defineExpose({ close, open, toggle, isOpen })
 </script>
 
 <template>
-  <div class="x-dropdown-menu-wrapper" v-bind="$attrs">
+  <div class="x-dropdown-menu-wrapper" v-bind="$attrs" style="display: inline-block; position: relative;">
     <!-- Trigger: lo que el usuario ve siempre -->
-    <slot name="trigger" :is-open="isOpen" :open="open" :close="close" />
+    <slot name="trigger" :is-open="isOpen" :open="open" :close="close" :toggle="toggle" />
 
     <!-- Menu dropdown -->
     <q-menu
-      ref="menuRef"
       v-model="isOpen"
       :offset="offset"
       :anchor="anchorPosition"
@@ -94,6 +96,7 @@ defineExpose({ close, open, isOpen })
       :class="{ 'x-dropdown-menu--has-header': hasHeader, 'x-dropdown-menu--has-footer': hasFooter }"
       :style="{ width: widthStyle }"
       :disable="disable"
+      no-parent-event
       @show="$emit('show')"
       @hide="$emit('hide')"
       @before-show="$emit('before-show')"

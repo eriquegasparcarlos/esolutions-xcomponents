@@ -12,17 +12,119 @@ import XCellColumnRenderer from './XCellColumnRenderer.vue'
 import XCellRenderer from './XCellRenderer.vue'
 import XMobileMenuAction from './XMobileMenuAction.vue'
 import MobileLinkTitle from '../Mobile/MobileLinkTitle.vue'
+import XDropdownMenu from '../XDropdownMenu/XDropdownMenu.vue'
+import XDropdownItem from '../XDropdownMenu/XDropdownItem.vue'
+import XDropdownDivider from '../XDropdownMenu/XDropdownDivider.vue'
+import XDialog from '../XDialog/XDialog.vue'
+import XButton from '../XButton/XButton.vue'
 import { useDataStore } from 'stores/data.js'
 
 const dataStore = useDataStore()
 
 const props = defineProps({
   resource: { type: String, required: true },
+  /** Habilita seleccion multiple de filas (bulk actions) */
+  selectable: { type: Boolean, default: false },
+  /** Texto del contador de seleccion (admite plural) */
+  selectionLabel: { type: String, default: 'seleccionado' },
 })
 
 const { proxy } = getCurrentInstance()
 const $q = useQuasar()
-const emit = defineEmits(['actions', 'ready'])
+const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action'])
+
+// --- Bulk actions config (viene del backend en initTableBase) ---
+const bulkActions = ref([])
+
+// Estado del dialogo de confirmacion bulk
+const showBulkConfirm = ref(false)
+const pendingBulkAction = ref(null)  // { action, label, confirm, confirmLabel, confirmTitle, color }
+const bulkConfirmMessage = computed(() => {
+  if (!pendingBulkAction.value?.confirm) return ''
+  // Reemplaza {count} por la cantidad de seleccionados
+  return pendingBulkAction.value.confirm.replace(/\{count\}/g, selectedRows.value.length)
+})
+const bulkConfirmTitle = computed(() =>
+  pendingBulkAction.value?.confirmTitle || 'Confirmar accion'
+)
+const bulkConfirmLabel = computed(() =>
+  pendingBulkAction.value?.confirmLabel || 'Confirmar'
+)
+const bulkConfirmColor = computed(() =>
+  pendingBulkAction.value?.color === 'negative' ? 'negative' : 'primary'
+)
+
+/** Triggered cuando el user hace click en un item del dropdown de bulk actions */
+function triggerBulkAction(bulkAction) {
+  if (bulkAction.confirm) {
+    // Abrir dialogo de confirmacion (XDialog interno)
+    pendingBulkAction.value = bulkAction
+    showBulkConfirm.value = true
+  } else {
+    // Sin confirmacion: emitir directo
+    executeBulkAction(bulkAction)
+  }
+}
+
+function confirmBulkAction() {
+  if (pendingBulkAction.value) {
+    executeBulkAction(pendingBulkAction.value)
+  }
+  showBulkConfirm.value = false
+}
+
+function executeBulkAction(bulkAction) {
+  emit('bulk-action', {
+    action: bulkAction.action,
+    ids: [...selectedRows.value],
+  })
+  pendingBulkAction.value = null
+}
+
+// --- Bulk selection state ---
+const selectedRows = ref([])
+
+const selectedCount = computed(() => selectedRows.value.length)
+
+const allVisibleSelected = computed(() => {
+  if (rows.value.length === 0) return false
+  return rows.value.every(row => selectedRows.value.includes(row.id))
+})
+
+const someVisibleSelected = computed(() => {
+  if (rows.value.length === 0) return false
+  return rows.value.some(row => selectedRows.value.includes(row.id))
+    && !allVisibleSelected.value
+})
+
+function toggleAllVisible() {
+  if (allVisibleSelected.value) {
+    // Deseleccionar todos los visibles
+    const visibleIds = rows.value.map(r => r.id)
+    selectedRows.value = selectedRows.value.filter(id => !visibleIds.includes(id))
+  } else {
+    // Seleccionar todos los visibles (suma a lo ya seleccionado de otras paginas)
+    const visibleIds = rows.value.map(r => r.id)
+    const merged = [...new Set([...selectedRows.value, ...visibleIds])]
+    selectedRows.value = merged
+  }
+  emit('selection-change', [...selectedRows.value])
+}
+
+function toggleRow(rowId) {
+  const idx = selectedRows.value.indexOf(rowId)
+  if (idx === -1) {
+    selectedRows.value.push(rowId)
+  } else {
+    selectedRows.value.splice(idx, 1)
+  }
+  emit('selection-change', [...selectedRows.value])
+}
+
+function clearSelection() {
+  selectedRows.value = []
+  emit('selection-change', [])
+}
 
 const refDialogDeleteForm = ref()
 const refDialogActiveForm = ref()
@@ -316,6 +418,7 @@ const fetchColumnsAndData = async () => {
     }
 
     headerButtons.value = response.data.headerButtons || []
+    bulkActions.value = response.data.bulkActions || []
 
     // Configuracion movil desde backend (opcional)
     if (response.data.mobileConfig) {
@@ -509,7 +612,7 @@ const setFilterValues = (savedFilters) => {
   filterData()
 }
 
-defineExpose({ filterData, getFilterValues, setFilterValues })
+defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, selectedRows })
 </script>
 
 <template>
@@ -579,6 +682,39 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
             </q-btn>
           </template>
         </template>
+
+        <!-- Dropdown de bulk actions (solo visible cuando selectable=true Y hay seleccion) -->
+        <x-dropdown-menu v-if="selectable && selectedCount > 0 && bulkActions.length > 0"
+                        :width="220"
+                        align="right"
+                        class="x-table-bulk-dropdown q-mr-xs">
+          <template #trigger="{ toggle, isOpen }">
+            <q-btn outline no-caps color="primary" @click="toggle" class="x-table-bulk-trigger">
+              <strong>{{ selectedCount }}</strong>
+              <span class="q-ml-xs">
+                {{ selectedCount === 1 ? selectionLabel : selectionLabel + 's' }}
+              </span>
+              <q-icon name="fa-light fa-chevron-down"
+                      size="12px"
+                      class="q-ml-sm chevron-icon"
+                      :class="{ 'chevron-icon--open': isOpen }" />
+            </q-btn>
+          </template>
+
+          <template v-for="(bulkAction, idx) in bulkActions" :key="bulkAction.action || idx">
+            <x-dropdown-divider v-if="bulkAction.divider" />
+            <x-dropdown-item
+              :icon="bulkAction.icon"
+              :label="bulkAction.label"
+              :variant="bulkAction.color === 'negative' ? 'danger' :
+                       (bulkAction.color === 'positive' ? 'success' :
+                       (bulkAction.color === 'warning' ? 'warning' :
+                       (bulkAction.color === 'info' ? 'info' : 'default')))"
+              :disable="bulkAction.disable"
+              @click="triggerBulkAction(bulkAction)"
+            />
+          </template>
+        </x-dropdown-menu>
 
         <q-btn flat round no-caps icon="fa-light fa-columns-3">
           <q-menu class="column-visibility-menu">
@@ -725,6 +861,72 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
       :hide-header="isMobileView"
       @request="onRequest"
     >
+      <!-- Header: agrega checkbox de seleccion masiva al inicio -->
+      <template v-if="selectable && !isMobileView" v-slot:header="props">
+        <q-tr :props="props">
+          <q-th auto-width class="x-table-select-cell">
+            <q-checkbox
+              :model-value="allVisibleSelected"
+              :indeterminate-value="someVisibleSelected"
+              dense
+              size="sm"
+              @update:model-value="toggleAllVisible"
+            />
+          </q-th>
+          <q-th v-for="col in props.cols" :key="col.name" :props="props">
+            {{ col.label }}
+          </q-th>
+        </q-tr>
+      </template>
+
+      <!-- Body: agrega checkbox por fila + clase "selected" -->
+      <template v-if="selectable && !isMobileView" v-slot:body="props">
+        <q-tr :props="props"
+              :class="{ 'x-table-row--selected': selectedRows.includes(props.row.id) }">
+          <q-td auto-width class="x-table-select-cell">
+            <q-checkbox
+              :model-value="selectedRows.includes(props.row.id)"
+              dense
+              size="sm"
+              @update:model-value="toggleRow(props.row.id)"
+            />
+          </q-td>
+          <q-td v-for="col in props.cols" :key="col.name" :props="props">
+            <template v-if="col.name === 'actions'">
+              <div class="x-table-actions-cell">
+                <template v-for="(action, idx) in (Array.isArray(props.row.actions) ? props.row.actions.filter(Boolean) : [])" :key="idx">
+                  <q-btn
+                    v-if="action.type === 'group' && Array.isArray(action.buttons) && action.buttons.length > 0"
+                    flat round no-caps :size="action.size" :icon="action.icon"
+                  >
+                    <q-menu auto-close>
+                      <q-list>
+                        <template v-for="(subBtn, j) in (action.buttons || []).filter(Boolean)" :key="j">
+                          <q-separator v-if="subBtn.type === 'separator'" />
+                          <q-item v-else clickable @click="performAction(subBtn, props.row)">
+                            <q-item-section avatar style="min-width: 32px !important">
+                              <q-icon :name="subBtn.icon" size="20px" :color="subBtn.color" />
+                            </q-item-section>
+                            <q-item-section>
+                              <div class="x-menu-item-label" :title="subBtn.label">{{ subBtn.label }}</div>
+                            </q-item-section>
+                          </q-item>
+                        </template>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                  <q-btn v-else :icon="action.icon" :color="action.color" :disable="action.disable"
+                    :size="action.size" flat round @click="performAction(action, props.row)" />
+                </template>
+              </div>
+            </template>
+            <template v-else>
+              <x-cell-column-renderer :cell="col.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" />
+            </template>
+          </q-td>
+        </q-tr>
+      </template>
+
       <!-- MOBILE VIEW: Vista compacta con una sola fila -->
       <template v-if="isMobileView" v-slot:body="props">
         <q-tr
@@ -819,6 +1021,17 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
           </template>
         </q-td>
       </template>
+
+      <!-- Empty state mejorado: icono + mensaje + slot para CTA personalizado -->
+      <template v-slot:no-data>
+        <div class="x-table-empty-state">
+          <slot name="no-data">
+            <q-icon name="fa-light fa-inbox" size="48px" class="x-table-empty-state__icon" />
+            <div class="x-table-empty-state__title">No hay registros</div>
+            <div class="x-table-empty-state__subtitle">Aún no se han creado elementos en esta sección.</div>
+          </slot>
+        </div>
+      </template>
     </q-table>
 
     <!-- Mobile Actions Menu (Bottom Sheet) -->
@@ -864,7 +1077,19 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
       </q-item>
     </x-mobile-menu-action>
 
-    <q-card-section v-if="error" class="text-negative"> Error: {{ error }} </q-card-section>
+    <q-card-section v-if="error" class="x-table-error-state">
+      <q-icon name="fa-light fa-circle-exclamation"
+              size="48px"
+              class="x-table-error-state__icon" />
+      <div class="x-table-error-state__title">No se pudieron cargar los datos</div>
+      <div class="x-table-error-state__subtitle">{{ error }}</div>
+      <x-button label="Reintentar"
+                icon="fa-light fa-rotate-right"
+                color="primary"
+                unelevated
+                class="q-mt-md"
+                @click="fetchColumnsAndData" />
+    </q-card-section>
 
     <x-dialog-delete
       ref="refDialogDeleteForm"
@@ -881,5 +1106,28 @@ defineExpose({ filterData, getFilterValues, setFilterValues })
       action="active"
       @success="successActive"
     />
+
+    <!-- Dialogo de confirmacion para bulk actions (cuando bulkAction.confirm esta definido) -->
+    <x-dialog
+      v-model="showBulkConfirm"
+      :title="bulkConfirmTitle"
+      width="440px"
+      show-button-close
+      @action-button-close="showBulkConfirm = false"
+    >
+      <template #content>
+        <div class="text-body2" style="color: #344054;">
+          {{ bulkConfirmMessage }}
+        </div>
+      </template>
+
+      <template #action-buttons>
+        <x-button flat label="Cancelar" @click="showBulkConfirm = false" />
+        <x-button unelevated
+                  :color="bulkConfirmColor"
+                  :label="bulkConfirmLabel"
+                  @click="confirmBulkAction" />
+      </template>
+    </x-dialog>
   </q-card>
 </template>

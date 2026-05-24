@@ -31,12 +31,12 @@ const props = defineProps({
   /** Si se pasa, abre como link */
   href: {
     type: String,
-    default: '',
+    default: null,
   },
   /** Target del link */
   target: {
     type: String,
-    default: '',
+    default: null,
   },
   /** Deshabilita el item */
   disable: {
@@ -61,10 +61,10 @@ const variantClass = computed(() => `x-dropdown-item--${props.variant}`)
   <q-item
     v-bind="$attrs"
     clickable
-    :v-close-popup="closeOnClick"
-    :to="to"
-    :href="href"
-    :target="target"
+    v-close-popup="closeOnClick"
+    :to="to || undefined"
+    :href="href || undefined"
+    :target="target || undefined"
     :disable="disable"
     class="x-dropdown-item"
     :class="[variantClass, { 'x-dropdown-item--disabled': disable }]"

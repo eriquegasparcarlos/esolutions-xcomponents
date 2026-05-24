@@ -58,3 +58,115 @@
   overflow: visible;       /* que no oculte el texto */
   text-overflow: clip;     /* NO usar “…” */
 }
+
+// --------------------------------------------------------------------------
+// Empty state (cuando la tabla no tiene registros)
+// --------------------------------------------------------------------------
+.x-table-empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+
+  &__icon {
+    color: #d0d5dd;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2939;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: #667085;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Error state (cuando falla el fetch de la tabla)
+// --------------------------------------------------------------------------
+.x-table-error-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+
+  &__icon {
+    color: #f04438; // TailAdmin red-500
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1d2939;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: #667085;
+    max-width: 420px;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Bulk actions dropdown trigger (boton "X seleccionados" en el header)
+// --------------------------------------------------------------------------
+.x-table-bulk-trigger.q-btn {
+  min-height: 36px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: normal;
+  text-transform: none;
+
+  strong {
+    font-weight: 600;
+  }
+
+  .chevron-icon {
+    transition: transform 0.2s ease;
+  }
+  .chevron-icon--open {
+    transform: rotate(180deg);
+  }
+}
+
+// --------------------------------------------------------------------------
+// Filas seleccionadas
+// --------------------------------------------------------------------------
+.x-table-row--selected {
+  background-color: #f5f8ff !important; // brand-50 mas claro
+
+  &:hover {
+    background-color: #ecf3ff !important; // brand-50
+  }
+}
+
+// Celda del checkbox de seleccion (compacta)
+.x-table-select-cell {
+  width: 36px !important;
+  padding: 4px 8px !important;
+}
+
+// Celda de acciones (alineada a la derecha por defecto)
+.x-table-actions-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
