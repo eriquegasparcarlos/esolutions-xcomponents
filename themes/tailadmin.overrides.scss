@@ -1,0 +1,818 @@
+// ==========================================================================
+// Tema TailAdmin — Overrides CSS (cascade)
+// Se importa en app.scss AL FINAL para ganar por cascade sobre Quasar.
+// Solo estructura visual. Los colores los maneja ColorPalette (runtime).
+//
+// Paleta TailAdmin:
+//   Brand 50:  #ecf3ff (activo de tabs/items, casi blanco azulado)
+//   Brand 500: #465fff (azul violaceo principal)
+//   Gray 50:   #f9fafb (fondos sutiles)
+//   Gray 100:  #f2f4f7 (hover sutil)
+//   Gray 200:  #e4e7ec (bordes)
+//   Gray 500:  #667085 (texto secundario)
+//   Gray 700:  #344054 (texto principal)
+//   Gray 800:  #1d2939 (texto fuerte)
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// Body
+// --------------------------------------------------------------------------
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// --------------------------------------------------------------------------
+// Cards — sombra muy sutil + borde fino
+// --------------------------------------------------------------------------
+.q-card {
+  box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  border: 1px solid #e4e7ec; // gray-200
+}
+
+// --------------------------------------------------------------------------
+// XCard header — mas compacto, estilo TailAdmin
+// Reduce min-height y tamaño del titulo (text-lg 18px en vez de text-h6 20px)
+// --------------------------------------------------------------------------
+.x-card {
+  .x-card-section-title {
+    min-height: 52px !important;     // antes 60px
+    padding: 12px 20px !important;   // antes 8px 16px (mas horizontal, similar a TailAdmin p-5)
+
+    &--with-subtitle {
+      min-height: 64px !important;   // antes 80px
+    }
+
+    // Titulo: text-lg semibold gray-800 (estandar TailAdmin)
+    .text-h6 {
+      font-size: 18px !important;    // text-lg de Tailwind (estandar TailAdmin)
+      font-weight: 600 !important;
+      color: #1d2939;                // gray-800
+      line-height: 1.4 !important;
+    }
+
+    // Subtitle: caption pequeno gray-500
+    .text-caption {
+      font-size: 12px !important;
+      color: #667085 !important;     // gray-500 (mas legible que grey-5 default)
+      line-height: 1.4;
+      margin-top: 2px;
+    }
+
+    // Icono mas chico para acompañar el titulo mas pequeño
+    > .row > .q-icon {
+      font-size: 18px !important;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Header — fondo blanco con borde inferior fino
+// --------------------------------------------------------------------------
+.q-header {
+  box-shadow: none;
+  border-bottom: 1px solid #e4e7ec;
+}
+
+// --------------------------------------------------------------------------
+// Drawer — sin sombra, borde derecho fino
+// --------------------------------------------------------------------------
+.q-drawer {
+  box-shadow: none;
+  border-right: 1px solid #e4e7ec;
+  background-color: #ffffff;
+
+  .q-item {
+    border-radius: 8px;
+    margin: 2px 8px;
+    color: #344054; // gray-700
+
+    &:hover {
+      background-color: #f2f4f7; // gray-100
+    }
+  }
+
+  // Items activos (Quasar router-link, q-item--active, y nuestra clase custom menu-item-active)
+  .q-item.q-router-link--active,
+  .q-item.q-router-link-active,
+  .q-item--active,
+  .q-item.menu-item-active {
+    background-color: #ecf3ff !important; // brand-50
+    color: #465fff !important;            // brand-500
+
+    .q-icon {
+      color: #465fff !important;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Tabla — borde exterior, radius, th claro
+// --------------------------------------------------------------------------
+.q-table__container {
+  border: 1px solid #e4e7ec;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: none;
+}
+
+.q-table {
+  thead th {
+    background-color: #f9fafb; // gray-50
+    color: #667085; // gray-500
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #e4e7ec;
+  }
+
+  tbody td {
+    border-bottom: 1px solid #f2f4f7; // gray-100
+    color: #344054; // gray-700
+  }
+
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+
+  tbody tr:hover {
+    background-color: #f9fafb; // gray-50
+  }
+}
+
+// --------------------------------------------------------------------------
+// Separator
+// --------------------------------------------------------------------------
+.q-separator {
+  background-color: #e4e7ec; // gray-200
+}
+
+// --------------------------------------------------------------------------
+// Tabs — estilo TailAdmin "Tabs dentro de card"
+// Tab activo: bg gris-100 sutil + texto negro + rounded-lg
+// Tab inactivo: transparente con texto gris-500
+// Contenedor: transparente (hereda del card padre o body)
+// --------------------------------------------------------------------------
+.q-tabs {
+  background-color: transparent;
+  min-height: auto;
+
+  .q-tab {
+    text-transform: none;
+    font-weight: 500;
+    font-size: 14px;
+    color: #667085; // gray-500 — texto inactivo
+    border-radius: 8px;
+    padding: 8px 16px;
+    min-height: 36px;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+
+    &--inactive:hover {
+      color: #344054; // gray-700 al hover
+      background-color: #f9fafb; // gray-50 — hover muy sutil
+    }
+
+    &--active {
+      background-color: #f2f4f7; // gray-100 — tab activo sutil
+      color: #1d2939; // gray-800 — texto fuerte/negro
+
+      .q-icon {
+        color: #1d2939;
+      }
+    }
+  }
+
+  .q-tabs__arrow {
+    color: #667085;
+  }
+
+  // Quita el underline tipico de Quasar
+  .q-tab__indicator {
+    display: none !important;
+  }
+
+  // Wrapper interno sin padding extra
+  .q-tabs__content {
+    align-items: center;
+  }
+
+  // Si el tab tiene icono, lo pone a la IZQUIERDA del label (en vez de arriba)
+  .q-tab__content {
+    flex-direction: row;
+    gap: 8px;
+  }
+  .q-tab__icon {
+    margin: 0;
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+  .q-tab__label {
+    line-height: 1;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Items hover
+// --------------------------------------------------------------------------
+.q-item:hover {
+  background-color: #f2f4f7; // gray-100
+}
+
+// --------------------------------------------------------------------------
+// Menus (q-menu generico) — estilo TailAdmin
+// Aplica a TODOS los q-menu del proyecto (incluyendo XTableServer actions,
+// columns selector, row actions, etc.)
+// --------------------------------------------------------------------------
+.q-menu {
+  border-radius: 12px;
+  border: 1px solid #e4e7ec; // gray-200
+  box-shadow: 0 4px 16px rgba(16, 24, 40, 0.12);
+  background-color: #ffffff;
+  overflow: hidden;
+  padding: 8px;
+
+  // Listas dentro del menu
+  .q-list {
+    padding: 0;
+  }
+
+  // Items del menu
+  .q-item {
+    border-radius: 8px;
+    padding: 8px 12px;
+    min-height: auto;
+    color: #344054; // gray-700
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.15s ease, color 0.15s ease;
+    gap: 8px;
+
+    & + .q-item {
+      margin-top: 2px;
+    }
+
+    &:hover {
+      background-color: #f2f4f7; // gray-100
+      color: #1d2939; // gray-800
+
+      .q-icon {
+        color: #344054;
+      }
+    }
+
+    .q-item__section--avatar {
+      min-width: 28px;
+      padding-right: 0;
+      color: #667085; // gray-500
+    }
+  }
+
+  // Headers de seccion (q-item-label header)
+  .q-item-label--header {
+    padding: 4px 12px;
+    color: #667085;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  // Separators dentro del menu
+  .q-separator {
+    margin: 4px 0;
+    background-color: #e4e7ec;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Dialog backdrop — oscuro con blur
+// --------------------------------------------------------------------------
+.q-dialog__backdrop {
+  background: rgba(16, 24, 40, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+// --------------------------------------------------------------------------
+// Botones — transicion suave + estilo TailAdmin
+// --------------------------------------------------------------------------
+.q-btn {
+  text-transform: none;
+  font-weight: 500;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
+  letter-spacing: normal;
+
+  &:not(.q-btn--flat):not(.q-btn--outline):not(.q-btn--dense) {
+    box-shadow: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+
+    &:hover {
+      box-shadow: 0 4px 6px -1px rgba(16, 24, 40, 0.1);
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Inputs / Fields — bordes sutiles + focus ring TailAdmin
+// --------------------------------------------------------------------------
+.q-field--outlined {
+  .q-field__control {
+    border-radius: 8px;
+    background: #ffffff;
+
+    &:before {
+      border-color: #d0d5dd; // gray-300
+    }
+
+    &:hover:before {
+      border-color: #98a2b3; // gray-400
+    }
+  }
+
+  &.q-field--focused .q-field__control {
+    &:after {
+      border-color: #465fff; // brand-500
+      border-width: 1px;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// Chip — estilo TailAdmin (mas redondeado, mas suave)
+// --------------------------------------------------------------------------
+.q-chip {
+  font-weight: 500;
+  font-size: 12px;
+}
+
+// --------------------------------------------------------------------------
+// Layout header
+// --------------------------------------------------------------------------
+.layout-header {
+  background-color: #ffffff;
+  color: #344054; // gray-700
+}
+
+// --------------------------------------------------------------------------
+// Header icon buttons (hamburguesa, notificaciones, etc.)
+// Estilo TailAdmin: cuadrado con rounded-lg + hover sutil
+// --------------------------------------------------------------------------
+.header-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #344054; // gray-700
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background-color: #f2f4f7; // gray-100
+    color: #1d2939;
+  }
+  &:focus {
+    outline: none;
+  }
+  &:focus-visible {
+    box-shadow: 0 0 0 3px rgba(70, 95, 255, 0.15); // focus ring brand
+  }
+  &--active {
+    background-color: #f2f4f7;
+  }
+}
+
+// --------------------------------------------------------------------------
+// User trigger (boton del usuario en el header con avatar + nombre + chevron)
+// Estilo pill TailAdmin: redondeado, hover sutil
+// --------------------------------------------------------------------------
+.user-trigger {
+  // Estructura (reset del button nativo + flex)
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+
+  // Estilo visual TailAdmin
+  border-radius: 9999px; // pill — sigue la curva del avatar
+  color: #344054; // gray-700
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: #f2f4f7; // gray-100
+  }
+  &:focus {
+    outline: none; // sin outline default del browser
+  }
+  &:focus-visible {
+    // Ring SOLO cuando se navega con teclado (Tab), no con click de mouse.
+    // :focus-visible es el estandar moderno para mejor UX + accesibilidad.
+    box-shadow: 0 0 0 3px rgba(70, 95, 255, 0.15); // focus ring brand-500
+  }
+  &--active {
+    background-color: #f2f4f7;
+  }
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #ffffff;
+  border: 1px solid #e4e7ec; // gray-200
+}
+
+.user-trigger__name {
+  white-space: nowrap;
+}
+
+.user-trigger__chevron {
+  color: #667085; // gray-500
+}
+
+// --------------------------------------------------------------------------
+// Toast notifications — estilo TailAdmin (blanco con border-left de color)
+// --------------------------------------------------------------------------
+.x-toast.q-notification {
+  background-color: #ffffff !important;
+  color: #1d2939 !important; // gray-800
+  border: 1px solid #e4e7ec; // gray-200
+  border-radius: 12px;
+  box-shadow: 0 4px 8px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  padding: 14px 16px;
+  min-width: 320px;
+  max-width: 420px;
+  border-left: 4px solid transparent;
+
+  .q-notification__icon {
+    font-size: 16px;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+  }
+
+  .q-notification__message {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    padding: 0;
+    color: #1d2939 !important;
+  }
+
+  // --- Success (TailAdmin green) ---
+  &.x-toast--success {
+    border-left-color: #12b76a;
+
+    .q-notification__icon {
+      background-color: #ecfdf3;
+      color: #039855;
+    }
+  }
+
+  // --- Error (TailAdmin red) ---
+  &.x-toast--error {
+    border-left-color: #f04438;
+
+    .q-notification__icon {
+      background-color: #fef3f2;
+      color: #d92d20;
+    }
+  }
+
+  // --- Warning (TailAdmin orange) ---
+  &.x-toast--warning {
+    border-left-color: #f79009;
+
+    .q-notification__icon {
+      background-color: #fffaeb;
+      color: #dc6803;
+    }
+  }
+
+  // --- Info (TailAdmin brand) ---
+  &.x-toast--info {
+    border-left-color: #465fff;
+
+    .q-notification__icon {
+      background-color: #ecf3ff;
+      color: #465fff;
+    }
+  }
+}
+
+// ==========================================================================
+// DARK MODE — TailAdmin dark palette
+// ==========================================================================
+.body--dark {
+  // --- Body ---
+  background-color: #101828; // gray-900
+  color: #f2f4f7; // gray-100
+
+  // --- Layout header ---
+  .layout-header,
+  .q-header {
+    background-color: #101828;
+    border-bottom-color: #344054; // gray-700
+    color: #f2f4f7;
+  }
+
+  // --- Drawer ---
+  .q-drawer {
+    background-color: #101828;
+    border-right-color: #344054;
+
+    .q-item.q-router-link--active,
+    .q-item--active {
+      background-color: rgba(70, 95, 255, 0.15); // brand-500 con alpha
+      color: #7592ff; // brand-400
+
+      .q-icon {
+        color: #7592ff;
+      }
+    }
+
+    .q-item {
+      color: #d0d5dd; // gray-300
+    }
+  }
+
+  // --- Cards ---
+  .q-card {
+    background-color: #1d2939; // gray-800
+    border-color: #344054;
+    color: #f2f4f7;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  // --- Tables ---
+  .q-table__container {
+    border-color: #344054;
+  }
+
+  .q-table {
+    thead th {
+      background-color: #1d2939;
+      color: #98a2b3; // gray-400
+      border-bottom-color: #344054;
+    }
+
+    tbody td {
+      color: #d0d5dd; // gray-300
+      border-bottom-color: #344054;
+    }
+
+    tbody tr:hover {
+      background-color: #344054;
+    }
+  }
+
+  // --- Dialog ---
+  .x-dialog-title,
+  .x-dialog-actions {
+    background-color: #1d2939;
+    border-color: #344054;
+  }
+
+  .x-dialog-content-header {
+    background-color: #1d2939;
+    border-color: #344054;
+  }
+
+  .q-dialog__backdrop {
+    background: rgba(0, 0, 0, 0.7);
+  }
+
+  // --- Inputs / Fields ---
+  .q-field {
+    .q-field__control {
+      border-color: #344054;
+      color: #f2f4f7;
+    }
+
+    .q-field__label {
+      color: #98a2b3;
+    }
+
+    .q-field__native,
+    .q-field__prefix,
+    .q-field__suffix {
+      color: #f2f4f7;
+    }
+
+    &.q-field--outlined .q-field__control:before {
+      border-color: #344054;
+    }
+
+    &.q-field--outlined .q-field__control:hover:before {
+      border-color: #98a2b3;
+    }
+  }
+
+  // --- Separator ---
+  .q-separator {
+    background-color: #344054;
+  }
+
+  // --- Items hover ---
+  .q-item:hover {
+    background-color: #344054;
+  }
+
+  // --- Menu popup (con estilo TailAdmin) ---
+  .q-menu {
+    background-color: #1d2939; // gray-800
+    border-color: #344054; // gray-700
+    color: #f2f4f7;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+
+    .q-item {
+      color: #d0d5dd; // gray-300
+
+      &:hover {
+        background-color: #344054;
+        color: #f2f4f7;
+
+        .q-icon {
+          color: #d0d5dd;
+        }
+      }
+
+      .q-item__section--avatar {
+        color: #98a2b3;
+      }
+    }
+
+    .q-item-label--header {
+      color: #98a2b3;
+    }
+
+    .q-separator {
+      background-color: #344054;
+    }
+  }
+
+  // --- Tabs (dark mode) ---
+  .q-tabs {
+    background-color: transparent;
+
+    .q-tab {
+      color: #98a2b3; // gray-400 — texto inactivo
+
+      &--inactive:hover {
+        color: #d0d5dd; // gray-300
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      &--active {
+        background-color: #344054; // gray-700 — tab activo sutil
+        color: #f2f4f7; // gray-100 — texto claro
+
+        .q-icon {
+          color: #f2f4f7;
+        }
+      }
+    }
+  }
+
+  // --- Flat buttons hover ---
+  .q-btn--flat:hover {
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+
+  // --- Scrollbars ---
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #101828;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #475467; // gray-600
+    border-radius: 4px;
+  }
+
+  // --- Loading overlay ---
+  .x-loading {
+    background-color: rgba(16, 24, 40, 0.7);
+  }
+
+  // --- Select dropdown ---
+  .q-select__dropdown-icon {
+    color: #98a2b3;
+  }
+
+  // --- Toolbar title ---
+  .q-toolbar__title {
+    color: #f2f4f7;
+  }
+
+  // --- Chip ---
+  .q-chip {
+    background-color: #344054;
+    color: #f2f4f7;
+  }
+
+  // --- Tooltip ---
+  .q-tooltip {
+    background-color: #1d2939;
+    color: #f2f4f7;
+    border: 1px solid #344054;
+  }
+
+  // --- Page container bg ---
+  .q-page {
+    background-color: #101828;
+  }
+
+  // --- Expansion item ---
+  .q-expansion-item__content {
+    background-color: #101828;
+  }
+
+  // --- Banner ---
+  .q-banner {
+    background-color: #1d2939;
+    color: #f2f4f7;
+  }
+
+  // --- Header icon buttons ---
+  .header-icon-btn {
+    color: #f2f4f7;
+
+    &:hover,
+    &--active {
+      background-color: #344054;
+      color: #f2f4f7;
+    }
+  }
+
+  // --- User trigger (header) ---
+  .user-trigger {
+    color: #f2f4f7;
+
+    &:hover,
+    &--active {
+      background-color: #344054;
+    }
+  }
+  .user-avatar {
+    background: #1d2939;
+    border-color: #344054;
+  }
+  .user-trigger__chevron {
+    color: #98a2b3;
+  }
+
+  // --- Toasts ---
+  .x-toast.q-notification {
+    background-color: #1d2939 !important;
+    color: #f2f4f7 !important;
+    border-color: #344054;
+
+    .q-notification__message {
+      color: #f2f4f7 !important;
+    }
+
+    &.x-toast--success .q-notification__icon {
+      background-color: rgba(18, 183, 106, 0.15);
+      color: #32d583;
+    }
+
+    &.x-toast--error .q-notification__icon {
+      background-color: rgba(240, 68, 56, 0.15);
+      color: #fda29b;
+    }
+
+    &.x-toast--warning .q-notification__icon {
+      background-color: rgba(247, 144, 9, 0.15);
+      color: #fec84b;
+    }
+
+    &.x-toast--info .q-notification__icon {
+      background-color: rgba(70, 95, 255, 0.15);
+      color: #7592ff;
+    }
+  }
+}
