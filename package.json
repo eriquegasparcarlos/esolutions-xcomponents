@@ -25,6 +25,7 @@
     "XDialog",
     "XDialogAction",
     "XDnd",
+    "XDropdownMenu",
     "XFile",
     "XInput",
     "XInputColor",
