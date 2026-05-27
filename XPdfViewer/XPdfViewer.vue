@@ -1,197 +1,592 @@
+<template>
+  <div class="x-pdf-viewer">
+    <!-- Toolbar -->
+    <div class="x-pdf-toolbar">
+      <span v-if="filename" class="x-pdf-toolbar__filename" :title="filename">{{ filename }}</span>
+      <div v-if="filename" class="x-pdf-tb-divider"></div>
+
+      <div class="x-pdf-toolbar__group">
+        <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button class="x-pdf-zoom-label" @click="zoomReset" title="Restaurar zoom (100%)">
+          {{ zoomLabel }}
+        </button>
+        <button class="x-pdf-tb-btn" @click="zoomIn" :disabled="scale >= MAX_SCALE" title="Acercar (Ctrl++)">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button class="x-pdf-tb-btn" @click="zoomFit" title="Ajustar al ancho">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+            <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="x-pdf-toolbar__sep"></div>
+
+      <div class="x-pdf-toolbar__group">
+        <span class="x-pdf-page-info" v-if="totalPages > 0">
+          {{ totalPages }} {{ totalPages === 1 ? 'página' : 'páginas' }}
+        </span>
+      </div>
+
+      <div class="x-pdf-toolbar__sep"></div>
+
+      <div class="x-pdf-toolbar__group">
+        <button
+          v-if="!hidePrint"
+          class="x-pdf-tb-btn"
+          @click="printPdf"
+          :disabled="!pdfReady || printing"
+          :title="printing ? 'Preparando...' : 'Imprimir'"
+        >
+          <svg v-if="!printing" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="6 9 6 2 18 2 18 9"/>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+            <rect x="6" y="14" width="12" height="8"/>
+          </svg>
+          <span v-else class="x-pdf-tb-spinner"></span>
+        </button>
+        <button v-if="!hideDownload" class="x-pdf-tb-btn" @click="downloadPdf" :disabled="!pdfReady" title="Descargar PDF">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+        </button>
+        <template v-if="!hideClose">
+          <div class="x-pdf-tb-divider"></div>
+          <button class="x-pdf-tb-btn x-pdf-tb-btn--close" @click="$emit('close')" title="Cerrar">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Área de páginas -->
+    <div
+      class="x-pdf-pages-container"
+      ref="containerRef"
+      :class="{ 'is-dragging': isDragging, 'is-loading': loading }"
+      @mousedown="startDrag"
+    >
+      <div class="x-pdf-pages-inner" ref="pagesRef"></div>
+    </div>
+
+    <!-- Overlay de carga -->
+    <Transition name="x-pdf-fade">
+      <div v-if="loading" class="x-pdf-loading-overlay">
+        <div class="x-pdf-spinner"></div>
+        <span>{{ loadingMsg }}</span>
+      </div>
+    </Transition>
+
+    <!-- Hint Ctrl+Scroll -->
+    <Transition name="x-pdf-fade">
+      <div v-if="showHint" class="x-pdf-hint">Ctrl + rueda del ratón para hacer zoom</div>
+    </Transition>
+  </div>
+</template>
+
 <script setup>
-import { ref, computed, watch, nextTick } from 'vue'
-import { api } from 'src/services/api'
-import VuePdfEmbed from 'vue-pdf-embed'
-import XDialog from '../XDialog/XDialog.vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
+import * as pdfjsLib from 'pdfjs-dist'
+
+// Worker usando new URL para compatibilidad con Vite/Rollup en proyectos consumidores
+pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).href
+
+const emit = defineEmits(['close'])
 
 const props = defineProps({
-  src: { type: String, default: '' },
-  title: { type: String, default: 'Documento PDF' },
-  width: { type: String, default: '50vw' },
+  src:          { type: String, required: true },
+  filename:     { type: String, default: 'documento.pdf' },
+  hidePrint:    { type: Boolean, default: false },
+  hideDownload: { type: Boolean, default: false },
+  hideClose:    { type: Boolean, default: false },
 })
 
-const isDialogOpen = ref(false)
-const isLoading = ref(false)
-const isRendering = ref(false)
-const pdfSource = ref(null)
-const currentPage = ref(1)
-const totalPages = ref(0)
-const zoom = ref(1)
-const scrollRef = ref(null)
+// --- Estado ---
+const containerRef = ref(null)
+const pagesRef     = ref(null)
+const loading      = ref(false)
+const loadingMsg   = ref('Cargando PDF...')
+const printing     = ref(false)
+const pdfReady     = ref(false)
+const totalPages   = ref(0)
+const scale        = ref(1.0)
+const isDragging   = ref(false)
+const showHint     = ref(false)
 
-const showOverlay = computed(() => isLoading.value || isRendering.value)
+const MIN_SCALE  = 0.25
+const MAX_SCALE  = 5.0
+const SCALE_STEP = 0.25
 
-const pdfWidth = computed(() => {
-  const el = scrollRef.value?.$el || scrollRef.value
-  if (!el) return 800
-  const available = el.clientWidth - 8
-  return Math.round(available * zoom.value)
-})
+let pdfDoc      = null
+let renderGen   = 0
+let hintTimeout = null
 
-const openDialog = () => {
-  isDialogOpen.value = true
-}
+// --- Computed ---
+const zoomLabel = computed(() => `${Math.round(scale.value * 100)}%`)
 
-const closeDialog = () => {
-  isDialogOpen.value = false
-}
-
-const handleOpen = async () => {
-  if (!props.src) return
-  isLoading.value = true
-  isRendering.value = true
-  currentPage.value = 1
+// --- Carga del PDF ---
+async function loadPdf(src) {
+  loading.value    = true
+  loadingMsg.value = 'Cargando PDF...'
+  pdfReady.value   = false
   totalPages.value = 0
-  zoom.value = 1
 
   try {
-    const response = await api.get(props.src, { responseType: 'arraybuffer' })
-    await nextTick()
-    pdfSource.value = new Uint8Array(response.data)
-  } catch {
-    pdfSource.value = null
-    isRendering.value = false
+    if (pdfDoc) {
+      pdfDoc.destroy()
+      pdfDoc = null
+    }
+
+    const task = pdfjsLib.getDocument({ url: src, cMapUrl: null })
+    pdfDoc = await task.promise
+    totalPages.value = pdfDoc.numPages
+
+    await fitToWidth()
+    await renderAll()
+    pdfReady.value = true
+  } catch (e) {
+    console.error('[XPdfViewer] Error cargando PDF:', e)
+    loadingMsg.value = 'Error al cargar el PDF'
   } finally {
-    isLoading.value = false
+    loading.value = false
   }
 }
 
-const onLoaded = (pdf) => {
-  if (pdf?.numPages) {
-    totalPages.value = pdf.numPages
+// --- Fit al ancho del contenedor ---
+async function fitToWidth() {
+  if (!pdfDoc || !containerRef.value) return
+  const page      = await pdfDoc.getPage(1)
+  const vp        = page.getViewport({ scale: 1.0 })
+  const padding   = 48
+  const available = containerRef.value.clientWidth - padding
+  scale.value = Math.max(MIN_SCALE, Math.min(MAX_SCALE, available / vp.width))
+}
+
+// --- Renderizado ---
+async function renderAll() {
+  if (!pdfDoc || !pagesRef.value) return
+
+  const gen = ++renderGen
+  pagesRef.value.innerHTML = ''
+
+  for (let i = 1; i <= totalPages.value; i++) {
+    if (gen !== renderGen) return
+    loadingMsg.value = `Renderizando página ${i} / ${totalPages.value}...`
+    await renderPage(i, gen)
   }
+  loadingMsg.value = ''
 }
 
-const onRendered = () => {
-  isRendering.value = false
+async function renderPage(pageNum, gen) {
+  const page     = await pdfDoc.getPage(pageNum)
+  const dpr      = window.devicePixelRatio || 1
+  const viewport = page.getViewport({ scale: scale.value })
+
+  const wrapper = document.createElement('div')
+  wrapper.className = 'x-pdf-page-wrapper'
+
+  const canvas = document.createElement('canvas')
+  const ctx    = canvas.getContext('2d')
+
+  canvas.width  = Math.floor(viewport.width  * dpr)
+  canvas.height = Math.floor(viewport.height * dpr)
+  canvas.style.width  = `${viewport.width}px`
+  canvas.style.height = `${viewport.height}px`
+  ctx.scale(dpr, dpr)
+
+  wrapper.appendChild(canvas)
+
+  if (gen !== renderGen) return
+  pagesRef.value.appendChild(wrapper)
+
+  await page.render({ canvasContext: ctx, viewport }).promise
 }
 
-const prevPage = () => {
-  if (currentPage.value > 1) {
-    isRendering.value = true
-    currentPage.value--
-  }
+// --- Zoom ---
+function zoomIn() {
+  scale.value = parseFloat(Math.min(MAX_SCALE, scale.value + SCALE_STEP).toFixed(2))
+  renderAll()
 }
 
-const nextPage = () => {
-  if (currentPage.value < totalPages.value) {
-    isRendering.value = true
-    currentPage.value++
-  }
+function zoomOut() {
+  scale.value = parseFloat(Math.max(MIN_SCALE, scale.value - SCALE_STEP).toFixed(2))
+  renderAll()
 }
 
-const zoomIn = () => {
-  if (zoom.value < 2) zoom.value = Math.round((zoom.value + 0.25) * 100) / 100
+function zoomReset() {
+  scale.value = 1.0
+  renderAll()
 }
 
-const zoomOut = () => {
-  if (zoom.value > 0.5) zoom.value = Math.round((zoom.value - 0.25) * 100) / 100
+async function zoomFit() {
+  await fitToWidth()
+  renderAll()
 }
 
-const zoomPercent = () => Math.round(zoom.value * 100)
+// --- Drag to pan ---
+let drag = { active: false, x: 0, y: 0, sl: 0, st: 0 }
 
-const downloadPdf = () => {
-  if (!props.src) return
-  api
-    .get(props.src, { responseType: 'blob' })
-    .then((response) => {
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `${props.title || 'documento'}.pdf`)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
-    })
-    .catch(() => {})
+function startDrag(e) {
+  if (e.button !== 0) return
+  const c = containerRef.value
+  drag = { active: true, x: e.clientX, y: e.clientY, sl: c.scrollLeft, st: c.scrollTop }
+  isDragging.value = true
+  document.addEventListener('mousemove', onDrag)
+  document.addEventListener('mouseup',   endDrag)
 }
 
-const printPdf = () => {
-  if (!props.src) return
-  api
-    .get(props.src, { responseType: 'blob' })
-    .then((response) => {
-      const blob = new Blob([response.data], { type: 'application/pdf' })
-      const url = window.URL.createObjectURL(blob)
-      const iframe = document.createElement('iframe')
-      iframe.style.display = 'none'
-      iframe.src = url
-      document.body.appendChild(iframe)
-      iframe.onload = () => {
-        iframe.contentWindow.print()
-        setTimeout(() => {
-          document.body.removeChild(iframe)
-          window.URL.revokeObjectURL(url)
-        }, 1000)
+function onDrag(e) {
+  if (!drag.active) return
+  const dx = e.clientX - drag.x
+  const dy = e.clientY - drag.y
+  containerRef.value.scrollLeft = drag.sl - dx
+  containerRef.value.scrollTop  = drag.st - dy
+}
+
+function endDrag() {
+  drag.active = false
+  isDragging.value = false
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup',   endDrag)
+}
+
+// --- Ctrl + Rueda → Zoom ---
+let wheelDebounce = null
+
+function onWheel(e) {
+  if (!e.ctrlKey) return
+  e.preventDefault()
+
+  const delta = e.deltaY < 0 ? SCALE_STEP : -SCALE_STEP
+  scale.value = parseFloat(
+    Math.min(MAX_SCALE, Math.max(MIN_SCALE, scale.value + delta)).toFixed(2)
+  )
+
+  clearTimeout(wheelDebounce)
+  wheelDebounce = setTimeout(renderAll, 150)
+}
+
+function onWheelNoCtrl(e) {
+  if (e.ctrlKey) return
+  showHint.value = true
+  clearTimeout(hintTimeout)
+  hintTimeout = setTimeout(() => { showHint.value = false }, 2000)
+}
+
+// --- Imprimir ---
+async function printPdf() {
+  if (!pdfDoc || printing.value) return
+  printing.value = true
+
+  const style = document.createElement('style')
+  style.textContent = `
+    @media print {
+      body > *:not(#__pdf-print-area__) { display: none !important; }
+      #__pdf-print-area__ {
+        display: block !important;
+        position: fixed; inset: 0; background: white; z-index: 99999;
       }
-    })
-    .catch(() => {})
+      #__pdf-print-area__ img {
+        display: block; width: 100%; height: auto;
+        page-break-after: always; page-break-inside: avoid;
+      }
+      #__pdf-print-area__ img:last-child { page-break-after: auto; }
+    }
+  `
+  const area = document.createElement('div')
+  area.id = '__pdf-print-area__'
+  area.style.display = 'none'
+
+  try {
+    for (let i = 1; i <= totalPages.value; i++) {
+      const page     = await pdfDoc.getPage(i)
+      const viewport = page.getViewport({ scale: 2.5 })
+      const canvas   = document.createElement('canvas')
+      canvas.width   = viewport.width
+      canvas.height  = viewport.height
+      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise
+      const img = document.createElement('img')
+      img.src = canvas.toDataURL('image/jpeg', 0.92)
+      area.appendChild(img)
+    }
+
+    document.head.appendChild(style)
+    document.body.appendChild(area)
+    await new Promise(r => setTimeout(r, 150))
+
+    // Liberar el botón ANTES del diálogo (window.print es bloqueante en escritorio)
+    printing.value = false
+    window.print()
+  } finally {
+    printing.value = false
+    document.head.contains(style) && document.head.removeChild(style)
+    document.body.contains(area)  && document.body.removeChild(area)
+  }
 }
 
-watch(
-  () => props.src,
-  (newSrc) => {
-    if (newSrc && isDialogOpen.value) handleOpen()
-  },
-)
+// --- Descargar ---
+function downloadPdf() {
+  const a    = document.createElement('a')
+  a.href     = props.src
+  a.download = props.filename
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+}
 
-defineExpose({ openDialog })
+// --- Ciclo de vida ---
+onMounted(() => {
+  containerRef.value.addEventListener('wheel', onWheel,       { passive: false })
+  containerRef.value.addEventListener('wheel', onWheelNoCtrl, { passive: true  })
+  if (props.src) loadPdf(props.src)
+})
+
+onBeforeUnmount(() => {
+  containerRef.value?.removeEventListener('wheel', onWheel)
+  containerRef.value?.removeEventListener('wheel', onWheelNoCtrl)
+  document.removeEventListener('mousemove', onDrag)
+  document.removeEventListener('mouseup',   endDrag)
+  clearTimeout(wheelDebounce)
+  clearTimeout(hintTimeout)
+  if (pdfDoc) pdfDoc.destroy()
+})
+
+watch(() => props.src, (src) => { if (src) loadPdf(src) })
+
+defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
 </script>
 
-<template>
-  <x-dialog
-    v-model="isDialogOpen"
-    :title="title"
-    :width="width"
-    :loading="showOverlay"
-    is-full-height
-    show-button-close
-    @action-button-close="closeDialog"
-    @before-show="handleOpen"
-  >
-    <template #content-header>
-      <div class="x-pdf-toolbar">
-        <div class="x-pdf-toolbar__nav">
-          <q-btn flat dense round icon="fal fa-chevron-left" size="sm" :disable="currentPage <= 1 || showOverlay" @click="prevPage" />
-          <span class="x-pdf-toolbar__page-info">{{ currentPage }} / {{ totalPages || '...' }}</span>
-          <q-btn flat dense round icon="fal fa-chevron-right" size="sm" :disable="currentPage >= totalPages || showOverlay" @click="nextPage" />
-        </div>
-        <q-separator vertical class="q-mx-sm" />
-        <div class="x-pdf-toolbar__zoom">
-          <q-btn flat dense round icon="fal fa-minus" size="sm" :disable="zoom <= 0.5" @click="zoomOut" />
-          <span class="x-pdf-toolbar__zoom-info">{{ zoomPercent() }}%</span>
-          <q-btn flat dense round icon="fal fa-plus" size="sm" :disable="zoom >= 2" @click="zoomIn" />
-        </div>
-        <q-space />
-        <q-btn flat dense round icon="fal fa-print" size="sm" @click="printPdf">
-          <q-tooltip>Imprimir</q-tooltip>
-        </q-btn>
-        <q-btn flat dense round icon="fal fa-download" size="sm" @click="downloadPdf">
-          <q-tooltip>Descargar</q-tooltip>
-        </q-btn>
-      </div>
-    </template>
+<style scoped>
+.x-pdf-viewer {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  background: #525659;
+}
 
-    <template #content>
-      <div ref="scrollRef" class="x-pdf-scroll" :class="{ 'x-pdf-scroll--zoomed': zoom > 1 }">
-        <!-- PDF -->
-        <div v-if="pdfSource" class="x-pdf-viewer__container" :class="{ 'x-pdf-viewer__container--ready': !showOverlay }">
-          <vue-pdf-embed
-            :source="pdfSource"
-            :page="currentPage"
-            :width="pdfWidth"
-            @loaded="onLoaded"
-            @rendered="onRendered"
-          />
-        </div>
+/* ── Toolbar ── */
+.x-pdf-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  flex-shrink: 0;
+  user-select: none;
+  flex-wrap: wrap;
+}
 
-        <!-- Sin PDF -->
-        <div v-else-if="!isLoading" class="x-pdf-viewer__empty">
-          <q-icon name="fal fa-file-pdf" size="48px" color="grey-5" />
-          <div class="text-grey-6 q-mt-sm">No se pudo cargar el PDF</div>
-        </div>
-      </div>
-    </template>
-  </x-dialog>
-</template>
+.x-pdf-toolbar__group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.x-pdf-toolbar__sep {
+  flex: 1;
+}
+
+.x-pdf-tb-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  color: #444;
+  cursor: pointer;
+  font-size: 12px;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.x-pdf-tb-btn:hover:not(:disabled) {
+  background: #f0f0f0;
+  border-color: #d0d0d0;
+  color: #111;
+}
+
+.x-pdf-tb-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.x-pdf-tb-divider {
+  width: 1px;
+  height: 18px;
+  background: #e0e0e0;
+  margin: 0 4px;
+}
+
+.x-pdf-tb-btn--close:hover:not(:disabled) {
+  background: #fee2e2;
+  border-color: #fca5a5;
+  color: #dc2626;
+}
+
+.x-pdf-toolbar__filename {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  color: #666;
+  padding-left: 4px;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.x-pdf-tb-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ddd;
+  border-top-color: #555;
+  border-radius: 50%;
+  animation: x-pdf-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.x-pdf-zoom-label {
+  min-width: 50px;
+  text-align: center;
+  padding: 4px 8px;
+  background: #f4f4f4;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+  color: #333;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.x-pdf-zoom-label:hover {
+  background: #e8e8e8;
+  color: #111;
+}
+
+.x-pdf-page-info {
+  font-size: 12px;
+  color: #888;
+  padding: 0 6px;
+}
+
+/* ── Área de páginas ── */
+.x-pdf-pages-container {
+  flex: 1;
+  overflow: auto;
+  cursor: grab;
+  min-height: 0;
+}
+
+.x-pdf-pages-container.is-dragging {
+  cursor: grabbing;
+}
+
+.x-pdf-pages-container.is-loading {
+  overflow: hidden;
+}
+
+.x-pdf-pages-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  gap: 16px;
+  min-height: 100%;
+}
+
+/* ── Página individual ── */
+:deep(.x-pdf-page-wrapper) {
+  display: flex;
+  justify-content: center;
+  flex-shrink: 0;
+  border-radius: 2px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background: white;
+  overflow: hidden;
+  line-height: 0;
+}
+
+:deep(.x-pdf-page-wrapper canvas) {
+  display: block;
+  max-width: 100%;
+}
+
+/* ── Loading overlay ── */
+.x-pdf-loading-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  background: rgba(30, 30, 30, 0.85);
+  color: #ccc;
+  font-size: 14px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.x-pdf-spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid #444;
+  border-top-color: #4a90e2;
+  border-radius: 50%;
+  animation: x-pdf-spin 0.8s linear infinite;
+}
+
+@keyframes x-pdf-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Hint Ctrl+Scroll ── */
+.x-pdf-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.75);
+  color: #eee;
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 20px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+/* ── Transiciones ── */
+.x-pdf-fade-enter-active,
+.x-pdf-fade-leave-active {
+  transition: opacity 0.25s;
+}
+
+.x-pdf-fade-enter-from,
+.x-pdf-fade-leave-to {
+  opacity: 0;
+}
+</style>
