@@ -1,5 +1,5 @@
 <script setup>
-import {getCurrentInstance, nextTick, ref} from 'vue';
+import {computed, getCurrentInstance, nextTick, ref} from 'vue';
 import {useQuasar} from 'quasar';
 import XInput from '../XInput/XInput.vue';
 import XDialog from '../XDialog/XDialog.vue';
@@ -18,6 +18,18 @@ const props = defineProps({
   recordId: null,
   action: {type: String, required: true}
 });
+
+// Normaliza los colores que llegan del backend a tokens semanticos del theme.
+// Mapeo: 'red' -> danger, 'green' -> success, 'primary' -> primary, etc.
+const iconVariant = computed(() => {
+  const c = (form.value?.icon_color || 'primary').toLowerCase()
+  if (['red', 'negative', 'danger', 'error'].includes(c)) return 'danger'
+  if (['green', 'positive', 'success'].includes(c)) return 'success'
+  if (['orange', 'warning', 'yellow'].includes(c)) return 'warning'
+  if (['blue', 'info'].includes(c)) return 'info'
+  if (['grey', 'gray', 'neutral'].includes(c)) return 'neutral'
+  return 'primary'
+})
 
 // Eventos que puede emitir este componente
 const emit = defineEmits(['success']);
@@ -124,36 +136,53 @@ defineExpose({openDialog});
 <template>
   <x-dialog v-model="isDialogOpen"
             :loading="loading"
-            width="540px"
+            width="440px"
             @before-show="handleOpen">
-    <!-- Slot: contenido del diálogo -->
+    <!-- Slot: contenido del diálogo (centrado, estilo TailAdmin) -->
     <template #content>
-      <div class="row">
-        <div class="col-4 text-center q-mt-md">
-          <q-icon :name="`fal fa-${form.icon}`" size="xl" :color="form.icon_color"/>
+      <div class="x-dialog-action">
+        <!-- Icono dentro de circulo de color suave -->
+        <div class="x-dialog-action__icon-wrap" :class="`x-dialog-action__icon-wrap--${iconVariant}`">
+          <q-icon :name="`fa-light fa-${form.icon}`" size="28px" />
         </div>
-        <div class="col-20 q-mt-sm">
-          <div class="text-weight-medium q-mb-md" style="font-size: 18px;">{{ title }}</div>
-          <div class="text-grey-7" style="font-size: 15px;" v-html="form.description"></div>
-          <div v-if="form.verify_password" class="q-mt-md">
-            <x-input
-              ref="refPasswordInput"
-              :label="$t('auth.enterPassword')"
-              type="password"
-              :dense="false"
-              v-model="form.password"
-              :error="errors.password"
-            />
-          </div>
+
+        <!-- Title -->
+        <div class="x-dialog-action__title">{{ title }}</div>
+
+        <!-- Description -->
+        <div class="x-dialog-action__description" v-html="form.description"></div>
+
+        <!-- Password field opcional -->
+        <div v-if="form.verify_password" class="x-dialog-action__password">
+          <x-input
+            ref="refPasswordInput"
+            :label="$t('auth.enterPassword')"
+            type="password"
+            :dense="false"
+            v-model="form.password"
+            :error="errors.password"
+          />
         </div>
       </div>
     </template>
 
-    <!-- Slot: botones de acción -->
+    <!-- Slot: botones de acción (centrados, full-width en mobile) -->
     <template #action-buttons>
-      <x-button outline color="grey-8" class="q-mr-xs" @click="closeDialog" :disable="loadingSubmit" :label="$t('common.cancel')"/>
-      <x-button :color="form.button_color" @click="onSubmit" :loading="loadingSubmit" :disable="loadingSubmit"
-                :label="form.button_label_submit"/>
+      <div class="x-dialog-action__buttons">
+        <x-button outline
+                  color="grey-8"
+                  class="x-dialog-action__btn"
+                  @click="closeDialog"
+                  :disable="loadingSubmit"
+                  :label="$t('common.cancel')" />
+        <x-button :color="form.button_color"
+                  unelevated
+                  class="x-dialog-action__btn"
+                  @click="onSubmit"
+                  :loading="loadingSubmit"
+                  :disable="loadingSubmit"
+                  :label="form.button_label_submit" />
+      </div>
     </template>
   </x-dialog>
 </template>

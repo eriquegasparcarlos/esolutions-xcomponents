@@ -40,6 +40,8 @@
     "XPdfViewer",
     "XPriceCalculator",
     "XSelect",
+    "XTable",
+    "XTableCard",
     "XTableServer",
     "XToggle",
     "XTracking",

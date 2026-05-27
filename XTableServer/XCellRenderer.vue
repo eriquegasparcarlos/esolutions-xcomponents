@@ -48,6 +48,9 @@ defineProps({
              :label="cell.label"
              :title="cell.value"
              :is-lighten-color="cell.is_lighten_color"
+             :variant="cell.variant || 'light'"
+             :icon="cell.icon || null"
+             :icon-position="cell.icon_position || 'left'"
              class="q-mx-xs x-badge"></x-badge>
 
     <!-- CHIP -->

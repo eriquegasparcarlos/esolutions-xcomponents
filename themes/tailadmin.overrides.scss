@@ -215,9 +215,9 @@ body {
 }
 
 // --------------------------------------------------------------------------
-// Items hover
+// Items hover — SOLO en items clickables (no informativos)
 // --------------------------------------------------------------------------
-.q-item:hover {
+.q-item--clickable:hover {
   background-color: #f2f4f7; // gray-100
 }
 
@@ -301,6 +301,7 @@ body {
 .q-btn {
   text-transform: none;
   font-weight: 500;
+  min-height: 40px; // uniformidad TOTAL: todos los q-btn = 40px (match inputs dense)
   transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.05s ease;
   letter-spacing: normal;
 
@@ -311,6 +312,51 @@ body {
       box-shadow: 0 4px 6px -1px rgba(16, 24, 40, 0.1);
     }
   }
+
+  // Round buttons (icon-only): 40x40 para mantener circulo perfecto.
+  // Override de Quasar (non-dense: 3em = 42px, dense round: 2.4em alto / 3em ancho = elipse).
+  &.q-btn--round {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+  }
+
+  // Variante compacta: icon-only round mas chico (32x32). Util para acciones
+  // de fila en tablas donde 40x40 ocupa mucho espacio vertical.
+  // Uso: <q-btn flat round dense class="x-btn-icon-sm" icon="..." />
+  // Icono interno 16px (Quasar default ~20px se ve apretado).
+  &.q-btn--round.x-btn-icon-sm {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+
+    .q-icon {
+      font-size: 16px !important;
+    }
+  }
+}
+
+// Override del override: dentro de QDate/QTime los q-btn--round son los dias/horas
+// del calendario y tienen su propio sizing dinamico. NO forzar 40x40 ni min-height.
+.q-date .q-btn--round,
+.q-time .q-btn--round {
+  width: auto;
+  height: auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+// Reset directo a los items del calendario (Quasar usa div/button dentro de .q-date__calendar-item)
+// Tamano fijo 30x30 para mantener el circulo perfecto en los dias del calendario.
+.q-date__calendar-item > div,
+.q-date__calendar-item button {
+  width: 30px;
+  height: 30px;
+  min-width: 30px;
+  min-height: 30px;
 }
 
 // --------------------------------------------------------------------------
@@ -333,9 +379,16 @@ body {
   &.q-field--focused .q-field__control {
     &:after {
       border-color: #465fff; // brand-500
-      border-width: 1px;
+      border-width: 2px;
     }
   }
+}
+
+// Altura unificada de TODOS los inputs/selects/datepickers en modo dense.
+// 40px = Quasar default dense outlined — respeta el espacio para label flotante.
+// Match con TailAdmin h-10 y Tailwind UI standard para inputs con label dentro.
+.q-field--dense.q-field--outlined .q-field__control {
+  min-height: 40px;
 }
 
 // --------------------------------------------------------------------------

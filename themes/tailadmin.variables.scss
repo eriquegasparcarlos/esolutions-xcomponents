@@ -60,12 +60,15 @@ $x-button-height-lg: 44px;
 // Inputs / Selects (TailAdmin usa inputs un poco mas altos)
 // --------------------------------------------------------------------------
 $x-input-height: 40px;
+$x-input-height-dense: 40px; // Quasar default dense outlined: respeta diseño con label flotante
 $x-select-height: 40px;
 
 // --------------------------------------------------------------------------
 // Badge (pill)
 // --------------------------------------------------------------------------
 $x-badge-border-radius: 9999px;
+$x-badge-padding: 2px 10px; // TailAdmin: px-2.5 py-0.5
+$x-badge-font-size: 12px;
 
 // --------------------------------------------------------------------------
 // Dialog

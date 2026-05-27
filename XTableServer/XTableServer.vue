@@ -17,6 +17,7 @@ import XDropdownItem from '../XDropdownMenu/XDropdownItem.vue'
 import XDropdownDivider from '../XDropdownMenu/XDropdownDivider.vue'
 import XDialog from '../XDialog/XDialog.vue'
 import XButton from '../XButton/XButton.vue'
+import XLoading from '../XLoading/XLoading.vue'
 import { useDataStore } from 'stores/data.js'
 
 const dataStore = useDataStore()
@@ -27,6 +28,12 @@ const props = defineProps({
   selectable: { type: Boolean, default: false },
   /** Texto del contador de seleccion (admite plural) */
   selectionLabel: { type: String, default: 'seleccionado' },
+  /**
+   * Oculta botones del header y filtros cuando la tabla esta vacia "de origen"
+   * (sin registros y sin filtros activos). El empty-state queda como unico foco.
+   * Si el usuario filtra y no hay match, se sigue mostrando el header.
+   */
+  hideHeaderWhenEmpty: { type: Boolean, default: true },
 })
 
 const { proxy } = getCurrentInstance()
@@ -133,6 +140,10 @@ const columns = ref([])
 const rows = ref([])
 const loading = ref(false)
 const error = ref(null)
+/** True hasta que termine la PRIMERA carga (incluye fetch de columnas + records).
+ *  Mientras esto sea true, no renderizamos header/filtros/tabla — solo un skeleton.
+ *  Asi evitamos el "flash" del header+tabla antes de saber si hay datos o empty state. */
+const initialLoadDone = ref(false)
 
 const pagination = ref({
   sortBy: '',
@@ -167,6 +178,46 @@ const suppressFilterFetch = ref(false)
 // Mobile responsive
 // -------------------------
 const isMobileView = computed(() => $q.platform.is.mobile || $q.screen.lt.lg)
+
+/**
+ * Indica si hay al menos un filtro con valor REAL (input, select, fecha, etc.).
+ * Sirve para diferenciar "tabla nueva sin datos" vs "filtro sin resultados".
+ *
+ * El valor 'all' NO cuenta como filtro activo — es el placeholder default de
+ * los selects con includeAllOption (significa "sin filtrar").
+ */
+const hasActiveFilters = computed(() => {
+  return filters.value.some(f => {
+    if (f.value !== null && f.value !== undefined && f.value !== '' && f.value !== 'all') return true
+    if (f.dateStart || f.dateEnd) return true
+    if (f.monthStart || f.monthEnd) return true
+    return false
+  })
+})
+
+/**
+ * Tabla "vacia de origen": sin registros + sin filtros activos.
+ * Oculta header, filtros y tabla. Solo se ve el empty-state "no hay registros".
+ */
+const isTrulyEmpty = computed(() =>
+  props.hideHeaderWhenEmpty &&
+  initialLoadDone.value &&
+  !hasActiveFilters.value &&
+  (pagination.value?.rowsNumber ?? 0) === 0
+)
+
+/**
+ * Tabla sin registros (con o sin filtros aplicados).
+ * Oculta SOLO el header de tabla (titulo + botones) + thead + pagination.
+ * Los filtros se mantienen visibles si hay alguno aplicado para que el usuario
+ * pueda modificarlos o limpiarlos.
+ */
+const isEmpty = computed(() =>
+  props.hideHeaderWhenEmpty &&
+  initialLoadDone.value &&
+  (pagination.value?.rowsNumber ?? 0) === 0
+)
+
 const showMobileActions = ref(false)
 const selectedRow = ref(null)
 const mobileConfigBackend = ref(null)
@@ -206,6 +257,13 @@ const mobileLeftFields = computed(
 const mobileRightFields = computed(
   () => mobileConfig.value.primaryFields?.filter((f) => f.position === 'right') || [],
 )
+
+/**
+ * Ancho de la columna izquierda en mobile. Por default 60% (mayor que la derecha
+ * porque tipicamente contiene el dato principal: nombre, titulo, etc.).
+ * Configurable desde backend via `mobileConfig.leftWidth` ('60%', '50%', '70%', etc.)
+ */
+const mobileLeftWidth = computed(() => mobileConfig.value.leftWidth || '60%')
 
 function openMobileActions(row) {
   selectedRow.value = row
@@ -431,6 +489,7 @@ const fetchColumnsAndData = async () => {
     error.value = err.message
   } finally {
     loading.value = false
+    initialLoadDone.value = true
   }
 }
 
@@ -591,6 +650,10 @@ const onRequest = (propsReq) => {
 }
 
 const filterData = () => {
+  // Set loading sincrono ANTES del fetch async para evitar que Vue renderice
+  // un estado transitorio (rows=[], !loading, !hasActiveFilters) que mostraria
+  // el empty-state "No hay registros" entre el cambio de filtros y la respuesta.
+  loading.value = true
   pagination.value.page = 1
   fetchData()
 }
@@ -612,12 +675,27 @@ const setFilterValues = (savedFilters) => {
   filterData()
 }
 
-defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, selectedRows })
+/** Limpia todos los filtros (value + rangos de fecha/mes) y re-fetch. */
+function clearFilters() {
+  filters.value.forEach(f => {
+    f.value = f.includeAllOption ? 'all' : null
+    f.dateStart = null
+    f.dateEnd = null
+    f.monthStart = null
+    f.monthEnd = null
+  })
+  filterData()
+}
+
+defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clearSelection, selectedRows })
 </script>
 
 <template>
   <q-card class="x-table-server" flat>
-    <q-card-section class="q-py-none x-table-server-title">
+    <!-- Overlay loading sobre la card: cubre carga inicial Y refrescos/filtros -->
+    <x-loading :loading="loading" />
+
+    <q-card-section v-if="initialLoadDone && !isTrulyEmpty" class="q-py-none x-table-server-title">
       <div class="text-h6">
         {{ tableTitle }}
         <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
@@ -743,7 +821,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
       </div>
     </q-card-section>
 
-    <q-card-section v-if="filters.length > 0" class="q-py-md">
+    <q-card-section v-if="initialLoadDone && filters.length > 0 && !isTrulyEmpty" class="q-py-md">
       <div class="row q-col-gutter-md">
         <div v-for="filter in filters" :key="filter.name" :class="filter.class">
           <x-input
@@ -844,21 +922,22 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
     </q-card-section>
 
     <!-- MOBILE HEADER (mismo estilo que thead de la tabla) -->
-    <div v-if="isMobileView" class="x-table-mobile-header">
+    <div v-if="initialLoadDone && isMobileView && !isEmpty" class="x-table-mobile-header">
       <div class="text-caption">
         {{ pagination.rowsNumber }} registro{{ pagination.rowsNumber !== 1 ? 's' : '' }}
       </div>
     </div>
 
     <q-table
+      v-if="initialLoadDone"
       :rows="rows"
       :columns="columns"
       row-key="id"
       dense
-      :loading="loading"
       v-model:pagination="pagination"
       :rows-per-page-options="pagination.pageSizes"
-      :hide-header="isMobileView"
+      :hide-header="isMobileView || isEmpty"
+      :hide-pagination="isEmpty"
       @request="onRequest"
     >
       <!-- Header: agrega checkbox de seleccion masiva al inicio -->
@@ -897,7 +976,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
                 <template v-for="(action, idx) in (Array.isArray(props.row.actions) ? props.row.actions.filter(Boolean) : [])" :key="idx">
                   <q-btn
                     v-if="action.type === 'group' && Array.isArray(action.buttons) && action.buttons.length > 0"
-                    flat round no-caps :size="action.size" :icon="action.icon"
+                    flat round dense no-caps :size="action.size" :icon="action.icon"
                   >
                     <q-menu auto-close>
                       <q-list>
@@ -916,7 +995,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
                     </q-menu>
                   </q-btn>
                   <q-btn v-else :icon="action.icon" :color="action.color" :disable="action.disable"
-                    :size="action.size" flat round @click="performAction(action, props.row)" />
+                    :size="action.size" flat round dense @click="performAction(action, props.row)" />
                 </template>
               </div>
             </template>
@@ -930,26 +1009,26 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
       <!-- MOBILE VIEW: Vista compacta con una sola fila -->
       <template v-if="isMobileView" v-slot:body="props">
         <q-tr
-          class="cursor-pointer"
+          class="cursor-pointer x-table-mobile-row"
           :props="props"
           @click="openMobileActions(props.row)"
         >
           <q-td colspan="100%" class="q-py-sm">
-            <div class="flex items-center">
-              <!-- Columna izquierda -->
-              <div class="col-shrink column q-mr-sm" style="min-width: 100px">
+            <div class="x-table-mobile-row__content">
+              <!-- Columna izquierda (ancho configurable, mismo para todas las filas) -->
+              <div class="x-table-mobile-row__left" :style="{ flexBasis: mobileLeftWidth }">
                 <template v-for="(field, idx) in mobileLeftFields" :key="idx">
-                  <div class="text-left">
+                  <div class="ellipsis" :class="`text-${field.align || 'left'}`">
                     <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
                   </div>
                 </template>
               </div>
-              <!-- Columna derecha -->
-              <div class="col column">
+              <!-- Columna derecha (toma el resto, mismo para todas las filas) -->
+              <div class="x-table-mobile-row__right">
                 <template v-for="(field, idx) in mobileRightFields" :key="idx">
                   <div
-                    class="text-left"
-                    :class="{ ellipsis: field.truncate }"
+                    class="ellipsis"
+                    :class="`text-${field.align || 'right'}`"
                     :style="field.truncate ? { maxWidth: field.truncate + 'px' } : {}"
                   >
                     <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
@@ -957,8 +1036,8 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
                 </template>
               </div>
               <!-- Icono de menu -->
-              <div class="col-shrink q-ml-sm">
-                <q-icon class="cursor-pointer" size="1.5em" name="fal fa-ellipsis-v" color="grey-7" />
+              <div class="x-table-mobile-row__action">
+                <q-icon class="cursor-pointer" size="1.25em" name="fa-light fa-ellipsis-vertical" color="grey-7" />
               </div>
             </div>
           </q-td>
@@ -1022,14 +1101,35 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearSelection, sel
         </q-td>
       </template>
 
-      <!-- Empty state mejorado: icono + mensaje + slot para CTA personalizado -->
+      <!--
+        Empty state contextual:
+          - hasActiveFilters=true  -> slot #no-results (default: "Ningun resultado" + Limpiar filtros)
+          - hasActiveFilters=false -> slot #no-data    (default: "Sin registros" + CTA de la pagina)
+      -->
       <template v-slot:no-data>
-        <div class="x-table-empty-state">
-          <slot name="no-data">
-            <q-icon name="fa-light fa-inbox" size="48px" class="x-table-empty-state__icon" />
-            <div class="x-table-empty-state__title">No hay registros</div>
-            <div class="x-table-empty-state__subtitle">Aún no se han creado elementos en esta sección.</div>
-          </slot>
+        <div v-if="!loading" class="x-table-empty-state">
+          <template v-if="hasActiveFilters">
+            <slot name="no-results" :clear-filters="clearFilters">
+              <q-icon name="fa-light fa-magnifying-glass" size="48px" class="x-table-empty-state__icon" />
+              <div class="x-table-empty-state__title">No se encontraron resultados</div>
+              <div class="x-table-empty-state__subtitle">
+                Intenta ajustar los filtros aplicados o limpiarlos para ver todos los registros.
+              </div>
+              <x-button label="Limpiar filtros"
+                        icon="fa-light fa-filter-slash"
+                        color="primary"
+                        outline
+                        class="q-mt-md"
+                        @click="clearFilters" />
+            </slot>
+          </template>
+          <template v-else>
+            <slot name="no-data">
+              <q-icon name="fa-light fa-inbox" size="48px" class="x-table-empty-state__icon" />
+              <div class="x-table-empty-state__title">No hay registros</div>
+              <div class="x-table-empty-state__subtitle">Aún no se han creado elementos en esta sección.</div>
+            </slot>
+          </template>
         </div>
       </template>
     </q-table>

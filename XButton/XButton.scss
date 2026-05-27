@@ -15,8 +15,12 @@
   padding-left: var(--x-button-padding-x);
   padding-right: var(--x-button-padding-x);
   font-weight: var(--x-button-font-weight);
-  border-radius: var(--x-button-border-radius);
   transition: all var(--x-button-transition);
+
+  // border-radius solo cuando NO es round (los round usan 50% nativo de Quasar = circulo)
+  &:not(.q-btn--round) {
+    border-radius: var(--x-button-border-radius);
+  }
 
   // Tamaños
   &.q-btn--size-sm {

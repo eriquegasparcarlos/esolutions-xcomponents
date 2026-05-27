@@ -30,7 +30,8 @@
 }
 
 // --------------------------------------------------------------------------
-// Tipos predefinidos
+// Tipos predefinidos — variante LIGHT (bg suave + texto color fuerte)
+// Estilo TailAdmin: badge-light = bg-color-50 + text-color-600
 // --------------------------------------------------------------------------
 .x-badge-success {
   background-color: rgba($x-positive, 0.15) !important;
@@ -67,6 +68,44 @@
 .x-badge-default {
   background-color: rgba(#000, 0.08) !important;
   color: $x-text-secondary !important;
+}
+
+// --------------------------------------------------------------------------
+// Variante SOLID (bg fuerte + texto blanco)
+// Estilo TailAdmin: badge-solid = bg-color-500 + text-white
+// Combinar como .x-badge-solid.x-badge-success, .x-badge-solid.x-badge-danger, etc.
+// --------------------------------------------------------------------------
+.x-badge-solid {
+  &.x-badge-success {
+    background-color: $x-positive !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-danger,
+  &.x-badge-error {
+    background-color: $x-negative !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-warning {
+    background-color: $x-warning !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-info {
+    background-color: $x-info !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-primary {
+    background-color: $x-primary !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-secondary {
+    background-color: $x-secondary !important;
+    color: #ffffff !important;
+  }
+  &.x-badge-neutral,
+  &.x-badge-default {
+    background-color: #1d2939 !important; // gray-800
+    color: #ffffff !important;
+  }
 }
 
 // --------------------------------------------------------------------------

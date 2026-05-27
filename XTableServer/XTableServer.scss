@@ -1,4 +1,9 @@
 .x-table-server {
+  // Min-height durante la carga inicial para que el overlay XLoading
+  // tenga superficie visible antes de que llegue el contenido.
+  min-height: 200px;
+  position: relative;
+
   .x-table-server-title {
     height: 60px;
     display: flex;
@@ -51,6 +56,44 @@
       padding: 8px 12px;
     }
   }
+}
+
+// --------------------------------------------------------------------------
+// Mobile row: layout uniforme entre filas
+// Columna izquierda y derecha con ancho FIJO proporcional (no adaptativo).
+// Asi todas las filas tienen la misma estructura visual.
+// --------------------------------------------------------------------------
+.x-table-mobile-row__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.x-table-mobile-row__left {
+  // flex-basis viene inline desde mobileLeftWidth (default 60%, configurable backend).
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 0;        // permite ellipsis interno
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.x-table-mobile-row__right {
+  flex: 1 1 auto;      // ocupa el resto
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.x-table-mobile-row__action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
 }
 
 .x-menu-item-label {

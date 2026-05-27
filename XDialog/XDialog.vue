@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, watchEffect, useSlots, nextTick} from 'vue';
+import {ref, computed, watchEffect, useSlots, nextTick, onBeforeUnmount} from 'vue';
 import {useQuasar} from 'quasar';
 import XLoading from '../XLoading/XLoading.vue';
 
@@ -70,7 +70,16 @@ const props = defineProps({
   },
   autofocus: {
     type: [Boolean, String],
-    default: false,
+    default: true,
+  },
+  /**
+   * Header sin border-bottom ni background (look "flush", estilo TailAdmin).
+   * Por default true para todos los modales. Override con :flat-header="false"
+   * si algun modal especifico necesita el header chrome clasico.
+   */
+  flatHeader: {
+    type: Boolean,
+    default: true,
   },
 });
 
@@ -79,6 +88,52 @@ const emit = defineEmits(['update:modelValue', 'before-show', 'show', 'confirm',
 // Control interno del estado abierto/cerrado del diálogo
 const isOpen = ref(false);
 const dialogCardRef = ref(null);
+const contentScrollRef = ref(null);
+const isContentScrolled = ref(false);
+const canScroll = ref(false);
+let resizeObserver = null;
+
+/** Listener de scroll del contenedor de contenido — actualiza estado scrolled. */
+function onContentScroll(e) {
+  isContentScrolled.value = (e.target?.scrollTop || 0) > 0;
+}
+
+/** Recalcula si el contenido excede el alto disponible (overflow = puede scrollear). */
+function recalcCanScroll() {
+  const el = contentScrollRef.value;
+  if (!el) {
+    canScroll.value = false;
+    return;
+  }
+  canScroll.value = el.scrollHeight > el.clientHeight + 1; // tolerancia 1px
+}
+
+/** Se llama después de que el dialog renderiza para detectar overflow inicial. */
+function setupScrollDetection() {
+  nextTick(() => {
+    recalcCanScroll();
+    // ResizeObserver para detectar cambios de contenido (load async, expand, etc.)
+    if (contentScrollRef.value && typeof ResizeObserver !== 'undefined') {
+      resizeObserver?.disconnect();
+      resizeObserver = new ResizeObserver(() => recalcCanScroll());
+      resizeObserver.observe(contentScrollRef.value);
+      // Tambien observar el contenido interno (no solo el contenedor)
+      const inner = contentScrollRef.value.firstElementChild;
+      if (inner) resizeObserver.observe(inner);
+    }
+    // Backup: window resize por si el observer no detecta cambios de viewport (vh units)
+    window.addEventListener('resize', recalcCanScroll);
+  });
+}
+
+function teardownScrollDetection() {
+  resizeObserver?.disconnect();
+  window.removeEventListener('resize', recalcCanScroll);
+}
+
+onBeforeUnmount(() => {
+  teardownScrollDetection();
+});
 
 const isFullView = computed(() => props.isFullHeight || props.fullScreen);
 
@@ -112,21 +167,46 @@ const onBeforeShow = () => {
 
 const onShow = () => {
   emit('show')
+  // Detectar si el contenido excede el alto y necesita scroll
+  setupScrollDetection()
   if (props.autofocus) {
     nextTick(() => {
-      const selector = typeof props.autofocus === 'string' && props.autofocus.length > 0
-        ? props.autofocus
-        : 'input:not([type="hidden"]), select'
       const root = dialogCardRef.value?.$el ?? dialogCardRef.value
-      const el = root?.querySelector(selector)
-      el?.focus()
-      el?.select()
+      if (!root) return
+
+      // Selector custom (si autofocus es string) o lista de candidatos focusables
+      let candidates
+      if (typeof props.autofocus === 'string' && props.autofocus.length > 0) {
+        candidates = root.querySelectorAll(props.autofocus)
+      } else {
+        candidates = root.querySelectorAll(
+          'input:not([type="hidden"]):not([type="submit"]):not([type="button"]), select, textarea'
+        )
+      }
+
+      // Filtrar: skip readonly, disabled o no visibles. Toma el primero focusable.
+      const el = Array.from(candidates).find(c =>
+        !c.readOnly && !c.disabled && c.offsetParent !== null
+      )
+
+      if (el) {
+        el.focus()
+        // Solo .select() en inputs con texto editable
+        if (typeof el.select === 'function' && el.type !== 'checkbox' && el.type !== 'radio') {
+          el.select()
+        }
+      }
+      // Si no encuentra ningun candidato focusable: no hace nada (silencioso).
     })
   }
 };
 
 // Emitir evento de cancelación y cerrar
 const onClose = () => {
+  // Reset por si se reabre el modal
+  isContentScrolled.value = false;
+  canScroll.value = false;
+  teardownScrollDetection();
   emit('cancel');
   emit('update:modelValue', false);
 };
@@ -151,17 +231,30 @@ const onClose = () => {
               : { width: dialogWidth, maxWidth: dialogWidth }">
 
       <!-- Título del diálogo -->
-      <div class="x-dialog-title" v-if="title" :style="{ height: TITLE_HEIGHT + 'px' }">
+      <!-- q--avoid-card-border evita el override de Quasar (box-shadow: none) -->
+      <div class="x-dialog-title q--avoid-card-border"
+           :class="{
+             'x-dialog-title--flat': flatHeader,
+             'x-dialog-title--scrolled': flatHeader && isContentScrolled,
+           }"
+           v-if="title"
+           :style="{ height: TITLE_HEIGHT + 'px' }">
         <div class="x-dialog-title__text">{{ title }}</div>
-        <q-icon v-if="showButtonClose"
-                name="fal fa-xmark"
-                @click="emit('action-button-close')"
-                size="20px"
-                class="cursor-pointer x-dialog-button-close"/>
+        <q-btn v-if="showButtonClose"
+               icon="fa-light fa-xmark"
+               flat
+               round
+               dense
+               size="md"
+               class="x-dialog-button-close"
+               @click="emit('action-button-close')" />
       </div>
 
       <!-- Header adicional si se define el slot -->
-      <div v-if="hasContentHeaderSlot" class="x-dialog-content-header" :style="{ height: CONTENT_HEADER_HEIGHT + 'px' }">
+      <!-- q--avoid-card-border: evita override de Quasar que borra border-top -->
+      <div v-if="hasContentHeaderSlot"
+           class="x-dialog-content-header q--avoid-card-border"
+           :style="{ height: CONTENT_HEADER_HEIGHT + 'px' }">
           <slot name="content-header"/>
       </div>
 
@@ -173,14 +266,20 @@ const onClose = () => {
       </div>
 
       <!-- Contenido full-view con scroll dinámico -->
-      <div v-else-if="isFullView" :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflowY: 'auto' }">
+      <div v-else-if="isFullView"
+           ref="contentScrollRef"
+           @scroll="onContentScroll"
+           :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflowY: 'auto' }">
         <q-card-section class="q-pa-md">
           <slot name="content"/>
         </q-card-section>
       </div>
 
       <!-- Contenido fijo si no es scrollable -->
-      <div style="max-height:60vh; overflow-y:auto;" v-else>
+      <div ref="contentScrollRef"
+           @scroll="onContentScroll"
+           style="max-height:60vh; overflow-y:auto;"
+           v-else>
         <q-card-section :class="{ 'q-pa-none': contentFlush }">
             <slot name="content"/>
         </q-card-section>

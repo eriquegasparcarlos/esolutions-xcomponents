@@ -1,0 +1,174 @@
+// ==========================================================================
+// XTable - Tabla local (sin backend) con estilos TailAdmin
+// ==========================================================================
+@import '../variables';
+
+.x-table {
+  position: relative;
+  min-height: 120px;
+}
+
+// --------------------------------------------------------------------------
+// Header (titulo + search + buttons)
+// --------------------------------------------------------------------------
+.x-table__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.x-table__header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.x-table__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1d2939; // gray-800
+  line-height: 1.4;
+}
+
+.x-table__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.x-table__search {
+  width: 220px;
+  max-width: 100%;
+}
+
+// --------------------------------------------------------------------------
+// Empty state (reutiliza estilos de XTableServer)
+// --------------------------------------------------------------------------
+.x-table .x-table-empty-state {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+
+  &__icon {
+    color: #d0d5dd;
+    margin-bottom: 12px;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1d2939;
+    margin-bottom: 4px;
+  }
+
+  &__subtitle {
+    font-size: 13px;
+    color: #667085;
+    max-width: 320px;
+    line-height: 1.5;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Responsive: search full-width en mobile
+// --------------------------------------------------------------------------
+@media (max-width: 599px) {
+  .x-table__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .x-table__search {
+    width: 100%;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Fila seleccionada (cuando se aplica via rowClass prop)
+// Estilo TailAdmin: bg-brand-50 sutil + texto primary
+// --------------------------------------------------------------------------
+.x-table .x-table-row--selected,
+.x-table .x-table-row--selected:hover {
+  background-color: #ecf3ff !important; // brand-50
+
+  td {
+    background-color: transparent !important;
+  }
+}
+
+// --------------------------------------------------------------------------
+// Variante sin bordes (no-border prop)
+// Quita: border exterior del card, border del q-table container, y separadores
+// horizontales entre filas. Util cuando XTable se anida en otro card o se quiere
+// integrar visualmente con el contenedor padre sin doble border.
+// --------------------------------------------------------------------------
+.x-table.x-table--no-border {
+  // Outer: el q-card que envuelve la tabla — sin border ni shadow, pero
+  // mantiene border-radius heredado del padre (evita esquinas blancas que
+  // sobresalen en las esquinas inferiores redondeadas del card padre).
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: inherit;
+
+  // Inner: q-table container — sin border. Sin radius arriba para integrarse
+  // flush con el header del card padre; el de abajo hereda del padre.
+  .q-table__container {
+    border: none !important;
+    box-shadow: none !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+  }
+
+  // Body: sin separadores entre filas
+  .q-table tbody td {
+    border-bottom: none !important;
+    border-top: none !important;
+  }
+
+  // Header: MANTIENE border arriba y abajo (separador visual claro)
+  .q-table thead th {
+    border-top: 1px solid #e4e7ec !important;     // gray-200
+    border-bottom: 1px solid #e4e7ec !important;  // gray-200
+  }
+}
+
+// --------------------------------------------------------------------------
+// Mobile row layout (igual que XTableServer para coherencia)
+// --------------------------------------------------------------------------
+.x-table .x-table-mobile-row__content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+.x-table .x-table-mobile-row__left {
+  flex-grow: 0;
+  flex-shrink: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.x-table .x-table-mobile-row__right {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.x-table .x-table-mobile-row__action {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+}

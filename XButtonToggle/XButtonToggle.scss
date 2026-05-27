@@ -35,6 +35,13 @@
   border-color: transparent !important;
 }
 
+/* Fix doble linea entre botones adyacentes: quita el border-right
+   de TODOS los botones excepto el ultimo. Asi el border-left del
+   siguiente boton hace de divisor unico (1px en vez de 2px). */
+.x-button-toggle--unelevated .q-btn.q-btn-item:not(:last-child):before {
+  border-right-color: transparent !important;
+}
+
 /* Dark */
 .body--dark .x-button-toggle--unelevated .q-btn[aria-pressed="false"] {
   border-color: var(--x-button-toggle-border-dark, rgba(255, 255, 255, 0.22)) !important;

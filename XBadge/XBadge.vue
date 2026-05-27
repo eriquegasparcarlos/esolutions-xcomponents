@@ -24,7 +24,24 @@ const props = defineProps({
   type: {
     type: String,
     default: null // Ej: 'success', 'danger', 'warning'
-  }
+  },
+  /** 'light' (default, bg suave) | 'solid' (bg fuerte + texto blanco) */
+  variant: {
+    type: String,
+    default: 'light',
+    validator: v => ['light', 'solid'].includes(v),
+  },
+  /** Nombre del icono (Quasar/FontAwesome). Si se pasa, renderiza con icono. */
+  icon: {
+    type: String,
+    default: null,
+  },
+  /** Posicion del icono respecto al label: 'left' (default) o 'right'. */
+  iconPosition: {
+    type: String,
+    default: 'left',
+    validator: v => ['left', 'right'].includes(v),
+  },
 })
 
 const attrs = useAttrs()
@@ -37,20 +54,40 @@ const bgColor = computed(() =>
   resolvedColor.value ? (props.isLightenColor ? lightenColor(resolvedColor.value) : resolvedColor.value) : null
 )
 
-// --- Clase dinámica para el tipo (si se usa sistema de tipo) ---
-const badgeClass = computed(() =>
-  props.type ? `x-badge-${props.type}` : ''
-)
+// --- Clases dinamicas ---
+const badgeClasses = computed(() => [
+  'x-badge',
+  props.type ? `x-badge-${props.type}` : '',
+  props.variant === 'solid' ? 'x-badge-solid' : '',
+  props.icon ? 'x-badge-with-icon' : '',
+])
+
+// --- Estilo inline solo si NO hay variant solid (porque solid usa clases) ---
+const inlineStyle = computed(() => {
+  if (!resolvedColor.value) return undefined
+  if (props.variant === 'solid') {
+    return { color: '#fff', backgroundColor: resolvedColor.value }
+  }
+  return { color: resolvedColor.value, backgroundColor: bgColor.value }
+})
 </script>
 
 <template>
   <q-badge
     style="margin: 0!important;"
     v-bind="attrs"
-    :label="label"
-    :class="['x-badge', badgeClass]"
-    :style="resolvedColor
-      ? { color: resolvedColor, backgroundColor: bgColor }
-      : undefined"
-  />
+    :class="badgeClasses"
+    :style="inlineStyle"
+  >
+    <!-- Con icono: render manual para controlar posicion -->
+    <template v-if="icon">
+      <q-icon v-if="iconPosition === 'left'" :name="icon" class="q-mr-xs" />
+      <span>{{ label }}</span>
+      <q-icon v-if="iconPosition === 'right'" :name="icon" class="q-ml-xs" />
+    </template>
+    <!-- Sin icono: solo label -->
+    <template v-else>
+      {{ label }}
+    </template>
+  </q-badge>
 </template>

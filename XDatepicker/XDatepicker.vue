@@ -22,7 +22,7 @@ const props = defineProps({
   // QDate options(dateString 'YYYY/MM/DD') => boolean
   options: { type: Function, default: null },
 
-  autoClose: { type: Boolean, default: false },
+  autoClose: { type: Boolean, default: true },
 })
 
 const emit = defineEmits(['update:modelValue', 'change'])

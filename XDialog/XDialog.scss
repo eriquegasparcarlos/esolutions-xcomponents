@@ -45,6 +45,25 @@
   background-color: #fafafa;
   flex-shrink: 0;
 
+  // Variante flat: sin border ni background, look limpio integrado al contenido
+  &--flat {
+    border-bottom: none;
+    background-color: transparent;
+    transition: box-shadow 0.2s ease, background-color 0.2s ease;
+  }
+
+  // Variante flat + content scrolled: sombra para separar visualmente del
+  // contenido que pasa por debajo. Background blanco para evitar transparencia.
+  // position: relative es CRITICO para que z-index aplique sobre el sibling
+  // (el contenedor scrollable) que viene despues en el DOM.
+  &--flat.x-dialog-title--scrolled {
+    background-color: #ffffff;
+    // Sombra suave para indicar separacion sutilmente
+    box-shadow: 0 2px 6px -1px rgba(16, 24, 40, 0.06), 0 1px 2px -1px rgba(16, 24, 40, 0.04);
+    position: relative;
+    z-index: 2;
+  }
+
   .x-dialog-title__text {
     font-size: var(--x-dialog-title-font-size);
     font-weight: 600;
@@ -58,18 +77,21 @@
 }
 
 // --------------------------------------------------------------------------
-// Boton de cerrar
+// Boton de cerrar (q-btn flat round dense con hover redondeado)
 // --------------------------------------------------------------------------
-.x-dialog-button-close {
+.x-dialog-button-close.q-btn {
   color: $x-text-secondary;
-  transition: color var(--x-dialog-transition), transform var(--x-dialog-transition);
-  border-radius: 50%;
-  padding: $x-spacing-xs;
+  transition: color 0.15s ease, background-color 0.15s ease;
   flex-shrink: 0;
 
+  // Override del hover q-btn default — fondo gris suave en circulo
   &:hover {
-    color: $x-negative;
-    transform: scale(1.1);
+    color: #1d2939; // gray-800
+    background-color: #f2f4f7; // gray-100
+
+    .q-icon {
+      color: inherit;
+    }
   }
 }
 
@@ -81,6 +103,7 @@
   align-items: center;
   padding: 0 var(--x-dialog-header-padding);
   background-color: #f5f5f5;
+  border-top: 1px solid $x-border-color;
   border-bottom: 1px solid $x-border-color;
   flex-shrink: 0;
 
@@ -134,6 +157,8 @@
   border-top: 1px solid $x-border-color;
   background-color: #fafafa;
   flex-shrink: 0;
+  // Botones siempre uno al lado del otro (sin wrap a fila nueva en mobile)
+  flex-wrap: nowrap;
 
   &.justify-end {
     justify-content: flex-end;
@@ -260,6 +285,5 @@
 
   .x-dialog-actions {
     padding: 0 $x-spacing-md;
-    flex-wrap: wrap;
   }
 }
