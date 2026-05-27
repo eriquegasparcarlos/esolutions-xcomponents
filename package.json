@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.0.39",
+  "version": "2.0.40",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -64,10 +64,14 @@
     "quasar": "^2.0.0",
     "pinia": "^2.0.0 || ^3.0.0",
     "vue-i18n": "^9.0.0 || ^10.0.0 || ^11.0.0",
-    "@embedpdf/vue-pdf-viewer": "^2.0.0"
+    "@embedpdf/vue-pdf-viewer": "^2.0.0",
+    "pdfjs-dist": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "@embedpdf/vue-pdf-viewer": {
+      "optional": true
+    },
+    "pdfjs-dist": {
       "optional": true
     }
   }
