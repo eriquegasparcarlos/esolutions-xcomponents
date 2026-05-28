@@ -1,0 +1,58 @@
+// ==========================================================================
+// XTokenDisplay - Display de tokens/secrets con chunks + copy/toggle
+// ==========================================================================
+
+.x-token-display {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #d0d5dd; // gray-300
+  border-radius: 8px;
+  background: #f9fafb; // gray-50
+  padding: 10px 12px;
+  overflow: hidden;
+}
+
+.x-token-display__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.x-token-display__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #667085; // gray-500
+}
+
+.x-token-display__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.x-token-display__btn {
+  color: #667085;
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #465fff; // brand-500
+  }
+}
+
+.x-token-display__value {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #1d2939; // gray-800
+  word-break: break-all;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
