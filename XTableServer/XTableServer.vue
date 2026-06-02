@@ -218,6 +218,19 @@ const isEmpty = computed(() =>
   (pagination.value?.rowsNumber ?? 0) === 0
 )
 
+/**
+ * Boton 'new' detectado en headerButtons. Se usa en el empty-state por defecto
+ * como CTA: si el consumidor no provee un slot #no-data custom, el usuario
+ * podra crear el primer registro desde el propio empty-state — sin necesitar
+ * que cada pagina cablee manualmente un boton.
+ */
+const newActionButton = computed(() => {
+  const flat = headerButtons.value.flatMap((b) =>
+    b.type === 'group' && Array.isArray(b.buttons) ? b.buttons : [b]
+  )
+  return flat.find((b) => b?.action === 'new') ?? null
+})
+
 const showMobileActions = ref(false)
 const selectedRow = ref(null)
 const mobileConfigBackend = ref(null)
@@ -1124,10 +1137,29 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
             </slot>
           </template>
           <template v-else>
-            <slot name="no-data">
+            <slot name="no-data" :new-action="newActionButton" :perform-action="performHeaderAction">
               <q-icon name="fa-light fa-inbox" size="48px" class="x-table-empty-state__icon" />
               <div class="x-table-empty-state__title">No hay registros</div>
               <div class="x-table-empty-state__subtitle">Aún no se han creado elementos en esta sección.</div>
+
+              <!--
+                CTA por defecto: si el backend expone un boton action='new' en
+                headerButtons, lo reusamos como llamada-a-la-accion del empty
+                state. Asi cualquier tabla con accion de creacion permite al
+                usuario crear el primer registro sin que el consumidor tenga
+                que cablear un slot custom.
+              -->
+              <q-btn
+                v-if="newActionButton"
+                :color="newActionButton.color || 'primary'"
+                unelevated
+                no-caps
+                class="q-mt-md"
+                @click="performHeaderAction(newActionButton)"
+              >
+                <q-icon :name="newActionButton.icon" size="16px" class="q-mr-sm" />
+                {{ newActionButton.label }}
+              </q-btn>
             </slot>
           </template>
         </div>
