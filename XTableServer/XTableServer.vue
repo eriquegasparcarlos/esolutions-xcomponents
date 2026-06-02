@@ -156,6 +156,7 @@ const pagination = ref({
 
 const pageTitle = ref('')
 const tableTitle = ref('')
+const tableSubtitle = ref('')
 const tableBadge = ref(null)
 const tableName = ref('')
 const headerButtons = ref([])
@@ -439,6 +440,7 @@ const fetchColumnsAndData = async () => {
 
     pageTitle.value = response.data.pageTitle
     tableTitle.value = response.data.tableTitle
+    tableSubtitle.value = response.data.tableSubtitle || ''
     tableBadge.value = response.data.tableBadge || null
     tableName.value = response.data.tableName
 
@@ -709,9 +711,14 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     <x-loading :loading="loading" />
 
     <q-card-section v-if="initialLoadDone && !isTrulyEmpty" class="q-py-none x-table-server-title">
-      <div class="text-h6">
-        {{ tableTitle }}
-        <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
+      <div>
+        <div class="text-h6">
+          {{ tableTitle }}
+          <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
+        </div>
+        <div v-if="tableSubtitle" class="text-caption text-grey-7 q-mt-xs x-table-server-subtitle">
+          {{ tableSubtitle }}
+        </div>
       </div>
       <div>
         <template v-for="button in headerButtons" :key="button.action">
