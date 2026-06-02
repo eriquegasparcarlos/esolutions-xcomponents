@@ -710,7 +710,9 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     <!-- Overlay loading sobre la card: cubre carga inicial Y refrescos/filtros -->
     <x-loading :loading="loading" />
 
-    <q-card-section v-if="initialLoadDone && !isTrulyEmpty" class="q-py-none x-table-server-title">
+    <q-card-section v-if="initialLoadDone && !isTrulyEmpty"
+                    class="q-py-none x-table-server-title"
+                    :class="{ 'has-subtitle': tableSubtitle }">
       <div>
         <div class="text-h6">
           {{ tableTitle }}
