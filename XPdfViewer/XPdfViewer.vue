@@ -389,6 +389,7 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   align-items: center;
   gap: 4px;
   padding: 6px 12px;
+  height: 50px;
   background: #ffffff;
   border-bottom: 1px solid #e0e0e0;
   flex-shrink: 0;
