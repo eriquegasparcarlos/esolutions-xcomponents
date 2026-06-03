@@ -7,7 +7,7 @@
 
       <div class="x-pdf-toolbar__group">
         <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             <line x1="8" y1="11" x2="14" y2="11"/>
           </svg>
@@ -16,13 +16,13 @@
           {{ zoomLabel }}
         </button>
         <button class="x-pdf-tb-btn" @click="zoomIn" :disabled="scale >= MAX_SCALE" title="Acercar (Ctrl++)">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
             <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
           </svg>
         </button>
         <button class="x-pdf-tb-btn" @click="zoomFit" title="Ajustar al ancho">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
             <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
           </svg>
@@ -47,7 +47,7 @@
           :disabled="!pdfReady || printing"
           :title="printing ? 'Preparando...' : 'Imprimir'"
         >
-          <svg v-if="!printing" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg v-if="!printing" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="6 9 6 2 18 2 18 9"/>
             <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
             <rect x="6" y="14" width="12" height="8"/>
@@ -55,7 +55,7 @@
           <span v-else class="x-pdf-tb-spinner"></span>
         </button>
         <button v-if="!hideDownload" class="x-pdf-tb-btn" @click="downloadPdf" :disabled="!pdfReady" title="Descargar PDF">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
             <polyline points="7 10 12 15 17 10"/>
             <line x1="12" y1="15" x2="12" y2="3"/>
@@ -64,7 +64,7 @@
         <template v-if="!hideClose">
           <div class="x-pdf-tb-divider"></div>
           <button class="x-pdf-tb-btn x-pdf-tb-btn--close" @click="$emit('close')" title="Cerrar">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <line x1="18" y1="6" x2="6" y2="18"/>
               <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
@@ -411,8 +411,8 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
+  width: 40px;
+  height: 40px;
   padding: 0;
   background: transparent;
   border: none;
