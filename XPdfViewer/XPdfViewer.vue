@@ -1,44 +1,9 @@
 <template>
   <div class="x-pdf-viewer">
-    <!-- Toolbar -->
-    <div class="x-pdf-toolbar">
+    <!-- Toolbar fila 1: nombre + acciones -->
+    <div class="x-pdf-toolbar x-pdf-toolbar--top">
       <span v-if="filename" class="x-pdf-toolbar__filename" :title="filename">{{ filename }}</span>
-      <div v-if="filename" class="x-pdf-tb-divider"></div>
-
-      <div class="x-pdf-toolbar__group">
-        <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            <line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
-        <button class="x-pdf-zoom-label" @click="zoomReset" title="Restaurar zoom (100%)">
-          {{ zoomLabel }}
-        </button>
-        <button class="x-pdf-tb-btn" @click="zoomIn" :disabled="scale >= MAX_SCALE" title="Acercar (Ctrl++)">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
-          </svg>
-        </button>
-        <button class="x-pdf-tb-btn" @click="zoomFit" title="Ajustar al ancho">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
-            <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
-          </svg>
-        </button>
-      </div>
-
       <div class="x-pdf-toolbar__sep"></div>
-
-      <div class="x-pdf-toolbar__group">
-        <span class="x-pdf-page-info" v-if="totalPages > 0">
-          {{ totalPages }} {{ totalPages === 1 ? 'página' : 'páginas' }}
-        </span>
-      </div>
-
-      <div class="x-pdf-toolbar__sep"></div>
-
       <div class="x-pdf-toolbar__group">
         <button
           v-if="!hidePrint"
@@ -70,6 +35,39 @@
             </svg>
           </button>
         </template>
+      </div>
+    </div>
+
+    <!-- Toolbar fila 2: zoom + páginas -->
+    <div class="x-pdf-toolbar x-pdf-toolbar--bottom">
+      <div class="x-pdf-toolbar__group">
+        <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button class="x-pdf-zoom-label" @click="zoomReset" title="Restaurar zoom (100%)">
+          {{ zoomLabel }}
+        </button>
+        <button class="x-pdf-tb-btn" @click="zoomIn" :disabled="scale >= MAX_SCALE" title="Acercar (Ctrl++)">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            <line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/>
+          </svg>
+        </button>
+        <button class="x-pdf-tb-btn" @click="zoomFit" title="Ajustar al ancho">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3"/><path d="M21 8V5a2 2 0 0 0-2-2h-3"/>
+            <path d="M3 16v3a2 2 0 0 0 2 2h3"/><path d="M16 21h3a2 2 0 0 0 2-2v-3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="x-pdf-toolbar__sep"></div>
+      <div class="x-pdf-toolbar__group">
+        <span class="x-pdf-page-info" v-if="totalPages > 0">
+          {{ totalPages }} {{ totalPages === 1 ? 'página' : 'páginas' }}
+        </span>
       </div>
     </div>
 
@@ -389,12 +387,21 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   align-items: center;
   gap: 2px;
   padding: 0 12px;
-  height: 50px;
   background: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
   flex-shrink: 0;
   user-select: none;
   font-family: 'Public Sans', 'Inter', sans-serif;
+}
+
+.x-pdf-toolbar--top {
+  height: 50px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.x-pdf-toolbar--bottom {
+  height: 40px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
 }
 
 .x-pdf-toolbar__group {
