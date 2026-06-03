@@ -1289,3 +1289,19 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     </x-dialog>
   </q-card>
 </template>
+
+<style>
+.column-visibility-menu .q-list::-webkit-scrollbar {
+  width: 4px;
+}
+.column-visibility-menu .q-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.column-visibility-menu .q-list::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+.column-visibility-menu .q-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
+}
+</style>
