@@ -835,7 +835,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
 
         <q-btn flat round no-caps icon="fa-light fa-columns-3">
           <q-menu class="column-visibility-menu">
-            <q-list dense style="min-width: 180px">
+            <q-list dense style="min-width: 180px; max-height: 320px; overflow-y: auto;">
               <q-item-label header class="text-caption text-weight-medium q-pb-xs">{{ $t('common.columns') }}</q-item-label>
               <q-item
                 v-for="col in columnVisibleOptions"
