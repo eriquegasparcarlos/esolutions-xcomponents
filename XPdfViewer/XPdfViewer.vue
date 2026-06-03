@@ -404,6 +404,11 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   background: #f9fafb;
 }
 
+.x-pdf-toolbar--bottom .x-pdf-tb-btn {
+  width: 32px;
+  height: 32px;
+}
+
 .x-pdf-toolbar__group {
   display: flex;
   align-items: center;
