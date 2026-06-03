@@ -70,6 +70,8 @@ const props = defineProps({
   closeOnBlur: { type: Boolean, default: true },
   truncateLabel: { type: Boolean, default: false },
   truncateWidth: { type: [String, Number], default: null },
+  // Aplica ellipsis de una línea a cada opción del dropdown
+  optionsEllipsis: { type: Boolean, default: false },
 });
 
 const fallbackId = `app-select-${Math.random().toString(36).substring(2, 9)}`;
@@ -321,7 +323,7 @@ function onSelect(val) {
             <q-icon :name="scope.opt.icon" :color="scope.opt.class?.replace('text-', '') || 'primary'"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label>{{ scope.opt.label }}</q-item-label>
+            <q-item-label :lines="optionsEllipsis ? 1 : undefined">{{ scope.opt.label }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
