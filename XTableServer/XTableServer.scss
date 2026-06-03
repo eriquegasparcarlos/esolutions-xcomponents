@@ -9,6 +9,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    // Cuando hay subtitulo el header crece para acomodar el texto extra
+    // sin recortar (60px no alcanza para titulo + caption).
+    &.has-subtitle {
+      height: 80px;
+    }
   }
 
   .q-table thead {

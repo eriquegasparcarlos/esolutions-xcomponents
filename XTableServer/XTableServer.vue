@@ -24,10 +24,6 @@ const dataStore = useDataStore()
 
 const props = defineProps({
   resource: { type: String, required: true },
-  /** Habilita seleccion multiple de filas (bulk actions) */
-  selectable: { type: Boolean, default: false },
-  /** Texto del contador de seleccion (admite plural) */
-  selectionLabel: { type: String, default: 'seleccionado' },
   /**
    * Oculta botones del header y filtros cuando la tabla esta vacia "de origen"
    * (sin registros y sin filtros activos). El empty-state queda como unico foco.
@@ -42,6 +38,13 @@ const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action']
 
 // --- Bulk actions config (viene del backend en initTableBase) ---
 const bulkActions = ref([])
+
+/**
+ * Selectable se DERIVA automaticamente de bulkActions: si el backend declara
+ * acciones en masa, los checkboxes aparecen; si no, no. El consumidor no
+ * decide — el backend es el source of truth.
+ */
+const isSelectable = computed(() => bulkActions.value.length > 0)
 
 // Estado del dialogo de confirmacion bulk
 const showBulkConfirm = ref(false)
@@ -156,9 +159,17 @@ const pagination = ref({
 
 const pageTitle = ref('')
 const tableTitle = ref('')
+const tableSubtitle = ref('')
 const tableBadge = ref(null)
 const tableName = ref('')
 const headerButtons = ref([])
+
+// Configuracion UX inyectable desde el backend (override en initTable() del DataTable).
+// Si el backend no las envia, se mantienen los defaults razonables.
+const selectionLabel = ref('seleccionado')
+const noDataLabel = ref('No hay registros')
+const noDataSubtitle = ref('Aún no se han creado elementos en esta sección.')
+const noDataIcon = ref('fa-light fa-inbox')
 
 const filters = ref([])
 const appliedFilters = ref({})
@@ -217,6 +228,19 @@ const isEmpty = computed(() =>
   initialLoadDone.value &&
   (pagination.value?.rowsNumber ?? 0) === 0
 )
+
+/**
+ * Boton 'new' detectado en headerButtons. Se usa en el empty-state por defecto
+ * como CTA: si el consumidor no provee un slot #no-data custom, el usuario
+ * podra crear el primer registro desde el propio empty-state — sin necesitar
+ * que cada pagina cablee manualmente un boton.
+ */
+const newActionButton = computed(() => {
+  const flat = headerButtons.value.flatMap((b) =>
+    b.type === 'group' && Array.isArray(b.buttons) ? b.buttons : [b]
+  )
+  return flat.find((b) => b?.action === 'new') ?? null
+})
 
 const showMobileActions = ref(false)
 const selectedRow = ref(null)
@@ -426,8 +450,16 @@ const fetchColumnsAndData = async () => {
 
     pageTitle.value = response.data.pageTitle
     tableTitle.value = response.data.tableTitle
+    tableSubtitle.value = response.data.tableSubtitle || ''
     tableBadge.value = response.data.tableBadge || null
     tableName.value = response.data.tableName
+
+    // Textos UX opcionales: solo se sobreescriben si el backend los envia,
+    // sino quedan con sus defaults.
+    if (response.data.selectionLabel) selectionLabel.value = response.data.selectionLabel
+    if (response.data.noDataLabel)    noDataLabel.value    = response.data.noDataLabel
+    if (response.data.noDataSubtitle) noDataSubtitle.value = response.data.noDataSubtitle
+    if (response.data.noDataIcon)     noDataIcon.value     = response.data.noDataIcon
 
     pagination.value.rowsPerPage = response.data.pagination.perPage
     pagination.value.descending = response.data.pagination.descending
@@ -695,10 +727,17 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     <!-- Overlay loading sobre la card: cubre carga inicial Y refrescos/filtros -->
     <x-loading :loading="loading" />
 
-    <q-card-section v-if="initialLoadDone && !isTrulyEmpty" class="q-py-none x-table-server-title">
-      <div class="text-h6">
-        {{ tableTitle }}
-        <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
+    <q-card-section v-if="initialLoadDone && !isTrulyEmpty"
+                    class="q-py-none x-table-server-title"
+                    :class="{ 'has-subtitle': tableSubtitle }">
+      <div>
+        <div class="text-h6">
+          {{ tableTitle }}
+          <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
+        </div>
+        <div v-if="tableSubtitle" class="text-caption text-grey-7 q-mt-xs x-table-server-subtitle">
+          {{ tableSubtitle }}
+        </div>
       </div>
       <div>
         <template v-for="button in headerButtons" :key="button.action">
@@ -761,8 +800,8 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
           </template>
         </template>
 
-        <!-- Dropdown de bulk actions (solo visible cuando selectable=true Y hay seleccion) -->
-        <x-dropdown-menu v-if="selectable && selectedCount > 0 && bulkActions.length > 0"
+        <!-- Dropdown de bulk actions (visible cuando hay bulkActions del backend Y hay seleccion) -->
+        <x-dropdown-menu v-if="isSelectable && selectedCount > 0"
                         :width="220"
                         align="right"
                         class="x-table-bulk-dropdown q-mr-xs">
@@ -941,7 +980,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       @request="onRequest"
     >
       <!-- Header: agrega checkbox de seleccion masiva al inicio -->
-      <template v-if="selectable && !isMobileView" v-slot:header="props">
+      <template v-if="isSelectable && !isMobileView" v-slot:header="props">
         <q-tr :props="props">
           <q-th auto-width class="x-table-select-cell">
             <q-checkbox
@@ -959,7 +998,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       </template>
 
       <!-- Body: agrega checkbox por fila + clase "selected" -->
-      <template v-if="selectable && !isMobileView" v-slot:body="props">
+      <template v-if="isSelectable && !isMobileView" v-slot:body="props">
         <q-tr :props="props"
               :class="{ 'x-table-row--selected': selectedRows.includes(props.row.id) }">
           <q-td auto-width class="x-table-select-cell">
@@ -1124,10 +1163,29 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
             </slot>
           </template>
           <template v-else>
-            <slot name="no-data">
-              <q-icon name="fa-light fa-inbox" size="48px" class="x-table-empty-state__icon" />
-              <div class="x-table-empty-state__title">No hay registros</div>
-              <div class="x-table-empty-state__subtitle">Aún no se han creado elementos en esta sección.</div>
+            <slot name="no-data" :new-action="newActionButton" :perform-action="performHeaderAction">
+              <q-icon :name="noDataIcon" size="48px" class="x-table-empty-state__icon" />
+              <div class="x-table-empty-state__title">{{ noDataLabel }}</div>
+              <div class="x-table-empty-state__subtitle">{{ noDataSubtitle }}</div>
+
+              <!--
+                CTA por defecto: si el backend expone un boton action='new' en
+                headerButtons, lo reusamos como llamada-a-la-accion del empty
+                state. Asi cualquier tabla con accion de creacion permite al
+                usuario crear el primer registro sin que el consumidor tenga
+                que cablear un slot custom.
+              -->
+              <q-btn
+                v-if="newActionButton"
+                :color="newActionButton.color || 'primary'"
+                unelevated
+                no-caps
+                class="q-mt-md"
+                @click="performHeaderAction(newActionButton)"
+              >
+                <q-icon :name="newActionButton.icon" size="16px" class="q-mr-sm" />
+                {{ newActionButton.label }}
+              </q-btn>
             </slot>
           </template>
         </div>

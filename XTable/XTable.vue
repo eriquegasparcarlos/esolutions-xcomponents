@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref, useSlots, watch, getCurrentInstance } from 'vue'
+import { computed, ref, useSlots, watch, onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import { useQuasar } from 'quasar'
 import XLoading from '../XLoading/XLoading.vue'
 import XInput from '../XInput/XInput.vue'
@@ -134,14 +134,55 @@ const hasRowClickListener = computed(() => !!instance?.vnode.props?.onRowClick)
 const isMobileView = computed(() => $q.platform.is.mobile || $q.screen.lt.lg)
 
 // --- First load tracking ---
-// Marca true despues de que loading pase de true → false (carga inicial completa).
-// O si nunca hubo loading=true (datos sincronos), se marca true al recibir rows.
-// Mientras false: solo se ve XLoading (no la tabla vacia debajo).
-const initialLoadDone = ref(!props.loading)
+// Evita el "flash" del empty-state mientras los datos vienen async. Solo
+// renderizamos <q-table> cuando initialLoadDone === true.
+//
+// Casos cubiertos:
+//   A) Datos sync (rows ya tiene items al mount)  -> true inmediato
+//   B) Fetch async con loading explicito          -> true cuando loading
+//                                                    pasa de true -> false
+//   C) Patron UserPlan: el padre arranca con rows=[] y loading=false, pero
+//      en el mismo tick llama getData() que pone loading=true.
+//      -> grace period de 50ms; si en ese tiempo no se ve actividad
+//         (fetch async no se inicio), asumimos tabla legitimamente vacia
+//         y mostramos. Si SI se inicia un fetch (loading=true), el watch
+//         cancela el timeout y esperamos a que termine.
+const initialLoadDone = ref(props.rows.length > 0)
+let initTimeoutId = null
+
+onMounted(() => {
+  if (initialLoadDone.value) return     // datos sync, listo
+  if (props.loading) return              // loading explicito, esperar
+  // Grace period: si en 50ms nadie inicia un fetch, asumimos vacio legitimo
+  initTimeoutId = setTimeout(() => {
+    initialLoadDone.value = true
+    initTimeoutId = null
+  }, 50)
+})
+
 watch(() => props.loading, (newVal, oldVal) => {
+  if (newVal === true && initTimeoutId) {
+    // Detectamos fetch async iniciado dentro del grace period: cancelar
+    clearTimeout(initTimeoutId)
+    initTimeoutId = null
+  }
   if (oldVal === true && newVal === false) {
     initialLoadDone.value = true
   }
+})
+
+watch(() => props.rows, (newRows) => {
+  if (Array.isArray(newRows) && newRows.length > 0) {
+    if (initTimeoutId) {
+      clearTimeout(initTimeoutId)
+      initTimeoutId = null
+    }
+    initialLoadDone.value = true
+  }
+})
+
+onUnmounted(() => {
+  if (initTimeoutId) clearTimeout(initTimeoutId)
 })
 
 // --- Busqueda local ---
