@@ -15,6 +15,7 @@ const attrs = useAttrs();
 const selectRef = ref(null);
 const remoteOptions = ref([]);
 const localFilteredOptions = ref(null);
+const triggerWidth = ref(0);
 
 // cache de última búsqueda remota
 const lastSearch = ref({ query: '', results: [] });
@@ -218,7 +219,15 @@ function onFocus() {
 }
 function onPopupShow() {
   onFocus();
+  if (props.optionsEllipsis) {
+    triggerWidth.value = selectRef.value?.$el?.offsetWidth ?? 0;
+  }
 }
+
+const popupContentStyle = computed(() => {
+  if (!props.optionsEllipsis || !triggerWidth.value) return undefined;
+  return { maxWidth: triggerWidth.value + 'px' };
+});
 
 // Cerrar popup al perder foco (tab, click afuera, o enfoque programático en otro input)
 function handleBlur() {
@@ -292,6 +301,7 @@ function onSelect(val) {
                 dense: dense,
                 for: elementId,
                 'popup-content-class': popupContentClass,
+                'popup-content-style': popupContentStyle,
                 'aria-labelledby': label ? `${elementId}-label` : null,
                 error: !!props.error,
                 'error-message': props.error,
@@ -323,7 +333,9 @@ function onSelect(val) {
             <q-icon :name="scope.opt.icon" :color="scope.opt.class?.replace('text-', '') || 'primary'"/>
           </q-item-section>
           <q-item-section>
-            <q-item-label :lines="optionsEllipsis ? 1 : undefined">{{ scope.opt.label }}</q-item-label>
+            <q-item-label
+              :style="optionsEllipsis ? { overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' } : undefined"
+            >{{ scope.opt.label }}</q-item-label>
           </q-item-section>
         </q-item>
       </template>
