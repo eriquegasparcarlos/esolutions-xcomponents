@@ -69,10 +69,14 @@
     "quasar": "^2.0.0",
     "pinia": "^2.0.0 || ^3.0.0",
     "vue-i18n": "^9.0.0 || ^10.0.0 || ^11.0.0",
+    "vue3-apexcharts": "^1.0.0",
     "@embedpdf/vue-pdf-viewer": "^2.0.0",
     "pdfjs-dist": "^4.0.0"
   },
   "peerDependenciesMeta": {
+    "vue3-apexcharts": {
+      "optional": true
+    },
     "@embedpdf/vue-pdf-viewer": {
       "optional": true
     },
