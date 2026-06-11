@@ -410,13 +410,38 @@ async function printPdf() {
 }
 
 // --- Descargar ---
-function downloadPdf() {
-  const a    = document.createElement('a')
-  a.href     = props.src
-  a.download = props.filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
+// `<a download>` no funciona cross-origin (el navegador lo ignora y abre el PDF
+// en una pestaña). Solución: descargar usando los bytes del PDF que pdfjs ya
+// tiene en memoria → Blob → Object URL → click programático.
+// Si pdfDoc aún no está listo, cae a fetch() del src como fallback.
+async function downloadPdf() {
+  let blob
+
+  try {
+    if (pdfDoc) {
+      const data = await pdfDoc.getData() // Uint8Array
+      blob = new Blob([data], { type: 'application/pdf' })
+    } else {
+      const res = await fetch(props.src, { credentials: 'include' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      blob = await res.blob()
+    }
+
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = props.filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    // Liberar el object URL en el próximo tick para asegurar que el browser
+    // ya inició la descarga.
+    setTimeout(() => URL.revokeObjectURL(url), 100)
+  } catch (e) {
+    console.error('[XPdfViewer] download failed:', e)
+    // Fallback: abrir en nueva tab (comportamiento anterior)
+    window.open(props.src, '_blank')
+  }
 }
 
 // --- Ciclo de vida ---
