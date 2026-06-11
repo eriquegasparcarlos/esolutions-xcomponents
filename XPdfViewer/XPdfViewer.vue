@@ -660,6 +660,30 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   cursor: text;
   transform-origin: 0% 0%;
   user-select: text;
+  /*
+   * pdfjs 5+ define en cada span dos variables:
+   *   --font-height: <px>   → debe aplicarse como font-size
+   *   --scale-x:     <num>  → debe aplicarse como transform: scaleX(...)
+   * Sin estas reglas el área seleccionable NO coincide con el ancho/alto
+   * del glifo dibujado en el canvas y la selección "agarra" caracteres
+   * adyacentes.
+   */
+  font-size: var(--font-height, 1em);
+  transform: scaleX(var(--scale-x, 1));
+}
+
+/* Marcadores internos de pdfjs */
+:deep(.x-pdf-text-layer span.markedContent) {
+  top: 0 !important;
+  height: 0 !important;
+}
+:deep(.x-pdf-text-layer .endOfContent) {
+  display: block;
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: -1;
+  cursor: default;
+  user-select: none;
 }
 
 :deep(.x-pdf-text-layer ::selection) {
