@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <!-- Toolbar fila 2: zoom + páginas -->
+    <!-- Toolbar fila 2: zoom + modo + páginas -->
     <div class="x-pdf-toolbar x-pdf-toolbar--bottom">
       <div class="x-pdf-toolbar__group">
         <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
@@ -63,6 +63,32 @@
           </svg>
         </button>
       </div>
+      <div class="x-pdf-tb-divider"></div>
+      <div class="x-pdf-toolbar__group">
+        <button
+          class="x-pdf-tb-btn"
+          :class="{ 'x-pdf-tb-btn--active': interactionMode === 'select' }"
+          @click="interactionMode = 'select'"
+          title="Seleccionar texto"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="3" x2="12" y2="21"/>
+            <path d="M9 6h6M9 18h6M7 12h10"/>
+          </svg>
+        </button>
+        <button
+          class="x-pdf-tb-btn"
+          :class="{ 'x-pdf-tb-btn--active': interactionMode === 'pan' }"
+          @click="interactionMode = 'pan'"
+          title="Mover (arrastrar)"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 11V8a2 2 0 0 0-4 0v3"/>
+            <path d="M14 11V7a2 2 0 0 0-4 0v4"/>
+            <path d="M10 11V9a2 2 0 0 0-4 0v5a7 7 0 0 0 14 0v-3a2 2 0 0 0-4 0v0"/>
+          </svg>
+        </button>
+      </div>
       <div class="x-pdf-toolbar__sep"></div>
       <div class="x-pdf-toolbar__group">
         <span class="x-pdf-page-info" v-if="totalPages > 0">
@@ -75,7 +101,7 @@
     <div
       class="x-pdf-pages-container"
       ref="containerRef"
-      :class="{ 'is-dragging': isDragging, 'is-loading': loading }"
+      :class="{ 'is-dragging': isDragging, 'is-loading': loading, 'is-select': interactionMode === 'select' }"
       @mousedown="startDrag"
     >
       <div class="x-pdf-pages-inner" ref="pagesRef"></div>
@@ -125,8 +151,9 @@ const printing     = ref(false)
 const pdfReady     = ref(false)
 const totalPages   = ref(0)
 const scale        = ref(1.0)
-const isDragging   = ref(false)
-const showHint     = ref(false)
+const isDragging      = ref(false)
+const showHint        = ref(false)
+const interactionMode = ref('select') // 'select' | 'pan'
 
 const MIN_SCALE  = 0.25
 const MAX_SCALE  = 5.0
@@ -243,6 +270,7 @@ let drag = { active: false, x: 0, y: 0, sl: 0, st: 0 }
 
 function startDrag(e) {
   if (e.button !== 0) return
+  if (interactionMode.value !== 'pan') return
   const c = containerRef.value
   drag = { active: true, x: e.clientX, y: e.clientY, sl: c.scrollLeft, st: c.scrollTop }
   isDragging.value = true
@@ -462,6 +490,11 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   color: #E7000B;
 }
 
+.x-pdf-tb-btn--active {
+  background: rgba(26, 86, 219, 0.10);
+  color: #1A56DB;
+}
+
 .x-pdf-toolbar__filename {
   max-width: 240px;
   overflow: hidden;
@@ -518,6 +551,11 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   overflow: auto;
   cursor: grab;
   min-height: 0;
+}
+
+.x-pdf-pages-container.is-select {
+  cursor: default;
+  user-select: text;
 }
 
 .x-pdf-pages-container.is-dragging {
