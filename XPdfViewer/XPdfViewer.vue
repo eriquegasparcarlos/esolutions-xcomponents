@@ -226,6 +226,8 @@ async function renderPage(pageNum, gen) {
 
   const wrapper = document.createElement('div')
   wrapper.className = 'x-pdf-page-wrapper'
+  wrapper.style.width  = `${viewport.width}px`
+  wrapper.style.height = `${viewport.height}px`
 
   const canvas = document.createElement('canvas')
   const ctx    = canvas.getContext('2d')
@@ -236,12 +238,31 @@ async function renderPage(pageNum, gen) {
   canvas.style.height = `${viewport.height}px`
   ctx.scale(dpr, dpr)
 
+  // Capa de texto para selección
+  const textLayerDiv = document.createElement('div')
+  textLayerDiv.className = 'x-pdf-text-layer'
+  textLayerDiv.style.width  = `${viewport.width}px`
+  textLayerDiv.style.height = `${viewport.height}px`
+
   wrapper.appendChild(canvas)
+  wrapper.appendChild(textLayerDiv)
 
   if (gen !== renderGen) return
   pagesRef.value.appendChild(wrapper)
 
   await page.render({ canvasContext: ctx, viewport }).promise
+
+  // Renderizar texto encima del canvas
+  try {
+    const textContent = await page.getTextContent()
+    pdfjsLib.renderTextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport,
+    })
+  } catch {
+    // ignorar si renderTextLayer no está disponible
+  }
 }
 
 // --- Zoom ---
@@ -577,8 +598,7 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
 
 /* ── Página individual ── */
 :deep(.x-pdf-page-wrapper) {
-  display: flex;
-  justify-content: center;
+  position: relative;
   flex-shrink: 0;
   border-radius: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -589,7 +609,33 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
 
 :deep(.x-pdf-page-wrapper canvas) {
   display: block;
-  max-width: 100%;
+}
+
+:deep(.x-pdf-text-layer) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.is-select :deep(.x-pdf-text-layer) {
+  pointer-events: auto;
+}
+
+:deep(.x-pdf-text-layer span),
+:deep(.x-pdf-text-layer br) {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+}
+
+:deep(.x-pdf-text-layer ::selection) {
+  background: rgba(26, 86, 219, 0.25);
+  color: transparent;
 }
 
 /* ── Loading overlay ── */
