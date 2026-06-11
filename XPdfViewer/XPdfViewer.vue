@@ -243,6 +243,15 @@ async function renderPage(pageNum, gen) {
   textLayerDiv.className = 'x-pdf-text-layer'
   textLayerDiv.style.width  = `${viewport.width}px`
   textLayerDiv.style.height = `${viewport.height}px`
+  // pdfjs 5+ usa `round(down, var(--total-scale-factor) * ...px, var(--scale-round-x))`
+  // para posicionar los spans del text layer. Sin estas variables CSS, los spans
+  // calculan posiciones inválidas y el área seleccionable NO coincide con el
+  // texto visible del canvas. La regla equivalente para pdfjs 3.x/4.x es
+  // --scale-factor; se setean ambas para compatibilidad.
+  textLayerDiv.style.setProperty('--total-scale-factor', String(viewport.scale))
+  textLayerDiv.style.setProperty('--scale-factor', String(viewport.scale))
+  textLayerDiv.style.setProperty('--scale-round-x', '1px')
+  textLayerDiv.style.setProperty('--scale-round-y', '1px')
 
   wrapper.appendChild(canvas)
   wrapper.appendChild(textLayerDiv)
@@ -630,10 +639,17 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   overflow: hidden;
   line-height: 1;
   pointer-events: none;
+  user-select: none;
+  /* Defaults: el JS sobreescribe estos valores con viewport.scale por página */
+  --scale-factor: 1;
+  --total-scale-factor: 1;
+  --scale-round-x: 1px;
+  --scale-round-y: 1px;
 }
 
 .is-select :deep(.x-pdf-text-layer) {
   pointer-events: auto;
+  user-select: text;
 }
 
 :deep(.x-pdf-text-layer span),
@@ -643,6 +659,7 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   white-space: pre;
   cursor: text;
   transform-origin: 0% 0%;
+  user-select: text;
 }
 
 :deep(.x-pdf-text-layer ::selection) {
