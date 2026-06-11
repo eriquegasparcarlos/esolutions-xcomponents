@@ -253,15 +253,27 @@ async function renderPage(pageNum, gen) {
   await page.render({ canvasContext: ctx, viewport }).promise
 
   // Renderizar texto encima del canvas
+  // - pdfjs 5+: usa la clase TextLayer (la API renderTextLayer fue removida)
+  // - pdfjs 3.x / 4.x: fallback a pdfjsLib.renderTextLayer({...}).promise
   try {
     const textContent = await page.getTextContent()
-    pdfjsLib.renderTextLayer({
-      textContentSource: textContent,
-      container: textLayerDiv,
-      viewport,
-    })
-  } catch {
-    // ignorar si renderTextLayer no está disponible
+    if (pdfjsLib.TextLayer) {
+      const tl = new pdfjsLib.TextLayer({
+        textContentSource: textContent,
+        container: textLayerDiv,
+        viewport,
+      })
+      await tl.render()
+    } else if (pdfjsLib.renderTextLayer) {
+      const task = pdfjsLib.renderTextLayer({
+        textContentSource: textContent,
+        container: textLayerDiv,
+        viewport,
+      })
+      await task.promise
+    }
+  } catch (e) {
+    console.warn('[XPdfViewer] text layer render failed:', e)
   }
 }
 
