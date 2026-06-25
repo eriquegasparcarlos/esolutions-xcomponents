@@ -719,7 +719,7 @@ function clearFilters() {
   filterData()
 }
 
-defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clearSelection, selectedRows })
+defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clearSelection, selectedRows, rows })
 </script>
 
 <template>
