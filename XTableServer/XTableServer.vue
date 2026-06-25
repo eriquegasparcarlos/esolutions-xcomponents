@@ -650,6 +650,7 @@ const performAction = (button, row) => {
     action: button.action,
     id: row.id,
     url: button.url,
+    row: row,
   })
 }
 
