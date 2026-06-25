@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <!-- Toolbar fila 2: zoom + páginas -->
+    <!-- Toolbar fila 2: zoom + modo + páginas -->
     <div class="x-pdf-toolbar x-pdf-toolbar--bottom">
       <div class="x-pdf-toolbar__group">
         <button class="x-pdf-tb-btn" @click="zoomOut" :disabled="scale <= MIN_SCALE" title="Alejar (Ctrl+-)">
@@ -63,6 +63,32 @@
           </svg>
         </button>
       </div>
+      <div class="x-pdf-tb-divider"></div>
+      <div class="x-pdf-toolbar__group">
+        <button
+          class="x-pdf-tb-btn"
+          :class="{ 'x-pdf-tb-btn--active': interactionMode === 'select' }"
+          @click="interactionMode = 'select'"
+          title="Seleccionar texto"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="3" x2="12" y2="21"/>
+            <path d="M9 6h6M9 18h6M7 12h10"/>
+          </svg>
+        </button>
+        <button
+          class="x-pdf-tb-btn"
+          :class="{ 'x-pdf-tb-btn--active': interactionMode === 'pan' }"
+          @click="interactionMode = 'pan'"
+          title="Mover (arrastrar)"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 11V8a2 2 0 0 0-4 0v3"/>
+            <path d="M14 11V7a2 2 0 0 0-4 0v4"/>
+            <path d="M10 11V9a2 2 0 0 0-4 0v5a7 7 0 0 0 14 0v-3a2 2 0 0 0-4 0v0"/>
+          </svg>
+        </button>
+      </div>
       <div class="x-pdf-toolbar__sep"></div>
       <div class="x-pdf-toolbar__group">
         <span class="x-pdf-page-info" v-if="totalPages > 0">
@@ -75,7 +101,7 @@
     <div
       class="x-pdf-pages-container"
       ref="containerRef"
-      :class="{ 'is-dragging': isDragging, 'is-loading': loading }"
+      :class="{ 'is-dragging': isDragging, 'is-loading': loading, 'is-select': interactionMode === 'select' }"
       @mousedown="startDrag"
     >
       <div class="x-pdf-pages-inner" ref="pagesRef"></div>
@@ -125,8 +151,9 @@ const printing     = ref(false)
 const pdfReady     = ref(false)
 const totalPages   = ref(0)
 const scale        = ref(1.0)
-const isDragging   = ref(false)
-const showHint     = ref(false)
+const isDragging      = ref(false)
+const showHint        = ref(false)
+const interactionMode = ref('select') // 'select' | 'pan'
 
 const MIN_SCALE  = 0.25
 const MAX_SCALE  = 5.0
@@ -199,6 +226,8 @@ async function renderPage(pageNum, gen) {
 
   const wrapper = document.createElement('div')
   wrapper.className = 'x-pdf-page-wrapper'
+  wrapper.style.width  = `${viewport.width}px`
+  wrapper.style.height = `${viewport.height}px`
 
   const canvas = document.createElement('canvas')
   const ctx    = canvas.getContext('2d')
@@ -209,12 +238,52 @@ async function renderPage(pageNum, gen) {
   canvas.style.height = `${viewport.height}px`
   ctx.scale(dpr, dpr)
 
+  // Capa de texto para selección
+  const textLayerDiv = document.createElement('div')
+  textLayerDiv.className = 'x-pdf-text-layer'
+  textLayerDiv.style.width  = `${viewport.width}px`
+  textLayerDiv.style.height = `${viewport.height}px`
+  // pdfjs 5+ usa `round(down, var(--total-scale-factor) * ...px, var(--scale-round-x))`
+  // para posicionar los spans del text layer. Sin estas variables CSS, los spans
+  // calculan posiciones inválidas y el área seleccionable NO coincide con el
+  // texto visible del canvas. La regla equivalente para pdfjs 3.x/4.x es
+  // --scale-factor; se setean ambas para compatibilidad.
+  textLayerDiv.style.setProperty('--total-scale-factor', String(viewport.scale))
+  textLayerDiv.style.setProperty('--scale-factor', String(viewport.scale))
+  textLayerDiv.style.setProperty('--scale-round-x', '1px')
+  textLayerDiv.style.setProperty('--scale-round-y', '1px')
+
   wrapper.appendChild(canvas)
+  wrapper.appendChild(textLayerDiv)
 
   if (gen !== renderGen) return
   pagesRef.value.appendChild(wrapper)
 
   await page.render({ canvasContext: ctx, viewport }).promise
+
+  // Renderizar texto encima del canvas
+  // - pdfjs 5+: usa la clase TextLayer (la API renderTextLayer fue removida)
+  // - pdfjs 3.x / 4.x: fallback a pdfjsLib.renderTextLayer({...}).promise
+  try {
+    const textContent = await page.getTextContent()
+    if (pdfjsLib.TextLayer) {
+      const tl = new pdfjsLib.TextLayer({
+        textContentSource: textContent,
+        container: textLayerDiv,
+        viewport,
+      })
+      await tl.render()
+    } else if (pdfjsLib.renderTextLayer) {
+      const task = pdfjsLib.renderTextLayer({
+        textContentSource: textContent,
+        container: textLayerDiv,
+        viewport,
+      })
+      await task.promise
+    }
+  } catch (e) {
+    console.warn('[XPdfViewer] text layer render failed:', e)
+  }
 }
 
 // --- Zoom ---
@@ -243,6 +312,7 @@ let drag = { active: false, x: 0, y: 0, sl: 0, st: 0 }
 
 function startDrag(e) {
   if (e.button !== 0) return
+  if (interactionMode.value !== 'pan') return
   const c = containerRef.value
   drag = { active: true, x: e.clientX, y: e.clientY, sl: c.scrollLeft, st: c.scrollTop }
   isDragging.value = true
@@ -340,13 +410,38 @@ async function printPdf() {
 }
 
 // --- Descargar ---
-function downloadPdf() {
-  const a    = document.createElement('a')
-  a.href     = props.src
-  a.download = props.filename
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
+// `<a download>` no funciona cross-origin (el navegador lo ignora y abre el PDF
+// en una pestaña). Solución: descargar usando los bytes del PDF que pdfjs ya
+// tiene en memoria → Blob → Object URL → click programático.
+// Si pdfDoc aún no está listo, cae a fetch() del src como fallback.
+async function downloadPdf() {
+  let blob
+
+  try {
+    if (pdfDoc) {
+      const data = await pdfDoc.getData() // Uint8Array
+      blob = new Blob([data], { type: 'application/pdf' })
+    } else {
+      const res = await fetch(props.src, { credentials: 'include' })
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+      blob = await res.blob()
+    }
+
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = props.filename
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    // Liberar el object URL en el próximo tick para asegurar que el browser
+    // ya inició la descarga.
+    setTimeout(() => URL.revokeObjectURL(url), 100)
+  } catch (e) {
+    console.error('[XPdfViewer] download failed:', e)
+    // Fallback: abrir en nueva tab (comportamiento anterior)
+    window.open(props.src, '_blank')
+  }
 }
 
 // --- Ciclo de vida ---
@@ -462,6 +557,11 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   color: #E7000B;
 }
 
+.x-pdf-tb-btn--active {
+  background: rgba(26, 86, 219, 0.10);
+  color: #1A56DB;
+}
+
 .x-pdf-toolbar__filename {
   max-width: 240px;
   overflow: hidden;
@@ -520,6 +620,11 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
   min-height: 0;
 }
 
+.x-pdf-pages-container.is-select {
+  cursor: default;
+  user-select: text;
+}
+
 .x-pdf-pages-container.is-dragging {
   cursor: grabbing;
 }
@@ -539,8 +644,7 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
 
 /* ── Página individual ── */
 :deep(.x-pdf-page-wrapper) {
-  display: flex;
-  justify-content: center;
+  position: relative;
   flex-shrink: 0;
   border-radius: 2px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
@@ -551,7 +655,65 @@ defineExpose({ printPdf, downloadPdf, zoomIn, zoomOut, zoomFit, zoomReset })
 
 :deep(.x-pdf-page-wrapper canvas) {
   display: block;
-  max-width: 100%;
+}
+
+:deep(.x-pdf-text-layer) {
+  position: absolute;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  /* Defaults: el JS sobreescribe estos valores con viewport.scale por página */
+  --scale-factor: 1;
+  --total-scale-factor: 1;
+  --scale-round-x: 1px;
+  --scale-round-y: 1px;
+}
+
+.is-select :deep(.x-pdf-text-layer) {
+  pointer-events: auto;
+  user-select: text;
+}
+
+:deep(.x-pdf-text-layer span),
+:deep(.x-pdf-text-layer br) {
+  color: transparent;
+  position: absolute;
+  white-space: pre;
+  cursor: text;
+  transform-origin: 0% 0%;
+  user-select: text;
+  /*
+   * pdfjs 5+ define en cada span dos variables:
+   *   --font-height: <px>   → debe aplicarse como font-size
+   *   --scale-x:     <num>  → debe aplicarse como transform: scaleX(...)
+   * Sin estas reglas el área seleccionable NO coincide con el ancho/alto
+   * del glifo dibujado en el canvas y la selección "agarra" caracteres
+   * adyacentes.
+   */
+  font-size: var(--font-height, 1em);
+  transform: scaleX(var(--scale-x, 1));
+}
+
+/* Marcadores internos de pdfjs */
+:deep(.x-pdf-text-layer span.markedContent) {
+  top: 0 !important;
+  height: 0 !important;
+}
+:deep(.x-pdf-text-layer .endOfContent) {
+  display: block;
+  position: absolute;
+  inset: 100% 0 0;
+  z-index: -1;
+  cursor: default;
+  user-select: none;
+}
+
+:deep(.x-pdf-text-layer ::selection) {
+  background: rgba(26, 86, 219, 0.25);
+  color: transparent;
 }
 
 /* ── Loading overlay ── */

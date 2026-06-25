@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.3.17",
+  "version": "2.3.23",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -71,7 +71,7 @@
     "vue-i18n": "^9.0.0 || ^10.0.0 || ^11.0.0",
     "vue3-apexcharts": "^1.0.0",
     "@embedpdf/vue-pdf-viewer": "^2.0.0",
-    "pdfjs-dist": "^4.0.0"
+    "pdfjs-dist": "^4.0.0 || ^5.0.0"
   },
   "peerDependenciesMeta": {
     "vue3-apexcharts": {
