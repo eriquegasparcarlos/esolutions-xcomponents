@@ -224,9 +224,11 @@ body {
 // --------------------------------------------------------------------------
 // Menus (q-menu generico) — estilo TailAdmin
 // Aplica a TODOS los q-menu del proyecto (incluyendo XTableServer actions,
-// columns selector, row actions, etc.)
+// columns selector, row actions, etc.) EXCEPTO al popup-content de XSelect
+// (.app-select__content), que necesita overflow propio para que el scroll
+// vertical funcione cuando hay muchas opciones (v2.3.27 fix).
 // --------------------------------------------------------------------------
-.q-menu {
+.q-menu:not(.app-select__content) {
   border-radius: 12px;
   border: 1px solid #e4e7ec; // gray-200
   box-shadow: 0 4px 16px rgba(16, 24, 40, 0.12);
