@@ -108,6 +108,7 @@
 // --------------------------------------------------------------------------
 .app-select__content {
   max-height: var(--x-select-dropdown-max-height, #{$x-select-dropdown-max-height});
+  overflow-y: auto; // scroll cuando las opciones exceden max-height (fix v2.3.26)
   border-radius: var(--x-select-border-radius, #{$x-border-radius});
   box-shadow: $x-shadow-md;
 
