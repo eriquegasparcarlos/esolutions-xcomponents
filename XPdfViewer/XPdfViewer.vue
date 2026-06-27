@@ -367,15 +367,16 @@ async function printPdf() {
   style.textContent = `
     @media print {
       body > *:not(#__pdf-print-area__) { display: none !important; }
-      #__pdf-print-area__ {
-        display: block !important;
-        position: fixed; inset: 0; background: white; z-index: 99999;
+      #__pdf-print-area__ { display: block !important; }
+      .x-pdf-print-page {
+        display: block;
+        width: 100%; height: 100vh;
+        page-break-after: always; break-after: page;
+        page-break-inside: avoid; break-inside: avoid;
+        overflow: hidden;
       }
-      #__pdf-print-area__ img {
-        display: block; width: 100%; height: auto;
-        page-break-after: always; page-break-inside: avoid;
-      }
-      #__pdf-print-area__ img:last-child { page-break-after: auto; }
+      .x-pdf-print-page:last-child { page-break-after: auto; break-after: auto; }
+      .x-pdf-print-page img { display: block; width: 100%; height: 100%; object-fit: contain; }
     }
   `
   const area = document.createElement('div')
@@ -392,7 +393,10 @@ async function printPdf() {
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise
       const img = document.createElement('img')
       img.src = canvas.toDataURL('image/jpeg', 0.92)
-      area.appendChild(img)
+      const pageDiv = document.createElement('div')
+      pageDiv.className = 'x-pdf-print-page'
+      pageDiv.appendChild(img)
+      area.appendChild(pageDiv)
     }
 
     document.head.appendChild(style)
