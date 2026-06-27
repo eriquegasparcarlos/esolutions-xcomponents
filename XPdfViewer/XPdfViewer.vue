@@ -359,57 +359,39 @@ function onWheelNoCtrl(e) {
 }
 
 // --- Imprimir ---
+// Usamos iframe con el blob del PDF para que el navegador imprima nativamente,
+// igual que cuando el usuario descarga y abre en el visor. Así se respetan todas
+// las páginas sin depender de page-break en elementos canvas/imagen.
 async function printPdf() {
   if (!pdfDoc || printing.value) return
   printing.value = true
 
-  const style = document.createElement('style')
-  style.textContent = `
-    @media print {
-      body > *:not(#__pdf-print-area__) { display: none !important; }
-      #__pdf-print-area__ { display: block !important; }
-      .x-pdf-print-page {
-        display: block;
-        width: 100%; height: 100vh;
-        page-break-after: always; break-after: page;
-        page-break-inside: avoid; break-inside: avoid;
-        overflow: hidden;
-      }
-      .x-pdf-print-page:last-child { page-break-after: auto; break-after: auto; }
-      .x-pdf-print-page img { display: block; width: 100%; height: 100%; object-fit: contain; }
-    }
-  `
-  const area = document.createElement('div')
-  area.id = '__pdf-print-area__'
-  area.style.display = 'none'
-
+  let url = null
+  let iframe = null
   try {
-    for (let i = 1; i <= totalPages.value; i++) {
-      const page     = await pdfDoc.getPage(i)
-      const viewport = page.getViewport({ scale: 2.5 })
-      const canvas   = document.createElement('canvas')
-      canvas.width   = viewport.width
-      canvas.height  = viewport.height
-      await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise
-      const img = document.createElement('img')
-      img.src = canvas.toDataURL('image/jpeg', 0.92)
-      const pageDiv = document.createElement('div')
-      pageDiv.className = 'x-pdf-print-page'
-      pageDiv.appendChild(img)
-      area.appendChild(pageDiv)
-    }
+    const data = await pdfDoc.getData()
+    const blob = new Blob([data], { type: 'application/pdf' })
+    url = URL.createObjectURL(blob)
 
-    document.head.appendChild(style)
-    document.body.appendChild(area)
-    await new Promise(r => setTimeout(r, 150))
+    iframe = document.createElement('iframe')
+    iframe.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1px;height:1px;opacity:0;'
+    iframe.src = url
+    document.body.appendChild(iframe)
 
-    // Liberar el botón ANTES del diálogo (window.print es bloqueante en escritorio)
+    await new Promise((resolve) => {
+      iframe.onload = resolve
+      setTimeout(resolve, 3000)
+    })
+
     printing.value = false
-    window.print()
+    iframe.contentWindow.focus()
+    iframe.contentWindow.print()
   } finally {
     printing.value = false
-    document.head.contains(style) && document.head.removeChild(style)
-    document.body.contains(area)  && document.body.removeChild(area)
+    setTimeout(() => {
+      if (iframe && document.body.contains(iframe)) document.body.removeChild(iframe)
+      if (url) URL.revokeObjectURL(url)
+    }, 1500)
   }
 }
 
