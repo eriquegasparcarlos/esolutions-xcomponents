@@ -234,20 +234,21 @@ function printPdf() {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: #2d2d2d;
+  background: #f3f4f6; /* --ep-background-app: coincide con fondo del visor embedpdf */
   overflow: hidden;
 }
 
-/* Header oscuro con filename + close */
+/* Header claro con filename + close — mismos tokens que usa embedpdf
+   (--ep-background-surface, --ep-foreground-primary, --ep-border-default). */
 .x-pdf-header {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: #1e1e1e;
-  color: #f0f0f0;
-  border-bottom: 1px solid #000;
+  background: #ffffff;
+  color: #111827;
+  border-bottom: 1px solid #d1d5db;
 
   &__filename {
     font-size: 13px;
@@ -267,14 +268,18 @@ function printPdf() {
     width: 32px;
     height: 32px;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     background: transparent;
     color: inherit;
     cursor: pointer;
-    transition: background 0.15s;
+    transition: background 0.15s, color 0.15s;
 
-    &:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); }
-    &--close:hover:not(:disabled) { background: rgba(255, 90, 90, 0.28); }
+    &:hover:not(:disabled) { background: #f3f4f6; } /* --ep-interactive-hover */
+
+    &--close:hover:not(:disabled) {
+      background: #fef2f2; /* --ep-state-error-light */
+      color: #dc2626;
+    }
   }
 }
 
