@@ -12,6 +12,14 @@ const emit = defineEmits(['update:modelValue', 'click-new', 'select', 'error']);
 const { proxy } = getCurrentInstance();
 const attrs = useAttrs();
 
+// Excluir onFilter del spread para evitar que Vue lo fusione en array
+// con el @filter interno del q-select cuando el padre pasa @filter.
+const cleanAttrs = computed(() => {
+  const { onFilter: _ext, ...rest } = attrs;
+  return rest;
+});
+const externalFilter = computed(() => (typeof attrs.onFilter === 'function' ? attrs.onFilter : null));
+
 const selectRef = ref(null);
 const remoteOptions = ref([]);
 const localFilteredOptions = ref(null);
@@ -119,7 +127,7 @@ const computedOptions = computed(() => {
   return options;
 });
 
-const isFilterable = computed(() => !!props.remoteUrl || !!props.filterLocal);
+const isFilterable = computed(() => !!props.remoteUrl || !!props.filterLocal || !!externalFilter.value);
 const optionsToShow = computed(() => {
   if (props.filterLocal && localFilteredOptions.value !== null) {
     return localFilteredOptions.value;
@@ -196,6 +204,10 @@ function handleLocalFilter(val, update) {
 }
 
 function onFilter(val, update, abort) {
+  if (externalFilter.value) {
+    externalFilter.value(val, update, abort);
+    return;
+  }
   if (props.remoteUrl) {
     handleRemoteFilter(val, update, abort);
   } else if (props.filterLocal) {
@@ -283,7 +295,7 @@ function onSelect(val) {
 
     <q-select ref="selectRef"
               v-bind="{
-                ...attrs,
+                ...cleanAttrs,
                 class: null,
                 label: elementLabel,
                 outlined: formDefaults.outlined,
