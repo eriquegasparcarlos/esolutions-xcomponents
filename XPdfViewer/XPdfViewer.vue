@@ -255,8 +255,8 @@ function printPdf() {
    (button 36×36, icono trazo fino, color #4b5563, hover rgba(0,0,0,0.06)). */
 .x-pdf-actions {
   position: absolute;
-  top: 10px;
-  right: 14px;
+  top: 6px;
+  right: 12px;
   z-index: 20;
   display: flex;
   align-items: center;
@@ -286,16 +286,17 @@ function printPdf() {
 }
 
 /* Oculta botones del toolbar interno de embedpdf que no tienen categoria
-   oficial en `disabledCategories`. Los IDs se confirmaron leyendo el
-   bundle de @embedpdf/snippet (data-item-id). */
-.x-pdf-viewer .embedpdf-container [data-item-id="left-action-menu"],
-.x-pdf-viewer .embedpdf-container [data-item-id="overflow-left-action-menu-button"],
-.x-pdf-viewer .embedpdf-container [data-item-id="document-menu"],
-.x-pdf-viewer .embedpdf-container [data-item-id="document-menu-button"],
-.x-pdf-viewer .embedpdf-container [data-item-id="page-settings"],
-.x-pdf-viewer .embedpdf-container [data-item-id="page-settings-menu"],
-.x-pdf-viewer .embedpdf-container [data-item-id="page-settings-submenu"],
-.x-pdf-viewer .embedpdf-container [data-item-id="page-settings-menu-button"] {
+   oficial en `disabledCategories`. embedpdf marca cada item con el atributo
+   `data-epdf-i="<id>"` — los IDs se leyeron del bundle @embedpdf/snippet.
+   (En v2.4.5 use `data-item-id`, atributo inexistente — no matcheaba nada.) */
+.x-pdf-viewer [data-epdf-i="left-action-menu"],
+.x-pdf-viewer [data-epdf-i="overflow-left-action-menu-button"],
+.x-pdf-viewer [data-epdf-i="document-menu"],
+.x-pdf-viewer [data-epdf-i="document-menu-button"],
+.x-pdf-viewer [data-epdf-i="page-settings"],
+.x-pdf-viewer [data-epdf-i="page-settings-menu"],
+.x-pdf-viewer [data-epdf-i="page-settings-submenu"],
+.x-pdf-viewer [data-epdf-i="page-settings-button"] {
   display: none !important;
 }
 </style>
