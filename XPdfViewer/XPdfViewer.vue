@@ -268,47 +268,51 @@ function printPdf() {
   overflow: hidden;
 }
 
-/* Header claro con filename + close — mismos tokens que usa embedpdf
-   (--ep-background-surface, --ep-foreground-primary, --ep-border-default). */
+/* Header con filename + close — replica los tokens visuales de XDialog:
+   height 60px, padding 16px, filename 20px/600, boton cerrar round 32px
+   con hover gray-100 (#f2f4f7) + gray-800 (#1d2939). */
 .x-pdf-header {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
-  background: #ffffff;
-  color: #111827;
-  border-bottom: 1px solid #d1d5db;
+  height: 60px;
+  padding: 0 16px;
+  background: #fafafa;
+  color: inherit;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.24);
 
   &__filename {
-    font-size: 13px;
-    font-weight: 500;
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #1d2939;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 80%;
   }
 
-  &__spacer { flex: 1 1 auto; }
+  &__spacer { display: none; }
 
   &__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
     width: 32px;
     height: 32px;
+    margin-left: 8px;
     border: none;
-    border-radius: 6px;
+    border-radius: 50%; /* q-btn round */
     background: transparent;
-    color: inherit;
+    color: #757575; /* $x-text-secondary */
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
 
-    &:hover:not(:disabled) { background: #f3f4f6; } /* --ep-interactive-hover */
-
-    &--close:hover:not(:disabled) {
-      background: #fef2f2; /* --ep-state-error-light */
-      color: #dc2626;
+    &:hover:not(:disabled) {
+      background: #f2f4f7; /* gray-100 */
+      color: #1d2939;      /* gray-800 */
     }
   }
 }
