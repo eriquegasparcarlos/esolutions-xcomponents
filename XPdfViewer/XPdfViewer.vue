@@ -1,11 +1,47 @@
 <template>
   <div class="x-pdf-viewer">
-    <!-- Header custom: filename + boton cerrar (embedpdf no expone cerrar) -->
+    <!-- Header custom: filename + acciones (imprimir/descargar/cerrar).
+         Los botones equivalentes de embedpdf estan siempre deshabilitados
+         (`document-print` + `document-export`) para no duplicarlos. -->
     <div v-if="showHeader" class="x-pdf-header">
       <span v-if="filename" class="x-pdf-header__filename" :title="filename">
         {{ filename }}
       </span>
       <div class="x-pdf-header__spacer"></div>
+
+      <!-- Imprimir -->
+      <button
+        v-if="!hidePrint"
+        class="x-pdf-header__btn"
+        :disabled="busy"
+        @click="printPdf"
+        title="Imprimir"
+        type="button"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 6 2 18 2 18 9"/>
+          <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+          <rect x="6" y="14" width="12" height="8"/>
+        </svg>
+      </button>
+
+      <!-- Descargar -->
+      <button
+        v-if="!hideDownload"
+        class="x-pdf-header__btn"
+        :disabled="busy"
+        @click="downloadPdf"
+        title="Descargar"
+        type="button"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+      </button>
+
+      <!-- Cerrar -->
       <button
         v-if="!hideClose"
         class="x-pdf-header__btn x-pdf-header__btn--close"
@@ -21,7 +57,10 @@
     </div>
 
     <!-- Motor: PDFium via WebAssembly (embedpdf). Trae UI con toolbar, zoom,
-         search, thumbnails, print, download, seleccion precisa nativa. -->
+         search, thumbnails, seleccion precisa nativa.
+         Los botones de print y download del toolbar interno estan siempre
+         deshabilitados: los llevamos al header custom para tener control
+         del filename en descarga y del flujo de impresion. -->
     <div class="x-pdf-viewer__viewport">
       <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
@@ -30,21 +69,24 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 
 /**
  * XPdfViewer — visor PDF basado en @embedpdf/vue-pdf-viewer (PDFium WASM).
  *
- * v2.4.x — motor PDFium via WebAssembly. Selección de texto nativa,
- *          sin worker JS externo, sin problemas de MIME .mjs.
+ * v2.4.2 — Print + Download reubicados al header custom del componente:
+ *   - Print via iframe oculto (dispara el dialog nativo del browser sin
+ *     abrir tab ni pasar por el preview interno de embedpdf).
+ *   - Download via fetch(src) → Blob → `<a download>` para respetar el
+ *     prop `filename` (embedpdf usaba el nombre original del PDF servido).
+ *   - Los botones internos de embedpdf (`document-print`, `document-export`)
+ *     quedan siempre off para no duplicar.
  *
- * Defaults: visor minimalista (zoom + print + download + selección + navegación).
- * Todas las features "editables" (annotations, forms, redaction, sidebar,
- * search, rotate) están apagadas por default y se habilitan por props.
- *
- * Retrocompatibilidad v2.3.x: `hidePrint`, `hideDownload`, `hideClose`,
- * `filename`, `showHeader` mantienen su semántica original.
+ * Defaults del toolbar de embedpdf (categorías activables via `show*`):
+ *   Off por default: search, sidebar, annotations, forms, redaction, rotate,
+ *                    capture, insert.
+ *   On por default:  zoom, selection, navegación de páginas.
  */
 
 const emit = defineEmits(['close'])
@@ -54,17 +96,13 @@ const props = defineProps({
   src:          { type: String, required: true },
   filename:     { type: String, default: 'documento.pdf' },
 
-  // — Header custom (no proviene de embedpdf) —
+  // — Header custom —
   showHeader:   { type: Boolean, default: true },
+  hidePrint:    { type: Boolean, default: false }, // oculta boton print del header
+  hideDownload: { type: Boolean, default: false }, // oculta boton descargar del header
   hideClose:    { type: Boolean, default: false },
 
-  // — Toolbar de embedpdf: categorías visibles por default —
-  //   Se pueden apagar puntualmente.
-  hidePrint:    { type: Boolean, default: false }, // apaga document-print
-  hideDownload: { type: Boolean, default: false }, // apaga document-export
-
-  // — Toolbar de embedpdf: categorías apagadas por default —
-  //   Se activan opt-in (visor "read-only" minimalista es el escenario común).
+  // — Toolbar de embedpdf: apagadas por default (opt-in) —
   showSearch:      { type: Boolean, default: false }, // panel-search
   showSidebar:     { type: Boolean, default: false }, // panel-sidebar + panel-comment
   showAnnotations: { type: Boolean, default: false }, // annotation + annotation-shape
@@ -75,13 +113,10 @@ const props = defineProps({
   showInsert:      { type: Boolean, default: false }, // insert
 })
 
-// Construye disabledCategories desde los props.
-// Cada rama agrega las categorías/subcategorías correspondientes de embedpdf.
+// disabledCategories del toolbar interno de embedpdf.
+// document-print y document-export van SIEMPRE off (los manejamos en el header).
 const config = computed(() => {
-  const off = []
-
-  if (props.hidePrint)         off.push('document-print')
-  if (props.hideDownload)      off.push('document-export')
+  const off = ['document-print', 'document-export']
 
   if (!props.showSearch)       off.push('panel-search')
   if (!props.showSidebar)      off.push('panel-sidebar', 'panel-comment')
@@ -97,6 +132,75 @@ const config = computed(() => {
     disabledCategories: off,
   }
 })
+
+const busy = ref(false)
+
+/**
+ * Descarga forzando el filename del prop.
+ * Hace fetch(src) → Blob → `<a download>`.
+ * Funciona con URLs http/s y con blob: URLs.
+ */
+async function downloadPdf() {
+  if (!props.src) return
+  busy.value = true
+  let objUrl = null
+  try {
+    const res = await fetch(props.src, { credentials: 'include' })
+    if (!res.ok) throw new Error(`HTTP ${res.status}`)
+    const blob = await res.blob()
+    objUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = objUrl
+    a.download = props.filename || 'documento.pdf'
+    a.style.display = 'none'
+    document.body.appendChild(a)
+    a.click()
+    a.remove()
+  } catch (e) {
+    console.error('[XPdfViewer] download failed:', e)
+  } finally {
+    busy.value = false
+    if (objUrl) setTimeout(() => URL.revokeObjectURL(objUrl), 5000)
+  }
+}
+
+/**
+ * Imprime disparando el dialog nativo del browser via iframe oculto.
+ * NO se puede saltar el dialog del browser por seguridad; lo mejor
+ * posible es que aparezca directamente listo para "Imprimir".
+ * El iframe se elimina al minuto por si el usuario cancela.
+ */
+function printPdf() {
+  if (!props.src) return
+  busy.value = true
+  const iframe = document.createElement('iframe')
+  iframe.style.position = 'fixed'
+  iframe.style.right = '0'
+  iframe.style.bottom = '0'
+  iframe.style.width = '0'
+  iframe.style.height = '0'
+  iframe.style.border = '0'
+  iframe.setAttribute('aria-hidden', 'true')
+  iframe.src = props.src
+  iframe.onload = () => {
+    try {
+      iframe.contentWindow?.focus()
+      iframe.contentWindow?.print()
+    } catch (e) {
+      console.warn('[XPdfViewer] print failed:', e)
+    } finally {
+      busy.value = false
+    }
+  }
+  iframe.onerror = () => {
+    busy.value = false
+    console.error('[XPdfViewer] iframe error for print')
+    iframe.remove()
+  }
+  document.body.appendChild(iframe)
+  // Cleanup por si el dialog nunca cierra
+  setTimeout(() => iframe.remove(), 60000)
+}
 </script>
 
 <style lang="scss">
@@ -113,8 +217,8 @@ const config = computed(() => {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 12px;
+  gap: 4px;
+  padding: 6px 8px;
   background: #1e1e1e;
   color: #f0f0f0;
   border-bottom: 1px solid #000;
@@ -125,7 +229,8 @@ const config = computed(() => {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 60%;
+    max-width: 55%;
+    padding: 0 4px;
   }
 
   &__spacer {
@@ -145,11 +250,16 @@ const config = computed(() => {
     cursor: pointer;
     transition: background 0.15s;
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.1);
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
     }
 
-    &--close:hover {
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &--close:hover:not(:disabled) {
       background: rgba(255, 90, 90, 0.25);
     }
   }
