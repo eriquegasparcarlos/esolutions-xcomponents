@@ -23,8 +23,8 @@
     <!-- Motor: PDFium via WebAssembly (embedpdf). Corre dentro de shadow DOM,
          por eso ocultamos elementos del toolbar interno via `disabledCategories`
          del config — el CSS externo no penetra el shadow. -->
-    <div class="x-pdf-viewer__viewport">
-      <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" @init="onEmbedInit" />
+    <div class="x-pdf-viewer__viewport" ref="viewportRef">
+      <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <div v-if="showActions" class="x-pdf-actions">
@@ -63,7 +63,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, nextTick } from 'vue'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 
 /**
@@ -138,16 +138,17 @@ const config = computed(() => {
 })
 
 const busy = ref(false)
+const viewportRef = ref(null)
 
 /**
- * Al inicializar el <embedpdf-container>, inyectamos un <style> dentro de su
- * shadowRoot para ocultar bloques del toolbar interno que no tienen
- * data-epdf-cat propia (o cuyo comportamiento es "medio" apagado, como
- * botones deshabilitados que siguen ocupando espacio).
+ * Inyecta un <style> dentro del shadowRoot del <embedpdf-container> para
+ * ocultar bloques del toolbar interno que no tienen data-epdf-cat propia.
  *
- * Estrategia: ocultar el CONTENEDOR completo (left-group, right-group, etc.)
- * cuando ninguno de sus items esta activado por props. Mas robusto que
- * targetear item por item.
+ * IMPORTANTE — sobre @init:
+ *   @PDFViewer emit("init", viewer) NO pasa el HTMLElement — pasa el
+ *   VIEWER OBJECT (retorno de EmbedPDF.init()). Por eso `viewer.shadowRoot`
+ *   es undefined. Este bug estuvo activo en v2.4.7 → v2.4.10.
+ *   Fix: usar @ready + querySelector desde nuestro propio wrapper Vue.
  *
  * Estructura del main-toolbar de embedpdf:
  *   left-group  → document-menu, sidebar, overflow-menu, page-settings
@@ -158,29 +159,36 @@ const busy = ref(false)
  *   spacer-2
  *   right-group → search + comment
  */
-function onEmbedInit(container) {
-  const el = container?.$el ?? container
-  const shadow = el?.shadowRoot
-  if (!shadow) return
+function onEmbedReady() {
+  nextTick(() => injectShadowStyles())
+}
+
+function injectShadowStyles(retriesLeft = 5) {
+  const container = viewportRef.value?.querySelector('embedpdf-container')
+  const shadow = container?.shadowRoot
+
+  if (!shadow) {
+    if (retriesLeft > 0) {
+      setTimeout(() => injectShadowStyles(retriesLeft - 1), 150)
+    }
+    return
+  }
+
+  // Evitar duplicar si ya se inyecto (por remontajes).
+  if (shadow.querySelector('style[data-x-pdf-viewer="overrides"]')) return
 
   const rules = []
 
-  // Si TODOS los botones del left-group estan off → ocultar el grupo entero
-  // (incluye los dividers y el sidebar-button deshabilitado).
   if (!props.showDocumentMenu && !props.showPageSettings
       && !props.showSidebar && !props.showOverflowMenu) {
     rules.push('[data-epdf-i="left-group"]{display:none!important;}')
     rules.push('[data-epdf-i="divider-2"]{display:none!important;}')
   }
 
-  // right-group tiene search + comment (ambos disabled cuando sus categorias
-  // estan off). Si el consumidor no activo ninguno, no aporta nada visual.
   if (!props.showSearch && !props.showSidebar) {
     rules.push('[data-epdf-i="right-group"]{display:none!important;}')
   }
 
-  // mode-tabs + mode-select-button ya se apagan via categoria "mode", pero
-  // pueden dejar huella visual en algunos breakpoints. Reforzarlo.
   if (!props.showModeTabs) {
     rules.push('[data-epdf-i="mode-tabs"]{display:none!important;}')
     rules.push('[data-epdf-i="mode-select-button"]{display:none!important;}')
