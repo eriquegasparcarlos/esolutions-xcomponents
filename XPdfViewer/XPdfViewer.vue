@@ -20,8 +20,8 @@
       </button>
     </div>
 
-    <!-- Motor: PDFium via WebAssembly (embedpdf). Trae su propia UI con zoom,
-         search, thumbnails, print, download, selección precisa. -->
+    <!-- Motor: PDFium via WebAssembly (embedpdf). Trae UI con toolbar, zoom,
+         search, thumbnails, print, download, seleccion precisa nativa. -->
     <div class="x-pdf-viewer__viewport">
       <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
@@ -36,40 +36,65 @@ import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 /**
  * XPdfViewer — visor PDF basado en @embedpdf/vue-pdf-viewer (PDFium WASM).
  *
- * Historia:
- *  - Hasta v2.3.x usaba pdfjs-dist con render manual (canvas + text layer).
- *    La selección de texto era imprecisa y el worker .mjs daba issues de MIME
- *    en nginx sin config extra.
- *  - Desde v2.4.0 delega a @embedpdf/vue-pdf-viewer (motor PDFium via WASM,
- *    el mismo motor de Chrome). Selección nativa, sin worker JS, toolbar
- *    interno con zoom/search/print/download/thumbnails.
+ * v2.4.x — motor PDFium via WebAssembly. Selección de texto nativa,
+ *          sin worker JS externo, sin problemas de MIME .mjs.
  *
- * API pública (retro-compatible con llamantes v2.3.x):
- *   Props: src, filename, hidePrint, hideDownload, hideClose, showHeader
- *   Emits: close
+ * Defaults: visor minimalista (zoom + print + download + selección + navegación).
+ * Todas las features "editables" (annotations, forms, redaction, sidebar,
+ * search, rotate) están apagadas por default y se habilitan por props.
+ *
+ * Retrocompatibilidad v2.3.x: `hidePrint`, `hideDownload`, `hideClose`,
+ * `filename`, `showHeader` mantienen su semántica original.
  */
 
 const emit = defineEmits(['close'])
 
 const props = defineProps({
+  // — Contenido —
   src:          { type: String, required: true },
   filename:     { type: String, default: 'documento.pdf' },
-  hidePrint:    { type: Boolean, default: false },
-  hideDownload: { type: Boolean, default: false },
-  hideClose:    { type: Boolean, default: false },
+
+  // — Header custom (no proviene de embedpdf) —
   showHeader:   { type: Boolean, default: true },
+  hideClose:    { type: Boolean, default: false },
+
+  // — Toolbar de embedpdf: categorías visibles por default —
+  //   Se pueden apagar puntualmente.
+  hidePrint:    { type: Boolean, default: false }, // apaga document-print
+  hideDownload: { type: Boolean, default: false }, // apaga document-export
+
+  // — Toolbar de embedpdf: categorías apagadas por default —
+  //   Se activan opt-in (visor "read-only" minimalista es el escenario común).
+  showSearch:      { type: Boolean, default: false }, // panel-search
+  showSidebar:     { type: Boolean, default: false }, // panel-sidebar + panel-comment
+  showAnnotations: { type: Boolean, default: false }, // annotation + annotation-shape
+  showForms:       { type: Boolean, default: false }, // form
+  showRedaction:   { type: Boolean, default: false }, // redaction + security
+  showRotate:      { type: Boolean, default: false }, // page-rotate
+  showCapture:     { type: Boolean, default: false }, // document-capture + tools-capture
+  showInsert:      { type: Boolean, default: false }, // insert
 })
 
-// Ocultar categorias del toolbar interno de embedpdf según los flags.
-// disabledCategories corta features enteras: 'print', 'export' (download),
-// 'annotation' (siempre off para visor de comprobantes), 'redaction' (idem).
+// Construye disabledCategories desde los props.
+// Cada rama agrega las categorías/subcategorías correspondientes de embedpdf.
 const config = computed(() => {
-  const disabled = ['annotation', 'redaction']
-  if (props.hidePrint) disabled.push('print')
-  if (props.hideDownload) disabled.push('export')
+  const off = []
+
+  if (props.hidePrint)         off.push('document-print')
+  if (props.hideDownload)      off.push('document-export')
+
+  if (!props.showSearch)       off.push('panel-search')
+  if (!props.showSidebar)      off.push('panel-sidebar', 'panel-comment')
+  if (!props.showAnnotations)  off.push('annotation', 'annotation-shape')
+  if (!props.showForms)        off.push('form')
+  if (!props.showRedaction)    off.push('redaction', 'security')
+  if (!props.showRotate)       off.push('page-rotate')
+  if (!props.showCapture)      off.push('document-capture', 'tools-capture')
+  if (!props.showInsert)       off.push('insert')
+
   return {
     src: props.src,
-    disabledCategories: disabled,
+    disabledCategories: off,
   }
 })
 </script>
