@@ -1,16 +1,33 @@
 <template>
   <div class="x-pdf-viewer">
+    <!-- Header custom: filename + boton cerrar (embedpdf no expone cerrar). -->
+    <div v-if="showHeader" class="x-pdf-header">
+      <span v-if="filename" class="x-pdf-header__filename" :title="filename">
+        {{ filename }}
+      </span>
+      <div class="x-pdf-header__spacer"></div>
+      <button
+        v-if="!hideClose"
+        class="x-pdf-header__btn x-pdf-header__btn--close"
+        title="Cerrar"
+        type="button"
+        @click="$emit('close')"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
     <!-- Motor: PDFium via WebAssembly (embedpdf). Trae UI con toolbar,
-         zoom, search, thumbnails, seleccion precisa nativa.
-         Los botones de print y download del toolbar interno estan siempre
-         apagados: los proveemos como overlay sobre el toolbar. -->
+         zoom, seleccion nativa. Print/Download del toolbar interno estan
+         apagados: los proveemos como overlay sobre el toolbar con estilo
+         que imita los botones del propio embedpdf (transparente, hover gris). -->
     <div class="x-pdf-viewer__viewport">
       <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
-      <!-- Botonera flotante a la derecha del toolbar interno de embedpdf.
-           Print + Download + Close comparten linea visual con los controles
-           de zoom/pan del toolbar. -->
       <div v-if="showActions" class="x-pdf-actions">
         <button
           v-if="!hidePrint"
@@ -41,19 +58,6 @@
             <line x1="12" y1="15" x2="12" y2="3"/>
           </svg>
         </button>
-
-        <button
-          v-if="!hideClose"
-          class="x-pdf-actions__btn x-pdf-actions__btn--close"
-          title="Cerrar"
-          type="button"
-          @click="$emit('close')"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
       </div>
     </div>
   </div>
@@ -66,21 +70,19 @@ import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 /**
  * XPdfViewer — visor PDF basado en @embedpdf/vue-pdf-viewer (PDFium WASM).
  *
- * v2.4.3 —
- *   - Botones Print / Download / Close ahora son overlay flotante a la
- *     derecha del toolbar interno (`x-pdf-actions`, position:absolute).
- *   - Se ocultan los botones del hamburger izquierdo y del "documento"
- *     (left-action-menu + document-menu-button) via CSS attribute selectors.
- *   - Default zoom: 'fit-width' — el PDF abre ocupando el ancho del contenedor.
- *   - `filename` ya no se muestra en pantalla (queda solo como default para
- *     la descarga). Se puede mostrar via `showActions=false` + overlay propio.
+ * v2.4.4 —
+ *   - Header custom con filename + boton cerrar (restaurado).
+ *   - Print/Download en overlay sobre el toolbar interno de embedpdf con
+ *     estilo neutro (transparente, hover gris claro) para verse como
+ *     continuacion natural del toolbar.
+ *   - Zoom por default: 'fit-width'.
  *
  * Props publicos:
- *   src, filename, showActions, hidePrint, hideDownload, hideClose
+ *   src, filename, showHeader, hideClose,
+ *   showActions, hidePrint, hideDownload,
  *   show*: search, sidebar, annotations, forms, redaction, rotate, capture,
- *          insert (todos default false — visor read-only minimalista)
- *
- * Emit: close
+ *          insert (todos default false — visor read-only minimalista).
+ * Emit: close.
  */
 
 const emit = defineEmits(['close'])
@@ -90,11 +92,14 @@ const props = defineProps({
   src:          { type: String, required: true },
   filename:     { type: String, default: 'documento.pdf' },
 
-  // — Overlay de acciones (Print/Download/Close) —
+  // — Header custom con filename + close —
+  showHeader:   { type: Boolean, default: true },
+  hideClose:    { type: Boolean, default: false },
+
+  // — Overlay de acciones sobre el toolbar (Print/Download) —
   showActions:  { type: Boolean, default: true },
   hidePrint:    { type: Boolean, default: false },
   hideDownload: { type: Boolean, default: false },
-  hideClose:    { type: Boolean, default: false },
 
   // — Toolbar de embedpdf: features apagadas por default (opt-in) —
   showSearch:      { type: Boolean, default: false }, // panel-search
@@ -122,8 +127,6 @@ const config = computed(() => {
   return {
     src: props.src,
     disabledCategories: off,
-    // Abre en fit-width para que el reporte sea legible sin tener que ajustar
-    // manualmente el zoom (embedpdf: 'fit-width' | 'fit-page' | 'automatic').
     zoom: {
       defaultZoomLevel: 'fit-width',
     },
@@ -198,6 +201,53 @@ function printPdf() {
   overflow: hidden;
 }
 
+/* Header custom oscuro con filename + close */
+.x-pdf-header {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #1e1e1e;
+  color: #f0f0f0;
+  border-bottom: 1px solid #000;
+
+  &__filename {
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80%;
+  }
+
+  &__spacer {
+    flex: 1 1 auto;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    &--close:hover:not(:disabled) {
+      background: rgba(255, 90, 90, 0.28);
+    }
+  }
+}
+
 .x-pdf-viewer__viewport {
   flex: 1 1 auto;
   min-height: 0;
@@ -214,21 +264,17 @@ function printPdf() {
   font-size: 14px;
 }
 
-/* Overlay de acciones: flota a la derecha, alineado con el toolbar interno
-   de embedpdf. Posicionado absoluto sobre el viewport para que quede en
-   la MISMA fila visual que los botones de zoom / pan. */
+/* Overlay Print/Download: flota a la derecha del toolbar interno de embedpdf.
+   Sin fondo propio — los botones se mimetizan con los del toolbar (iconos
+   grises con hover suave sobre background claro del toolbar). */
 .x-pdf-actions {
   position: absolute;
-  top: 6px;
+  top: 10px;
   right: 12px;
   z-index: 20;
   display: flex;
   align-items: center;
   gap: 2px;
-  padding: 2px 4px;
-  border-radius: 6px;
-  background: rgba(30, 30, 30, 0.55);
-  backdrop-filter: blur(2px);
 
   &__btn {
     display: inline-flex;
@@ -239,21 +285,17 @@ function printPdf() {
     border: none;
     border-radius: 4px;
     background: transparent;
-    color: #f0f0f0;
+    color: #3f3f46; /* mismo tono que los iconos del toolbar embedpdf */
     cursor: pointer;
     transition: background 0.15s;
 
     &:hover:not(:disabled) {
-      background: rgba(255, 255, 255, 0.15);
+      background: rgba(0, 0, 0, 0.08);
     }
 
     &:disabled {
       opacity: 0.4;
       cursor: not-allowed;
-    }
-
-    &--close:hover:not(:disabled) {
-      background: rgba(255, 90, 90, 0.3);
     }
   }
 }
