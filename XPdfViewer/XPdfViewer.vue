@@ -24,7 +24,7 @@
          por eso ocultamos elementos del toolbar interno via `disabledCategories`
          del config — el CSS externo no penetra el shadow. -->
     <div class="x-pdf-viewer__viewport">
-      <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" />
+      <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" @init="onEmbedInit" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <div v-if="showActions" class="x-pdf-actions">
@@ -138,6 +138,39 @@ const config = computed(() => {
 })
 
 const busy = ref(false)
+
+/**
+ * Al inicializar el <embedpdf-container>, inyectamos un <style> dentro de su
+ * shadowRoot para ocultar elementos que no tienen data-epdf-cat propia y por
+ * eso no se dejan apagar via disabledCategories: los divisores del toolbar
+ * (divider-1, divider-2) quedan huerfanos cuando document-menu / page-settings
+ * / ui-menu / mode estan off, y siguen ocupando espacio como lineas verticales.
+ *
+ * Recibe el elemento EmbedPdfContainer (o su HTMLElement).
+ */
+function onEmbedInit(container) {
+  const el = container?.$el ?? container
+  const shadow = el?.shadowRoot
+  if (!shadow) return
+
+  const rules = []
+  // Dividers huerfanos del main-toolbar cuando escondemos los grupos vecinos.
+  if (!props.showDocumentMenu && !props.showPageSettings) {
+    rules.push('[data-epdf-i="divider-1"]{display:none!important;}')
+    rules.push('[data-epdf-i="divider-2"]{display:none!important;}')
+  }
+  if (!props.showDocumentMenu) {
+    // sidebar-button esta disabled/opaco pero visible — ocultarlo tambien.
+    rules.push('[data-epdf-i="sidebar-button"]{display:none!important;}')
+  }
+
+  if (!rules.length) return
+
+  const style = document.createElement('style')
+  style.setAttribute('data-x-pdf-viewer', 'overrides')
+  style.textContent = rules.join('\n')
+  shadow.appendChild(style)
+}
 
 async function downloadPdf() {
   if (!props.src) return
