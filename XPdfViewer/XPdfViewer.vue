@@ -141,12 +141,22 @@ const busy = ref(false)
 
 /**
  * Al inicializar el <embedpdf-container>, inyectamos un <style> dentro de su
- * shadowRoot para ocultar elementos que no tienen data-epdf-cat propia y por
- * eso no se dejan apagar via disabledCategories: los divisores del toolbar
- * (divider-1, divider-2) quedan huerfanos cuando document-menu / page-settings
- * / ui-menu / mode estan off, y siguen ocupando espacio como lineas verticales.
+ * shadowRoot para ocultar bloques del toolbar interno que no tienen
+ * data-epdf-cat propia (o cuyo comportamiento es "medio" apagado, como
+ * botones deshabilitados que siguen ocupando espacio).
  *
- * Recibe el elemento EmbedPdfContainer (o su HTMLElement).
+ * Estrategia: ocultar el CONTENEDOR completo (left-group, right-group, etc.)
+ * cuando ninguno de sus items esta activado por props. Mas robusto que
+ * targetear item por item.
+ *
+ * Estructura del main-toolbar de embedpdf:
+ *   left-group  → document-menu, sidebar, overflow-menu, page-settings
+ *   divider-2   → separador entre left y center
+ *   center-group → zoom + pan + pointer (SIEMPRE visible)
+ *   spacer-1
+ *   mode-select-button + mode-tabs → View/Annotate/Shapes/Insert/Form/Redact
+ *   spacer-2
+ *   right-group → search + comment
  */
 function onEmbedInit(container) {
   const el = container?.$el ?? container
@@ -154,14 +164,26 @@ function onEmbedInit(container) {
   if (!shadow) return
 
   const rules = []
-  // Dividers huerfanos del main-toolbar cuando escondemos los grupos vecinos.
-  if (!props.showDocumentMenu && !props.showPageSettings) {
-    rules.push('[data-epdf-i="divider-1"]{display:none!important;}')
+
+  // Si TODOS los botones del left-group estan off → ocultar el grupo entero
+  // (incluye los dividers y el sidebar-button deshabilitado).
+  if (!props.showDocumentMenu && !props.showPageSettings
+      && !props.showSidebar && !props.showOverflowMenu) {
+    rules.push('[data-epdf-i="left-group"]{display:none!important;}')
     rules.push('[data-epdf-i="divider-2"]{display:none!important;}')
   }
-  if (!props.showDocumentMenu) {
-    // sidebar-button esta disabled/opaco pero visible — ocultarlo tambien.
-    rules.push('[data-epdf-i="sidebar-button"]{display:none!important;}')
+
+  // right-group tiene search + comment (ambos disabled cuando sus categorias
+  // estan off). Si el consumidor no activo ninguno, no aporta nada visual.
+  if (!props.showSearch && !props.showSidebar) {
+    rules.push('[data-epdf-i="right-group"]{display:none!important;}')
+  }
+
+  // mode-tabs + mode-select-button ya se apagan via categoria "mode", pero
+  // pueden dejar huella visual en algunos breakpoints. Reforzarlo.
+  if (!props.showModeTabs) {
+    rules.push('[data-epdf-i="mode-tabs"]{display:none!important;}')
+    rules.push('[data-epdf-i="mode-select-button"]{display:none!important;}')
   }
 
   if (!rules.length) return
