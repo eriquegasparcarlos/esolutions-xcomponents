@@ -134,9 +134,13 @@
     border-top: none !important;
   }
 
-  // Header: MANTIENE border arriba y abajo (separador visual claro)
+  // Header: solo border ABAJO (separador visual con el body). El border-top
+  // producía doble línea cuando XTable se anida bajo un header que ya tiene
+  // su propio border-bottom (típico caso: XDialog + content-flush + XTable).
+  // Si querés el border-top también, override desde el consumidor con una
+  // regla más específica.
   .q-table thead th {
-    border-top: 1px solid #e4e7ec !important;     // gray-200
+    border-top: none !important;
     border-bottom: 1px solid #e4e7ec !important;  // gray-200
   }
 }
