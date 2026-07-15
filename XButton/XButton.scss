@@ -12,14 +12,22 @@
   --x-button-transition: #{$x-transition-duration} #{$x-transition-timing};
 
   min-height: var(--x-button-height);
-  padding-left: var(--x-button-padding-x);
-  padding-right: var(--x-button-padding-x);
   font-weight: var(--x-button-font-weight);
   transition: all var(--x-button-transition);
 
-  // border-radius solo cuando NO es round (los round usan 50% nativo de Quasar = circulo)
+  // Padding horizontal y border-radius solo cuando NO es round — un botón
+  // "round" debe ser un circulo perfecto (ancho = alto); el padding-x lo
+  // deformaba en ovalo.
   &:not(.q-btn--round) {
+    padding-left: var(--x-button-padding-x);
+    padding-right: var(--x-button-padding-x);
     border-radius: var(--x-button-border-radius);
+  }
+
+  &.q-btn--round {
+    min-width: var(--x-button-height);
+    width: var(--x-button-height);
+    padding: 0;
   }
 
   // Tamaños

@@ -50,8 +50,12 @@ const attrs = useAttrs()
 const resolvedColor = computed(() => resolveColor(props.color))
 
 // --- Color de fondo calculado si se pasa color ---
+// La variante 'light' (default) siempre necesita un fondo mas claro que el
+// texto — si no se aclara, texto y fondo quedan del mismo color y el label
+// es invisible. isLightenColor ahora solo controla que tan claro (mas o
+// menos aclarado), nunca "aclarar si/no".
 const bgColor = computed(() =>
-  resolvedColor.value ? (props.isLightenColor ? lightenColor(resolvedColor.value) : resolvedColor.value) : null
+  resolvedColor.value ? lightenColor(resolvedColor.value, props.isLightenColor ? 0.7 : 0.85) : null
 )
 
 // --- Clases dinamicas ---
