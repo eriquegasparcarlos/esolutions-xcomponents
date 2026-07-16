@@ -79,11 +79,15 @@
   }
 
   // --------------------------------------------------------------------------
-  // Descripción (incluye el usuario al final, en la misma línea)
+  // Descripción (incluye el usuario al final, en la misma línea).
+  // white-space: pre-line respeta los \n del backend (p.ej. detalle técnico
+  // de soporte con archivo/línea/mensaje en líneas separadas) sin necesitar
+  // slots adicionales.
   // --------------------------------------------------------------------------
   .x-tracking-desc {
     font-size: var(--x-tracking-desc-font-size);
     color: var(--x-tracking-desc-color);
+    white-space: pre-line;
     line-height: 1.4;
     margin-top: 1px;
   }
