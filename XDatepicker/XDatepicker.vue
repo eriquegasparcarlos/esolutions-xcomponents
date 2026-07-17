@@ -14,6 +14,11 @@ const props = defineProps({
   outlined: { type: Boolean, default: formDefaults.outlined },
   clearable: { type: Boolean, default: false },
 
+  // El campo de texto nunca se escribe a mano (la fecha se elige en el
+  // calendario), así que readonly es lo que apaga el calendario: el icono sigue
+  // visible para no alterar el layout, pero no abre el popup ni deja limpiar.
+  readonly: { type: Boolean, default: false },
+
   error: { type: String, default: null },
 
   valueMask: { type: String, default: 'YYYY-MM-DD' },   // lo que guardas (v-model)
@@ -91,7 +96,7 @@ function clear() {
         dense: props.dense,
         outlined: props.outlined,
         readonly: true,
-        clearable: props.clearable,
+        clearable: props.clearable && !props.readonly,
         error: hasError,
         errorMessage: props.error || undefined,
         noErrorIcon: true,
@@ -100,8 +105,14 @@ function clear() {
       @clear="clear"
     >
       <template #append>
-        <q-icon name="event" class="cursor-pointer">
-          <q-popup-proxy ref="popupRef" cover transition-show="scale" transition-hide="scale">
+        <q-icon name="event" :class="props.readonly ? 'cursor-not-allowed' : 'cursor-pointer'">
+          <q-popup-proxy
+            v-if="!props.readonly"
+            ref="popupRef"
+            cover
+            transition-show="scale"
+            transition-hide="scale"
+          >
             <q-date
               :model-value="normalizedValue"
               :mask="props.valueMask"
