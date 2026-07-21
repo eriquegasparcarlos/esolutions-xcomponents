@@ -28,6 +28,20 @@
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <div v-if="showActions" class="x-pdf-actions">
+        <div v-if="formats.length > 1" class="x-pdf-actions__formats" role="group" aria-label="Formato del PDF">
+          <button
+            v-for="f in formats"
+            :key="f.value"
+            type="button"
+            class="x-pdf-actions__format-btn"
+            :class="{ 'x-pdf-actions__format-btn--active': f.value === activeFormat }"
+            :title="f.label"
+            @click="$emit('update:activeFormat', f.value)"
+          >
+            {{ f.label }}
+          </button>
+        </div>
+
         <button
           v-if="!hidePrint"
           class="x-pdf-actions__btn"
@@ -77,7 +91,7 @@ import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
  *     para coincidir vertical con la fila del toolbar interno.
  */
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'update:activeFormat'])
 
 const props = defineProps({
   // — Contenido —
@@ -92,6 +106,14 @@ const props = defineProps({
   showActions:  { type: Boolean, default: true },
   hidePrint:    { type: Boolean, default: false },
   hideDownload: { type: Boolean, default: false },
+
+  // — Selector de formato (A4/Ticket/A5...) — un botón por opción, a la
+  // izquierda de Imprimir. El componente NO regenera el PDF: solo avisa
+  // (update:activeFormat) cuál se eligió; quien lo usa decide cómo volver a
+  // pedirlo y actualiza `src`. Sin formats o con un solo valor, no se pinta
+  // nada — cero impacto en los consumidores que no lo usan.
+  formats:      { type: Array, default: () => [] }, // [{ value, label }]
+  activeFormat: { type: String, default: null },
 
   // — Toolbar embedpdf (features off por default, opt-in) —
   showDocumentMenu: { type: Boolean, default: false }, // hamburger izquierdo
@@ -378,6 +400,46 @@ function printPdf() {
     svg {
       width: 20px;
       height: 20px;
+    }
+  }
+
+  /* Selector de formato: segmented control compacto, misma altura visual
+     que los botones 32x32 de al lado (28px + 2px de padding del wrapper). */
+  &__formats {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: #f3f4f6; /* --ep-interactive-hover */
+    border-radius: 6px;
+    padding: 2px;
+    margin-right: 4px;
+  }
+
+  &__format-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 28px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #6b7280;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+
+    &:hover {
+      color: #111827; /* --ep-foreground-primary */
+    }
+
+    &--active {
+      background: #ffffff;
+      color: #111827;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
     }
   }
 }
