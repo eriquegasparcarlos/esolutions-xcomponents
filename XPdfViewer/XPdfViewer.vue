@@ -24,14 +24,15 @@
          por eso ocultamos elementos del toolbar interno via `disabledCategories`
          del config — el CSS externo no penetra el shadow.
 
-         :key="src" es necesario: PDFViewer carga el documento una sola vez al
-         montarse, no reacciona a que `config.src` cambie con el componente ya
-         montado (visto al cambiar de formato con el selector: el filename y
-         el botón activo se actualizaban, pero el PDF mostrado seguía siendo
-         el anterior). Forzar la key remonta el visor entero con cada `src`
-         nuevo, garantizando que siempre cargue el documento correcto. -->
+         :key también incluye `zoom` es necesario: PDFViewer carga el documento
+         (y aplica el zoom inicial) una sola vez al montarse, no reacciona a
+         que `config` cambie con el componente ya montado (visto al cambiar de
+         formato con el selector: el filename y el botón activo se
+         actualizaban, pero el PDF mostrado seguía siendo el anterior).
+         Forzar la key remonta el visor entero con cada `src`/`zoom` nuevo,
+         garantizando que siempre cargue el documento y el zoom correctos. -->
     <div class="x-pdf-viewer__viewport" ref="viewportRef">
-      <PDFViewer v-if="src" :key="src" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
+      <PDFViewer v-if="src" :key="`${src}::${zoom}`" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <div v-if="showActions" class="x-pdf-actions">
@@ -122,6 +123,13 @@ const props = defineProps({
   formats:      { type: Array, default: () => [] }, // [{ value, label }]
   activeFormat: { type: String, default: null },
 
+  // — Zoom inicial del documento — acepta 'fit-width' | 'fit-page' |
+  // 'automatic' (ZoomMode de embedpdf) o un número como factor (2 = 200%).
+  // Necesario porque 'fit-width' se ve bien en A4 pero es enorme en un
+  // ticket (70mm de ancho): quien consume el visor decide el zoom según el
+  // formato activo (p. ej. dentro de cada entrada de `formats`).
+  zoom:         { type: [String, Number], default: 'fit-width' },
+
   // — Toolbar embedpdf (features off por default, opt-in) —
   showDocumentMenu: { type: Boolean, default: false }, // hamburger izquierdo
   showPageSettings: { type: Boolean, default: false }, // page-settings icon
@@ -161,7 +169,7 @@ const config = computed(() => {
     src: props.src,
     disabledCategories: off,
     zoom: {
-      defaultZoomLevel: 'fit-width',
+      defaultZoomLevel: props.zoom,
     },
   }
 })
