@@ -215,16 +215,24 @@ function onEmbedReady(registry) {
 /**
  * Workaround del bug descrito arriba en `config`: aplica el zoom numérico
  * "a mano" vía la capability del plugin de zoom (requestZoom sí funciona
- * con números — no pasa por el recalcAuto que los ignora). Reintenta porque
- * justo después de "ready" el viewport puede no estar medido todavía
- * (handleRequest de embedpdf no hace nada si el viewport mide 0x0); mismo
- * patrón de reintento que injectShadowStyles.
+ * con números — no pasa por el recalcAuto que los ignora).
+ *
+ * requestZoom() internamente no-opea EN SILENCIO (sin lanzar excepción) si
+ * el viewport todavía mide 0x0 justo después de "ready" — visto en vivo:
+ * la llamada "funcionaba" (sin catch) pero el zoom quedaba en el que puso
+ * el modo 'automatic' inicial, no en el número pedido. Por eso acá no basta
+ * con reintentar solo ante una excepción: hay que confirmar con getState()
+ * que currentZoomLevel realmente cambió, y reintentar si no.
  */
-function applyNumericZoom(registry, retriesLeft = 10) {
+function applyNumericZoom(registry, retriesLeft = 15) {
   try {
     const capability = registry?.getPlugin?.('zoom')?.provides?.()
     if (!capability) throw new Error('zoom capability aún no disponible')
     capability.requestZoom(props.zoom)
+    const applied = capability.getState?.()?.currentZoomLevel
+    const appliedOk = typeof applied === 'number' && Math.abs(applied - props.zoom) < 0.05
+    if (appliedOk) return
+    throw new Error(`requestZoom no-opeó (currentZoomLevel=${applied}, esperado=${props.zoom})`)
   } catch (e) {
     if (retriesLeft > 0) {
       setTimeout(() => applyNumericZoom(registry, retriesLeft - 1), 150)
