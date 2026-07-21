@@ -207,13 +207,36 @@ const hasActiveFilters = computed(() => {
 })
 
 /**
- * Tabla "vacia de origen": sin registros + sin filtros activos.
+ * Total del scope base SIN los filtros ajustables por el usuario, enviado por
+ * el backend en meta.unfiltered_total. El scope base incluye lo estructural
+ * (establecimiento seleccionado, entorno, visibilidad por usuario) — asi una
+ * tabla con registros en OTRO establecimiento pero vacia en el actual cuenta
+ * como vacia. null = el backend no lo envia (tabla aun no adaptada).
+ */
+const unfilteredTotal = ref(null)
+
+/**
+ * Tabla "vacia de origen" (en su scope): decide entre los dos empty-states.
+ * - Con meta.unfiltered_total → fuente de verdad del backend. Corrige el caso
+ *   de filtros con valor default (p. ej. periodo = mes actual) que la
+ *   heuristica de abajo contaba como "filtro activo" y por eso nunca mostraba
+ *   "No hay registros" en tablas realmente vacias.
+ * - Sin meta.unfiltered_total → fallback legacy: sin filtros activos.
+ */
+const isSourceEmpty = computed(() =>
+  unfilteredTotal.value !== null
+    ? unfilteredTotal.value === 0
+    : !hasActiveFilters.value
+)
+
+/**
+ * Tabla "vacia de origen": sin registros en el scope base.
  * Oculta header, filtros y tabla. Solo se ve el empty-state "no hay registros".
  */
 const isTrulyEmpty = computed(() =>
   props.hideHeaderWhenEmpty &&
   initialLoadDone.value &&
-  !hasActiveFilters.value &&
+  isSourceEmpty.value &&
   (pagination.value?.rowsNumber ?? 0) === 0
 )
 
@@ -589,6 +612,7 @@ const fetchData = async () => {
     pagination.value.rowsPerPage = response.data.meta.per_page
     pagination.value.sortBy = response.data.meta.sort_by
     pagination.value.descending = response.data.meta.descending
+    unfilteredTotal.value = response.data.meta.unfiltered_total ?? null
   } catch (err) {
     error.value = err.message
   } finally {
@@ -1142,13 +1166,13 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       </template>
 
       <!--
-        Empty state contextual:
-          - hasActiveFilters=true  -> slot #no-results (default: "Ningun resultado" + Limpiar filtros)
-          - hasActiveFilters=false -> slot #no-data    (default: "Sin registros" + CTA de la pagina)
+        Empty state contextual (ver isSourceEmpty):
+          - scope base CON datos  -> slot #no-results (default: "Ningun resultado" + Limpiar filtros)
+          - scope base SIN datos  -> slot #no-data    (default: "Sin registros" + CTA de la pagina)
       -->
       <template v-slot:no-data>
         <div v-if="!loading" class="x-table-empty-state">
-          <template v-if="hasActiveFilters">
+          <template v-if="!isSourceEmpty">
             <slot name="no-results" :clear-filters="clearFilters">
               <q-icon name="fa-light fa-magnifying-glass" size="48px" class="x-table-empty-state__icon" />
               <div class="x-table-empty-state__title">No se encontraron resultados</div>
