@@ -22,9 +22,16 @@
 
     <!-- Motor: PDFium via WebAssembly (embedpdf). Corre dentro de shadow DOM,
          por eso ocultamos elementos del toolbar interno via `disabledCategories`
-         del config — el CSS externo no penetra el shadow. -->
+         del config — el CSS externo no penetra el shadow.
+
+         :key="src" es necesario: PDFViewer carga el documento una sola vez al
+         montarse, no reacciona a que `config.src` cambie con el componente ya
+         montado (visto al cambiar de formato con el selector: el filename y
+         el botón activo se actualizaban, pero el PDF mostrado seguía siendo
+         el anterior). Forzar la key remonta el visor entero con cada `src`
+         nuevo, garantizando que siempre cargue el documento correcto. -->
     <div class="x-pdf-viewer__viewport" ref="viewportRef">
-      <PDFViewer v-if="src" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
+      <PDFViewer v-if="src" :key="src" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <div v-if="showActions" class="x-pdf-actions">
