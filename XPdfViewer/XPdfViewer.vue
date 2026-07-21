@@ -169,7 +169,16 @@ const config = computed(() => {
     src: props.src,
     disabledCategories: off,
     zoom: {
-      defaultZoomLevel: props.zoom,
+      // Bug verificado en @embedpdf/plugin-zoom (v2.14.4, dist/index.js,
+      // método ZoomPlugin.recalcAuto): al terminar de cargar el documento,
+      // solo dispara la aplicación real del zoom si `zoomLevel` es un modo
+      // (ZoomMode.Automatic/FitPage/FitWidth) — un número queda guardado en
+      // el estado pero NUNCA se aplica al viewport, dejando el visor
+      // completamente en blanco. Por eso acá siempre se carga con un modo
+      // seguro; si `zoom` es un número, se aplica después "a mano" con
+      // requestZoom() en onEmbedReady (ese método sí funciona con números,
+      // no pasa por recalcAuto).
+      defaultZoomLevel: typeof props.zoom === 'number' ? 'automatic' : props.zoom,
     },
   }
 })
@@ -196,8 +205,33 @@ const viewportRef = ref(null)
  *   spacer-2
  *   right-group → search + comment
  */
-function onEmbedReady() {
+function onEmbedReady(registry) {
   nextTick(() => injectShadowStyles())
+  if (typeof props.zoom === 'number') {
+    applyNumericZoom(registry)
+  }
+}
+
+/**
+ * Workaround del bug descrito arriba en `config`: aplica el zoom numérico
+ * "a mano" vía la capability del plugin de zoom (requestZoom sí funciona
+ * con números — no pasa por el recalcAuto que los ignora). Reintenta porque
+ * justo después de "ready" el viewport puede no estar medido todavía
+ * (handleRequest de embedpdf no hace nada si el viewport mide 0x0); mismo
+ * patrón de reintento que injectShadowStyles.
+ */
+function applyNumericZoom(registry, retriesLeft = 10) {
+  try {
+    const capability = registry?.getPlugin?.('zoom')?.provides?.()
+    if (!capability) throw new Error('zoom capability aún no disponible')
+    capability.requestZoom(props.zoom)
+  } catch (e) {
+    if (retriesLeft > 0) {
+      setTimeout(() => applyNumericZoom(registry, retriesLeft - 1), 150)
+    } else {
+      console.warn('[XPdfViewer] no se pudo aplicar el zoom numérico:', e)
+    }
+  }
 }
 
 function injectShadowStyles(retriesLeft = 5) {
