@@ -14,6 +14,16 @@ const props = defineProps({
   isRequired: { type: Boolean, default: false },
   prefix: { type: String, default: null },
   suffix: { type: String, default: null },
+  /**
+   * Modo stepper: botones −/+ a los lados del input (uso típico: cantidades
+   * en grillas POS). Con controls, el valor se acota a [min, max]: los
+   * botones se deshabilitan en el límite y un valor escrito fuera de rango
+   * se corrige al salir del campo (blur) — evita cantidades en 0/vacío.
+   */
+  controls: { type: Boolean, default: false },
+  min: { type: [Number, String], default: null },
+  max: { type: [Number, String], default: null },
+  step: { type: [Number, String], default: 1 },
 })
 const emit = defineEmits(['update:modelValue', 'input', 'change'])
 
@@ -32,6 +42,37 @@ function toNum(v) {
   return Number.isFinite(n) ? n : null
 }
 
+// ---------------------------------------------------------------------------
+// Modo controls (stepper −/+)
+// ---------------------------------------------------------------------------
+const minNum = computed(() => (props.min === null || props.min === '' ? null : Number(props.min)))
+const maxNum = computed(() => (props.max === null || props.max === '' ? null : Number(props.max)))
+const stepNum = computed(() => Number(props.step) || 1)
+const currentNum = computed(() => Number(props.modelValue || 0))
+
+const canDecrement = computed(() => minNum.value === null || currentNum.value > minNum.value)
+const canIncrement = computed(() => maxNum.value === null || currentNum.value < maxNum.value)
+
+function clamp(n) {
+  if (!Number.isFinite(n)) return minNum.value ?? 0
+  if (minNum.value !== null && n < minNum.value) return minNum.value
+  if (maxNum.value !== null && n > maxNum.value) return maxNum.value
+  return n
+}
+
+function changeBy(delta) {
+  const next = clamp(currentNum.value + delta * stepNum.value)
+  if (next === currentNum.value) return
+  emit('update:modelValue', next)
+}
+
+// Al salir del campo se fuerza el rango (evita dejar 0/vacío bajo el mínimo).
+function onBlurClamp() {
+  if (!props.controls) return
+  const fixed = clamp(currentNum.value)
+  if (fixed !== currentNum.value) emit('update:modelValue', fixed)
+}
+
 const filteredAttrs = computed(() => {
   // eslint-disable-next-line no-unused-vars
   const { class: _c, label: _l, id: _i, required: _r, 'is-required': _ir, prefix: _p, suffix: _s, type: _t, ...rest } = attrs
@@ -46,7 +87,7 @@ defineExpose({ focus, select, focusAndSelect })
 </script>
 
 <template>
-  <div class="app-q-input flex-grow-1 x-input-numeric" :class="[{ 'x-input-numeric--large': !props.dense }, attrs.class]">
+  <div class="app-q-input flex-grow-1 x-input-numeric" :class="[{ 'x-input-numeric--large': !props.dense, 'x-input-numeric--controls': props.controls }, attrs.class]">
     <!-- Label manual (no classic) -->
     <label
       v-if="label"
@@ -74,6 +115,8 @@ defineExpose({ focus, select, focusAndSelect })
         'aria-required': props.isRequired ? 'true' : null,
       }"
       :model-value="modelValue"
+      :min="minNum"
+      :max="maxNum"
       :error="!!error"
       :error-message="error"
       no-error-icon
@@ -82,18 +125,35 @@ defineExpose({ focus, select, focusAndSelect })
       @update:model-value="val => emit('update:modelValue', toNum(val))"
       @input="e => emit('input', e)"
       @change="e => emit('change', e)"
+      @blur="onBlurClamp"
     >
       <template v-if="elementLabel" #label>
         <span>{{ elementLabel }}</span>
         <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
       </template>
 
-      <template v-if="prefixValue" #prepend>
-        <span class="x-input-numeric__affix">{{ prefixValue }}</span>
+      <template v-if="prefixValue || props.controls" #prepend>
+        <q-btn
+          v-if="props.controls"
+          dense flat round size="sm"
+          icon="fal fa-minus"
+          color="grey-7"
+          :disable="!canDecrement"
+          @click="changeBy(-1)"
+        />
+        <span v-if="prefixValue" class="x-input-numeric__affix">{{ prefixValue }}</span>
       </template>
 
-      <template v-if="suffixValue" #append>
-        <span class="x-input-numeric__affix">{{ suffixValue }}</span>
+      <template v-if="suffixValue || props.controls" #append>
+        <span v-if="suffixValue" class="x-input-numeric__affix">{{ suffixValue }}</span>
+        <q-btn
+          v-if="props.controls"
+          dense flat round size="sm"
+          icon="fal fa-plus"
+          color="primary"
+          :disable="!canIncrement"
+          @click="changeBy(1)"
+        />
       </template>
     </q-input>
   </div>
@@ -115,5 +175,11 @@ defineExpose({ focus, select, focusAndSelect })
 }
 .x-input-numeric :deep(input[type="number"]) {
   -moz-appearance: textfield;
+}
+
+/* Modo controls: valor centrado entre los botones −/+ */
+.x-input-numeric--controls :deep(input) {
+  text-align: center;
+  padding: 0 2px;
 }
 </style>
