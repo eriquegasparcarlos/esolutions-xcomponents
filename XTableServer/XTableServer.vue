@@ -139,6 +139,32 @@ function clearSelection() {
 const refDialogDeleteForm = ref()
 const refDialogActiveForm = ref()
 
+// ── Exportación con selección de columnas ─────────────────────────────────────
+// Desacopla las columnas a exportar de las visibles en pantalla: el usuario
+// elige en un diálogo qué campos van al archivo, sin recargar/scrollear la tabla.
+const showExportDialog = ref(false)
+const exportSelectedColumns = ref([])
+// Columnas que tiene sentido exportar (incluye only_export; excluye visuales/
+// acciones marcadas con exportable = false en el backend).
+const exportableColumns = computed(() => columnOptions.value.filter((c) => c.exportable))
+const exportAllChecked = computed(() =>
+  exportableColumns.value.length > 0 && exportSelectedColumns.value.length === exportableColumns.value.length,
+)
+
+const toggleExportAll = (val) => {
+  exportSelectedColumns.value = val ? exportableColumns.value.map((c) => c.value) : []
+}
+const exportOnlyVisible = () => {
+  exportSelectedColumns.value = exportableColumns.value
+    .filter((c) => visibleColumns.value.includes(c.value))
+    .map((c) => c.value)
+}
+const confirmExport = () => {
+  if (!exportSelectedColumns.value.length) return
+  showExportDialog.value = false
+  exportTableData(exportSelectedColumns.value)
+}
+
 const columns = ref([])
 const rows = ref([])
 const loading = ref(false)
@@ -496,6 +522,8 @@ const fetchColumnsAndData = async () => {
       visible: column.visible,
       sortable: column.sortable,
       locked: column.locked,
+      exportable: column.exportable !== false,
+      onlyExport: column.only_export === true,
     }))
 
     lockedColumns.value = columnOptions.value.filter((c) => c.locked).map((c) => c.value)
@@ -623,14 +651,18 @@ const fetchData = async () => {
 // -------------------------
 // Export + acciones
 // -------------------------
-const exportTableData = async () => {
+const exportTableData = async (exportColumns = null) => {
   try {
     const { sortBy, descending } = pagination.value
+
+    // Columnas a exportar: las elegidas en el diálogo; si no, las visibles.
+    const cols = (exportColumns && exportColumns.length) ? exportColumns : visibleColumns.value
 
     const response = await proxy.$api.post(
       `${props.resource}/export`,
       {
         filters: filters.value,
+        exportColumns: cols,
         visibleColumns: visibleColumns.value,
         sortBy,
         descending,
@@ -680,7 +712,9 @@ const performAction = (button, row) => {
 
 const performHeaderAction = (button) => {
   if (button.action === 'export') {
-    exportTableData()
+    // Abre el selector de columnas (default: todas las exportables).
+    exportSelectedColumns.value = exportableColumns.value.map((c) => c.value)
+    showExportDialog.value = true
     return
   }
 
@@ -1310,6 +1344,48 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
                   :color="bulkConfirmColor"
                   :label="bulkConfirmLabel"
                   @click="confirmBulkAction" />
+      </template>
+    </x-dialog>
+
+    <!-- Exportar: selección de columnas (desacoplada de las visibles) -->
+    <x-dialog
+      v-model="showExportDialog"
+      title="Exportar a Excel"
+      width="420px"
+      show-button-close
+      @action-button-close="showExportDialog = false"
+    >
+      <template #content>
+        <div class="row items-center justify-between q-mb-xs">
+          <q-checkbox
+            :model-value="exportAllChecked"
+            label="Seleccionar todas"
+            dense
+            @update:model-value="toggleExportAll"
+          />
+          <x-button flat dense label="Solo visibles" @click="exportOnlyVisible" />
+        </div>
+        <q-separator class="q-mb-sm" />
+        <div style="max-height: 320px; overflow-y: auto;">
+          <q-checkbox
+            v-for="col in exportableColumns"
+            :key="col.value"
+            v-model="exportSelectedColumns"
+            :val="col.value"
+            :label="col.label"
+            dense
+            class="block q-py-xs"
+          />
+        </div>
+        <div v-if="!exportSelectedColumns.length" class="text-caption text-negative q-mt-xs">
+          Selecciona al menos una columna.
+        </div>
+      </template>
+
+      <template #action-buttons>
+        <x-button flat label="Cancelar" @click="showExportDialog = false" />
+        <x-button unelevated color="primary" label="Exportar"
+                  :disable="!exportSelectedColumns.length" @click="confirmExport" />
       </template>
     </x-dialog>
   </q-card>
