@@ -144,9 +144,15 @@ const refDialogActiveForm = ref()
 // elige en un diálogo qué campos van al archivo, sin recargar/scrollear la tabla.
 const showExportDialog = ref(false)
 const exportSelectedColumns = ref([])
+// Selección de columnas de export guardada por el usuario (viene del backend).
+const savedExportColumns = ref([])
 // Columnas que tiene sentido exportar (incluye only_export; excluye visuales/
 // acciones marcadas con exportable = false en el backend).
 const exportableColumns = computed(() => columnOptions.value.filter((c) => c.exportable))
+// Opciones para q-option-group (label/value), en el orden definido por el backend.
+const exportColumnOptions = computed(() =>
+  exportableColumns.value.map((c) => ({ label: c.label, value: c.value })),
+)
 const exportAllChecked = computed(() =>
   exportableColumns.value.length > 0 && exportSelectedColumns.value.length === exportableColumns.value.length,
 )
@@ -529,6 +535,7 @@ const fetchColumnsAndData = async () => {
     lockedColumns.value = columnOptions.value.filter((c) => c.locked).map((c) => c.value)
     columnVisibleOptions.value = columnOptions.value.filter((c) => !c.locked)
     visibleColumns.value = response.data.visibleColumns
+    savedExportColumns.value = Array.isArray(response.data.exportColumns) ? response.data.exportColumns : []
 
     updateVisibleColumns(visibleColumns.value)
 
@@ -713,7 +720,11 @@ const performAction = (button, row) => {
 const performHeaderAction = (button) => {
   if (button.action === 'export') {
     // Abre el selector de columnas (default: todas las exportables).
-    exportSelectedColumns.value = exportableColumns.value.map((c) => c.value)
+    // Default: la selección guardada del usuario (si hay y sigue siendo válida);
+    // si no, todas las exportables.
+    const valid = exportableColumns.value.map((c) => c.value)
+    const saved = savedExportColumns.value.filter((v) => valid.includes(v))
+    exportSelectedColumns.value = saved.length ? saved : valid
     showExportDialog.value = true
     return
   }
@@ -1367,14 +1378,11 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
         </div>
         <q-separator class="q-mb-sm" />
         <div style="max-height: 320px; overflow-y: auto;">
-          <q-checkbox
-            v-for="col in exportableColumns"
-            :key="col.value"
+          <q-option-group
             v-model="exportSelectedColumns"
-            :val="col.value"
-            :label="col.label"
+            :options="exportColumnOptions"
+            type="checkbox"
             dense
-            class="block q-py-xs"
           />
         </div>
         <div v-if="!exportSelectedColumns.length" class="text-caption text-negative q-mt-xs">
