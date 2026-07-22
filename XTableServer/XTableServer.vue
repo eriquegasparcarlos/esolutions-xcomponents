@@ -188,10 +188,18 @@ const toggleExportAll = (val) => {
 const exportOnlyVisible = () => {
   exportColumnItems.value.forEach((i) => { i.checked = visibleColumns.value.includes(i.value) })
 }
-const confirmExport = () => {
+const confirmExport = async () => {
   if (!exportSelectedColumns.value.length) return
-  showExportDialog.value = false
-  exportTableData(exportSelectedColumns.value)
+  // Snapshot de la selección en el ORDEN actual de la lista.
+  const selected = exportSelectedColumns.value.slice()
+  const ok = await exportTableData(selected)
+  if (ok) {
+    // El diálogo NO se cierra: el usuario puede reexportar con otra selección.
+    // Reflejamos localmente la selección+orden para que, si reabre el diálogo
+    // en esta misma sesión, aparezca tal cual (el backend ya lo persiste en BD
+    // para próximas cargas de la página).
+    savedExportColumns.value = selected
+  }
 }
 
 const columns = ref([])
@@ -714,8 +722,10 @@ const exportTableData = async (exportColumns = null) => {
     link.click()
     document.body.removeChild(link)
     window.URL.revokeObjectURL(urlBlob)
+    return true
   } catch {
     $q.notify({ type: 'error', message: proxy.$t('common.exportExcelError') })
+    return false
   }
 }
 
