@@ -149,7 +149,9 @@ const showExportDialog = ref(false)
 const savedExportColumns = ref([])
 // Columnas que tiene sentido exportar (incluye only_export; excluye visuales/
 // acciones marcadas con exportable = false en el backend).
-const exportableColumns = computed(() => columnOptions.value.filter((c) => c.exportable))
+// !== false para incluir también columnas sin el flag (exportable indefinido);
+// solo se excluyen las marcadas explícitamente como no exportables.
+const exportableColumns = computed(() => columnOptions.value.filter((c) => c.exportable !== false))
 
 // Ítems reordenables del diálogo: [{ value, label, checked }] en el orden elegido.
 // El drag reordena TODA la lista; el checkbox marca cuáles se exportan.
@@ -167,7 +169,9 @@ const exportAllChecked = computed(() =>
  *  luego el resto de exportables (en orden de definición, sin marcar). Si no hay
  *  selección guardada, todas en orden de definición y marcadas. */
 const buildExportItems = () => {
-  const cols = exportableColumns.value
+  // Fallback: si por algún motivo no hay exportables detectadas, usar todas
+  // las columnas para no mostrar el diálogo vacío.
+  const cols = exportableColumns.value.length ? exportableColumns.value : columnOptions.value
   const validSaved = savedExportColumns.value.filter((v) => cols.some((c) => c.value === v))
   const rest = cols.filter((c) => !validSaved.includes(c.value)).map((c) => c.value)
   const ordered = [...validSaved, ...rest]
