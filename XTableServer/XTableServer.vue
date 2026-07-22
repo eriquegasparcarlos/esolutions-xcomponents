@@ -16,6 +16,7 @@ import XDropdownMenu from '../XDropdownMenu/XDropdownMenu.vue'
 import XDropdownItem from '../XDropdownMenu/XDropdownItem.vue'
 import XDropdownDivider from '../XDropdownMenu/XDropdownDivider.vue'
 import XDialog from '../XDialog/XDialog.vue'
+import XDnd from '../XDnd/XDnd.vue'
 import XButton from '../XButton/XButton.vue'
 import XLoading from '../XLoading/XLoading.vue'
 import { useDataStore } from 'stores/data.js'
@@ -143,27 +144,45 @@ const refDialogActiveForm = ref()
 // Desacopla las columnas a exportar de las visibles en pantalla: el usuario
 // elige en un diálogo qué campos van al archivo, sin recargar/scrollear la tabla.
 const showExportDialog = ref(false)
-const exportSelectedColumns = ref([])
-// Selección de columnas de export guardada por el usuario (viene del backend).
+// Selección de columnas de export guardada por el usuario (viene del backend),
+// como array ORDENADO de nombres de columna.
 const savedExportColumns = ref([])
 // Columnas que tiene sentido exportar (incluye only_export; excluye visuales/
 // acciones marcadas con exportable = false en el backend).
 const exportableColumns = computed(() => columnOptions.value.filter((c) => c.exportable))
-// Opciones para q-option-group (label/value), en el orden definido por el backend.
-const exportColumnOptions = computed(() =>
-  exportableColumns.value.map((c) => ({ label: c.label, value: c.value })),
+
+// Ítems reordenables del diálogo: [{ value, label, checked }] en el orden elegido.
+// El drag reordena TODA la lista; el checkbox marca cuáles se exportan.
+const exportColumnItems = ref([])
+
+// Nombres de columnas a exportar, en el ORDEN de la lista (solo las marcadas).
+const exportSelectedColumns = computed(() =>
+  exportColumnItems.value.filter((i) => i.checked).map((i) => i.value),
 )
 const exportAllChecked = computed(() =>
-  exportableColumns.value.length > 0 && exportSelectedColumns.value.length === exportableColumns.value.length,
+  exportColumnItems.value.length > 0 && exportColumnItems.value.every((i) => i.checked),
 )
 
+/** Construye la lista al abrir: primero las guardadas (en su orden, marcadas),
+ *  luego el resto de exportables (en orden de definición, sin marcar). Si no hay
+ *  selección guardada, todas en orden de definición y marcadas. */
+const buildExportItems = () => {
+  const cols = exportableColumns.value
+  const validSaved = savedExportColumns.value.filter((v) => cols.some((c) => c.value === v))
+  const rest = cols.filter((c) => !validSaved.includes(c.value)).map((c) => c.value)
+  const ordered = [...validSaved, ...rest]
+
+  exportColumnItems.value = ordered.map((v) => {
+    const c = cols.find((x) => x.value === v)
+    return { value: v, label: c ? c.label : v, checked: validSaved.length ? validSaved.includes(v) : true }
+  })
+}
+
 const toggleExportAll = (val) => {
-  exportSelectedColumns.value = val ? exportableColumns.value.map((c) => c.value) : []
+  exportColumnItems.value.forEach((i) => { i.checked = !!val })
 }
 const exportOnlyVisible = () => {
-  exportSelectedColumns.value = exportableColumns.value
-    .filter((c) => visibleColumns.value.includes(c.value))
-    .map((c) => c.value)
+  exportColumnItems.value.forEach((i) => { i.checked = visibleColumns.value.includes(i.value) })
 }
 const confirmExport = () => {
   if (!exportSelectedColumns.value.length) return
@@ -720,11 +739,8 @@ const performAction = (button, row) => {
 const performHeaderAction = (button) => {
   if (button.action === 'export') {
     // Abre el selector de columnas (default: todas las exportables).
-    // Default: la selección guardada del usuario (si hay y sigue siendo válida);
-    // si no, todas las exportables.
-    const valid = exportableColumns.value.map((c) => c.value)
-    const saved = savedExportColumns.value.filter((v) => valid.includes(v))
-    exportSelectedColumns.value = saved.length ? saved : valid
+    // Construye la lista reordenable (respeta orden+selección guardados).
+    buildExportItems()
     showExportDialog.value = true
     return
   }
@@ -1376,14 +1392,21 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
           />
           <x-button flat dense label="Solo visibles" @click="exportOnlyVisible" />
         </div>
+        <div class="text-caption text-grey-6 q-mb-xs">
+          Arrastra <q-icon name="drag_indicator" size="14px" /> para ordenar cómo salen en el archivo.
+        </div>
         <q-separator class="q-mb-sm" />
         <div style="max-height: 320px; overflow-y: auto;">
-          <q-option-group
-            v-model="exportSelectedColumns"
-            :options="exportColumnOptions"
-            type="checkbox"
-            dense
-          />
+          <x-dnd v-model="exportColumnItems" item-key="value" handle=".x-export-drag">
+            <template #item="{ element }">
+              <div class="row items-center no-wrap q-py-xs">
+                <q-icon name="drag_indicator" size="18px"
+                        class="x-export-drag text-grey-5 q-mr-xs" style="cursor: move;" />
+                <q-checkbox v-model="element.checked" dense />
+                <span class="q-ml-sm">{{ element.label }}</span>
+              </div>
+            </template>
+          </x-dnd>
         </div>
         <div v-if="!exportSelectedColumns.length" class="text-caption text-negative q-mt-xs">
           Selecciona al menos una columna.
