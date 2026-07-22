@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.4.34",
+  "version": "2.4.35",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -62,7 +62,8 @@
     "i18n"
   ],
   "dependencies": {
-    "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils"
+    "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils",
+    "vuedraggable": "^4.1.0"
   },
   "peerDependencies": {
     "vue": "^3.0.0",
