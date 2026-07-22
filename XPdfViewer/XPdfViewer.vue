@@ -231,7 +231,10 @@ function applyNumericZoom(registry, retriesLeft = 15) {
     capability.requestZoom(props.zoom)
     const applied = capability.getState?.()?.currentZoomLevel
     const appliedOk = typeof applied === 'number' && Math.abs(applied - props.zoom) < 0.05
-    if (appliedOk) return
+    if (appliedOk) {
+      scrollToTop(registry)
+      return
+    }
     throw new Error(`requestZoom no-opeó (currentZoomLevel=${applied}, esperado=${props.zoom})`)
   } catch (e) {
     if (retriesLeft > 0) {
@@ -239,6 +242,22 @@ function applyNumericZoom(registry, retriesLeft = 15) {
     } else {
       console.warn('[XPdfViewer] no se pudo aplicar el zoom numérico:', e)
     }
+  }
+}
+
+/**
+ * requestZoom(level, center) sin `center` mantiene el foco vertical en el
+ * CENTRO del viewport (default interno de embedpdf: VerticalZoomFocus.Center),
+ * a diferencia de la carga inicial en modo automático/fit-*, que sí explicita
+ * VerticalZoomFocus.Top — por eso al pasar a un zoom numérico la vista no
+ * arrancaba en el inicio de la hoja. La capability pública no expone ese
+ * parámetro, así que se corrige forzando el scroll al origen después.
+ */
+function scrollToTop(registry) {
+  try {
+    registry?.getPlugin?.('viewport')?.provides?.()?.scrollTo({ x: 0, y: 0, behavior: 'instant' })
+  } catch (e) {
+    console.warn('[XPdfViewer] no se pudo posicionar el scroll al inicio:', e)
   }
 }
 
