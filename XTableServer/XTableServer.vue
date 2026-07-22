@@ -144,6 +144,8 @@ const refDialogActiveForm = ref()
 // Desacopla las columnas a exportar de las visibles en pantalla: el usuario
 // elige en un diálogo qué campos van al archivo, sin recargar/scrollear la tabla.
 const showExportDialog = ref(false)
+// Indica que se está generando/descargando el Excel (loading del modal + botón).
+const exporting = ref(false)
 // Selección de columnas de export guardada por el usuario (viene del backend),
 // como array ORDENADO de nombres de columna.
 const savedExportColumns = ref([])
@@ -690,6 +692,7 @@ const fetchData = async () => {
 // Export + acciones
 // -------------------------
 const exportTableData = async (exportColumns = null) => {
+  exporting.value = true
   try {
     const { sortBy, descending } = pagination.value
 
@@ -726,6 +729,8 @@ const exportTableData = async (exportColumns = null) => {
   } catch {
     $q.notify({ type: 'error', message: proxy.$t('common.exportExcelError') })
     return false
+  } finally {
+    exporting.value = false
   }
 }
 
@@ -1397,6 +1402,8 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       @action-button-close="showExportDialog = false"
     >
       <template #content>
+        <div class="relative-position">
+        <q-inner-loading :showing="exporting" label="Generando Excel…" color="primary" style="z-index: 10;" />
         <div class="row items-center justify-between q-mb-xs">
           <q-checkbox
             :model-value="exportAllChecked"
@@ -1425,12 +1432,14 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
         <div v-if="!exportSelectedColumns.length" class="text-caption text-negative q-mt-xs">
           Selecciona al menos una columna.
         </div>
+        </div>
       </template>
 
       <template #action-buttons>
-        <x-button flat label="Cancelar" @click="showExportDialog = false" />
+        <x-button flat label="Cancelar" :disable="exporting" @click="showExportDialog = false" />
         <x-button unelevated color="primary" label="Exportar"
-                  :disable="!exportSelectedColumns.length" @click="confirmExport" />
+                  :loading="exporting"
+                  :disable="exporting || !exportSelectedColumns.length" @click="confirmExport" />
       </template>
     </x-dialog>
   </q-card>
