@@ -252,12 +252,22 @@ function applyNumericZoom(registry, retriesLeft = 15) {
  * VerticalZoomFocus.Top — por eso al pasar a un zoom numérico la vista no
  * arrancaba en el inicio de la hoja. La capability pública no expone ese
  * parámetro, así que se corrige forzando el scroll al origen después.
+ *
+ * Un solo scrollTo() no bastó: el propio cambio de zoom recalcula scroll
+ * internamente de forma asíncrona (rAF/resize) y esa recentrada tardía podía
+ * llegar DESPUÉS del scrollTo() y pisarlo, dejando la vista centrada otra
+ * vez. Por eso se reafirma varias veces en una ventana corta — no hay forma
+ * de saber desde afuera cuándo terminó el recálculo interno de embedpdf.
  */
-function scrollToTop(registry) {
+function scrollToTop(registry, attemptsLeft = 8) {
   try {
     registry?.getPlugin?.('viewport')?.provides?.()?.scrollTo({ x: 0, y: 0, behavior: 'instant' })
   } catch (e) {
     console.warn('[XPdfViewer] no se pudo posicionar el scroll al inicio:', e)
+    return
+  }
+  if (attemptsLeft > 0) {
+    setTimeout(() => scrollToTop(registry, attemptsLeft - 1), 100)
   }
 }
 
