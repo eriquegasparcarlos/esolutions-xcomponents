@@ -4,6 +4,9 @@ import XBadge from '../XBadge/XBadge.vue';
 defineProps({
   cell: {type: [Object, String, Number, Boolean], default: null}
 });
+
+// Una celda-ícono con `action` se vuelve clickeable y emite la acción hacia arriba.
+const emit = defineEmits(['cell-action']);
 </script>
 
 <template>
@@ -18,7 +21,7 @@ defineProps({
     <template v-if="cell.type_input === 'composite'">
       <template v-for="(line, i) in cell.lines" :key="i">
         <template v-for="(el, j) in line" :key="j">
-          <x-cell-renderer :cell="el"/>
+          <x-cell-renderer :cell="el" @cell-action="emit('cell-action', $event)"/>
         </template>
         <br v-if="i < cell.lines.length - 1"/>
       </template>
@@ -63,12 +66,13 @@ defineProps({
       {{ cell.label }}
     </q-chip>
 
-    <!-- ÍCONO -->
+    <!-- ÍCONO (clickeable si trae `action`) -->
     <q-icon v-else-if="cell.type_input === 'icon'"
             :name="cell.icon"
             :color="cell.color || undefined"
             :title="cell.tooltip || undefined"
-            class="q-mx-xs"/>
+            :class="['q-mx-xs', { 'cursor-pointer': cell.action }]"
+            @click="cell.action && emit('cell-action', cell.action)"/>
 
     <!-- AVATAR -->
     <q-avatar v-else-if="cell.type_input === 'avatar'"

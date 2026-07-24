@@ -1158,7 +1158,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
               </div>
             </template>
             <template v-else>
-              <x-cell-column-renderer :cell="col.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" />
+              <x-cell-column-renderer :cell="col.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" @cell-action="(a) => performAction({ action: a }, props.row)" />
             </template>
           </q-td>
         </q-tr>
@@ -1205,7 +1205,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       <!-- DESKTOP VIEW: Renderizado normal -->
       <template v-else v-slot:body-cell="props">
         <q-td :props="props">
-          <x-cell-column-renderer :cell="props.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" />
+          <x-cell-column-renderer :cell="props.value" :row="props.row" @refresh="fetchData" @loading="val => loading = val" @cell-action="(a) => performAction({ action: a }, props.row)" />
         </q-td>
       </template>
 

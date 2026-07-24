@@ -17,7 +17,7 @@ const props = defineProps({
   row: { type: Object, default: null },
 })
 
-const emit = defineEmits(['refresh', 'loading'])
+const emit = defineEmits(['refresh', 'loading', 'cell-action'])
 
 const { proxy } = getCurrentInstance()
 const $q = useQuasar()
@@ -153,6 +153,6 @@ function onUpdateModelValue(val) {
 
   <!-- 2) Celda normal (tu renderer actual) -->
   <template v-else>
-    <x-cell-renderer :cell="cell" />
+    <x-cell-renderer :cell="cell" @cell-action="emit('cell-action', $event)" />
   </template>
 </template>
