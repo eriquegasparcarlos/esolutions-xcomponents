@@ -563,6 +563,7 @@ const fetchColumnsAndData = async () => {
       locked: column.locked,
       exportable: column.exportable !== false,
       onlyExport: column.only_export === true,
+      width: column.width,
     }))
 
     lockedColumns.value = columnOptions.value.filter((c) => c.locked).map((c) => c.value)
@@ -636,13 +637,26 @@ const updateVisibleColumns = (selectedColumns) => {
 
   columns.value = columnOptions.value
     .filter((c) => selectedColumns.includes(c.value) || lockedColumns.value.includes(c.value))
-    .map((c) => ({
-      name: c.value,
-      label: c.label,
-      align: c.align,
-      field: c.value,
-      sortable: c.sortable || false,
-    }))
+    .map((c) => {
+      const col = {
+        name: c.value,
+        label: c.label,
+        align: c.align,
+        field: c.value,
+        sortable: c.sortable || false,
+      }
+      // Ancho de columna desde el backend (Column::width):
+      //   'auto'            → columna pegada al contenido (como el checkbox select)
+      //   '64px' / '10%'/…  → ancho fijo
+      if (c.width === 'auto') {
+        col.style = 'width: 1px; white-space: nowrap;'
+        col.headerStyle = 'width: 1px; white-space: nowrap;'
+      } else if (c.width) {
+        col.style = `width: ${c.width}; max-width: ${c.width};`
+        col.headerStyle = `width: ${c.width}; max-width: ${c.width};`
+      }
+      return col
+    })
 }
 
 const fetchData = async () => {
