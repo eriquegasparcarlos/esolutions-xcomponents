@@ -54,7 +54,8 @@ const emit = defineEmits(['cell-action']);
              :variant="cell.variant || 'light'"
              :icon="cell.icon || null"
              :icon-position="cell.icon_position || 'left'"
-             class="q-mx-xs x-badge"></x-badge>
+             :class="['q-mx-xs x-badge', { 'cursor-pointer': cell.action }]"
+             @click="cell.action && emit('cell-action', cell.action)"></x-badge>
 
     <!-- CHIP -->
     <q-chip v-else-if="cell.type_input === 'chip'"
