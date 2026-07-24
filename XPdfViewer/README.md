@@ -18,6 +18,17 @@ Requiere `@embedpdf/vue-pdf-viewer` como dependencia del proyecto consumidor.
 
 El componente **solo necesita la URL de un PDF ya generado** (`src`). Todo (páginas, zoom, panorámica, selección) lo maneja el motor embedpdf en el navegador. El zoom/panorámica/navegación de páginas viven en el **toolbar interno de embedpdf** (siempre visible); el resto de features se activan con props (todas off por defecto).
 
+### Qué debe servir el backend en `src`
+
+La URL de `src` tiene que devolver el **PDF crudo**, no un envoltorio:
+
+- **`Content-Type: application/pdf`** con los **bytes del PDF** en el cuerpo. El motor (PDFium/WASM) espera el binario; **no** admite JSON, base64 dentro de un objeto, ni HTML.
+- Servido **inline** (`Content-Disposition: inline`, o sin ese header), **no** como `attachment` — el archivo se muestra en el visor, no se fuerza una descarga. El botón *Descargar* del componente ya se encarga de bajarlo con el `filename` correcto.
+- **Un archivo por formato**: si manejas varias presentaciones (p. ej. A4 y ticket 80 mm), el backend expone una **URL distinta por formato**; el componente muestra la que reciba en `src` (ver el ejemplo de `formats` más abajo).
+- **Red / auth**: si el endpoint vive en otro origen, debe permitir **CORS**. La descarga usa `fetch(src, { credentials: 'include' })`, así que si el PDF requiere sesión/cookies, habilita credenciales en el endpoint.
+
+> **Ejemplo (backend Laravel de intipos):** `GET /api/document/print/{table}/{external_id}/{format}` genera el PDF con **mpdf** y lo devuelve con `response()->file($temp)` (Laravel emite `application/pdf` inline); se cachea en storage tras la primera vez. `format` es `a4` o `ticket`, y de ahí salen los campos `url_pdf` / `url_pdf_ticket` que consumen los *finish dialogs*.
+
 ### Props
 
 #### Contenido
