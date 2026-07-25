@@ -197,6 +197,32 @@ Si **no** se envia `mobileConfig` desde el backend, el componente genera una con
 - El titulo del bottom sheet es la primera columna
 - El subtitulo es la segunda columna
 
+## Clase por fila (`_row_class`)
+
+Cada registro puede traer un campo especial **`_row_class`** que XTableServer
+aplica como clase CSS a su fila (`<q-tr>`), tanto en escritorio como en móvil.
+Sirve para resaltar/atenuar filas según su estado (inhabilitado, vencido, etc.)
+sin agregar columnas.
+
+El backend lo incluye en cada record; el valor es el nombre de una clase CSS
+que **define el proyecto consumidor** (XTableServer solo la aplica):
+
+```json
+{
+  "id": 12,
+  "name": "Producto X",
+  "_row_class": "x-row-inactive"
+}
+```
+
+```css
+/* en el proyecto consumidor */
+.x-row-inactive { opacity: .55; }
+```
+
+Si un registro no trae `_row_class`, la fila se muestra normal. No colisiona con
+el resaltado interno de selección (`x-table-row--selected`).
+
 ## Filtros
 
 Los filtros se configuran en el backend:

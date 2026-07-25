@@ -1119,7 +1119,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       <!-- Body: agrega checkbox por fila + clase "selected" -->
       <template v-if="isSelectable && !isMobileView" v-slot:body="props">
         <q-tr :props="props"
-              :class="{ 'x-table-row--selected': selectedRows.includes(props.row.id) }">
+              :class="[{ 'x-table-row--selected': selectedRows.includes(props.row.id) }, props.row._row_class]">
           <q-td auto-width class="x-table-select-cell">
             <q-checkbox
               :model-value="selectedRows.includes(props.row.id)"
@@ -1168,6 +1168,7 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
       <template v-if="isMobileView" v-slot:body="props">
         <q-tr
           class="cursor-pointer x-table-mobile-row"
+          :class="props.row._row_class"
           :props="props"
           @click="openMobileActions(props.row)"
         >
