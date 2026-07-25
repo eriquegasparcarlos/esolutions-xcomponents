@@ -31,10 +31,13 @@ defineProps({
       anchor="top middle"
       self="bottom middle"
       :offset="[0, 6]"
-      class="x-help-tip__bubble bg-grey-9 text-white"
-      :style="{ maxWidth }"
+      class="bg-grey-9 text-white"
     >
-      <slot>{{ text }}</slot>
+      <!-- El ancho máximo va en un div interno: el q-tooltip se teletransporta
+           al body y no siempre reenvía su :style al contenido. -->
+      <div class="x-help-tip__bubble" :style="{ maxWidth, whiteSpace: 'normal', lineHeight: 1.4 }">
+        <slot>{{ text }}</slot>
+      </div>
     </q-tooltip>
   </q-icon>
 </template>
