@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.4.41",
+  "version": "2.4.42",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -46,6 +46,8 @@
     "XTokenDisplay",
     "XVerifiedBadge",
     "XToggle",
+    "XSettingToggle",
+    "XHelpTip",
     "XTracking",
     "XTreeSelect",
     "badge",
