@@ -234,3 +234,11 @@ $x-checkbox-size: 22px;
 - Con `is-classic`, el label aparece al lado del checkbox
 - Soporta array para multiples selecciones usando el prop `val`
 - El tooltip aparece al hacer hover sobre el checkbox
+
+## Prop `help` (v2.4.40)
+
+Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip](../XHelpTip/README.md)).
+
+```vue
+<XCheckbox label="Incluye IGV" help="El precio ya trae el IGV incluido." />
+```

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useAttrs } from 'vue';
 import { formDefaults } from '@esolutions/js-utils'
+import XHelpTip from '../XHelpTip/XHelpTip.vue'
 
 // Metadatos del componente
 defineOptions({
@@ -46,6 +47,11 @@ const props = defineProps({
     type: String,
     default: '',
   },
+  /** Texto de ayuda: muestra un ícono "?" con tooltip junto al checkbox/label. */
+  help: {
+    type: String,
+    default: '',
+  },
 });
 
 // Definimos los eventos emitidos
@@ -86,24 +92,28 @@ const hasTooltip = computed(() => !!props.tooltipText);
            class="q-input__label mb-1"
            style="line-height: 15px;">
       {{ props.label }}
+      <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
     </label>
 
-    <!-- Checkbox principal -->
-    <q-checkbox
-      v-bind="{
-        ...attrs,
-        class: null,         // evitar duplicación
-        label: checkboxLabel,
-        for: elementId,
-        dense: true,
-      }"
-      v-model="internalValue"
-      :color="color"
-      :disable="disable"
-      :indeterminate-value="indeterminateValue"
-    >
-      <q-tooltip v-if="hasTooltip" :class="tooltipColor">{{ tooltipText }}</q-tooltip>
-    </q-checkbox>
+    <!-- Checkbox principal (+ ícono de ayuda opcional al costado) -->
+    <div class="row items-center no-wrap">
+      <q-checkbox
+        v-bind="{
+          ...attrs,
+          class: null,         // evitar duplicación
+          label: checkboxLabel,
+          for: elementId,
+          dense: true,
+        }"
+        v-model="internalValue"
+        :color="color"
+        :disable="disable"
+        :indeterminate-value="indeterminateValue"
+      >
+        <q-tooltip v-if="hasTooltip" :class="tooltipColor">{{ tooltipText }}</q-tooltip>
+      </q-checkbox>
+      <XHelpTip v-if="help && !showTopLabel" :text="help" class="q-ml-xs" />
+    </div>
 
     <!-- Mensaje de ayuda opcional -->
     <slot name="hint" v-if="hint">

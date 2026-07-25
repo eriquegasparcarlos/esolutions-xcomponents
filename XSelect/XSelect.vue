@@ -1,6 +1,7 @@
 <script setup>
 import { computed, getCurrentInstance, ref, useAttrs, nextTick } from 'vue';
 import { formDefaults } from '@esolutions/js-utils'
+import XHelpTip from '../XHelpTip/XHelpTip.vue'
 
 defineOptions({
   name: 'XSelect',
@@ -78,6 +79,8 @@ const props = defineProps({
   closeOnBlur: { type: Boolean, default: true },
   truncateLabel: { type: Boolean, default: false },
   truncateWidth: { type: [String, Number], default: null },
+  /** Texto de ayuda: muestra un ícono "?" con tooltip junto al label. */
+  help: { type: String, default: '' },
 });
 
 const fallbackId = `app-select-${Math.random().toString(36).substring(2, 9)}`;
@@ -291,6 +294,7 @@ function onSelect(val) {
        @keyup.enter.stop>
     <label v-if="label" :for="elementId" class="x-select-label q-mb-xs" style="line-height: 22px">
       {{ label }}
+      <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
     </label>
 
     <q-select ref="selectRef"

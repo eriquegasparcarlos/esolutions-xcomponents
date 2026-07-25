@@ -222,3 +222,11 @@ Con `preserve-results`, los resultados de la ultima busqueda se mantienen al rea
 ### Opcion Agregar Nuevo
 
 La opcion "Agregar nuevo" aparece al final de la lista y emite el evento `click-new` para abrir un modal de creacion.
+
+## Prop `help` (v2.4.40)
+
+Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip](../XHelpTip/README.md)).
+
+```vue
+<XSelect label="Incluye IGV" help="El precio ya trae el IGV incluido." />
+```

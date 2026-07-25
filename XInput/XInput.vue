@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useAttrs, ref, toValue } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
+import XHelpTip from '../XHelpTip/XHelpTip.vue'
 
 defineOptions({ name: 'XInput', inheritAttrs: false })
 
@@ -12,6 +13,8 @@ const props = defineProps({
   autofocus: { type: Boolean, default: false },
   /** Solo muestra asterisco/aria, no activa validación nativa */
   isRequired: { type: Boolean, default: false },
+  /** Texto de ayuda: muestra un ícono "?" con tooltip junto al label. */
+  help: { type: String, default: '' },
 })
 
 const emit = defineEmits(['update:modelValue', 'input', 'change'])
@@ -55,6 +58,7 @@ const filteredAttrs = computed(() => {
     <label v-if="label" :for="elementId" class="q-input__label q-mb-xs" style="line-height: 22px;"
            :aria-required="props.isRequired ? 'true' : 'false'">
       {{ label }} <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
+      <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
     </label>
 
     <q-input
@@ -94,6 +98,7 @@ const filteredAttrs = computed(() => {
       <template v-if="elementLabel" #label>
         <span>{{ elementLabel }}</span>
         <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
+        <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
       </template>
 
       <!-- Proxy de slots de QField/QInput -->

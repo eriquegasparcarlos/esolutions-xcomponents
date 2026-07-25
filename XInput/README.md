@@ -204,3 +204,11 @@ Cuando `is-required="true"`, se muestra un asterisco rojo junto al label. Esto e
 
 - **Default**: El label aparece arriba del input como un `<label>` separado
 - **Clasico** (`is-classic`): El label flota dentro del input al estilo Material Design
+
+## Prop `help` (v2.4.40)
+
+Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip](../XHelpTip/README.md)).
+
+```vue
+<XInput label="Incluye IGV" help="El precio ya trae el IGV incluido." />
+```

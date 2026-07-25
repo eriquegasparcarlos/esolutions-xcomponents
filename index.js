@@ -34,6 +34,8 @@ export { default as XTableServer } from './XTableServer/XTableServer.vue'
 export { default as XToggle } from './XToggle/XToggle.vue'
 export { default as XTracking } from './XTracking/XTracking.vue'
 export { default as XTreeSelect } from './XTreeSelect/XTreeSelect.vue'
+export { default as XSettingToggle } from './XSettingToggle/XSettingToggle.vue'
+export { default as XHelpTip } from './XHelpTip/XHelpTip.vue'
 
 // Select variants
 export { default as XSelectCountry } from './select/XSelectCountry.vue'
