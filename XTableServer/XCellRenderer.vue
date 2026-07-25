@@ -68,6 +68,7 @@ defineProps({
             :name="cell.icon"
             :color="cell.color || undefined"
             :title="cell.tooltip || undefined"
+            :size="cell.size || undefined"
             class="q-mx-xs"/>
 
     <!-- AVATAR -->
