@@ -72,6 +72,7 @@ const emit = defineEmits(['cell-action']);
             :name="cell.icon"
             :color="cell.color || undefined"
             :title="cell.tooltip || undefined"
+            :size="cell.size || undefined"
             :class="['q-mx-xs', { 'cursor-pointer': cell.action }]"
             @click="cell.action && emit('cell-action', cell.action)"/>
 

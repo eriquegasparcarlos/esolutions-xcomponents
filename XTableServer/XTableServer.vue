@@ -1080,14 +1080,16 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     </q-card-section>
 
     <!-- MOBILE HEADER (mismo estilo que thead de la tabla) -->
-    <div v-if="initialLoadDone && isMobileView && !isEmpty" class="x-table-mobile-header">
+    <div v-if="initialLoadDone && isMobileView && !isEmpty && !error" class="x-table-mobile-header">
       <div class="text-caption">
         {{ pagination.rowsNumber }} registro{{ pagination.rowsNumber !== 1 ? 's' : '' }}
       </div>
     </div>
 
+    <!-- Ante un error de carga NO se renderiza la tabla ni su empty-state:
+         solo se muestra la tarjeta de error (evita apilar "sin resultados" + error). -->
     <q-table
-      v-if="initialLoadDone"
+      v-if="initialLoadDone && !error"
       :rows="rows"
       :columns="columns"
       row-key="id"
