@@ -1,4 +1,4 @@
-# ESolutions — Ecosistema de Paquetes
+# QuiroSys — Ecosistema de Paquetes
 
 Documentación de arquitectura para la refactorización de `esolutions/core` en paquetes independientes.
 
@@ -7,8 +7,8 @@ Documentación de arquitectura para la refactorización de `esolutions/core` en 
 ## Índice
 
 - [Visión general](#visión-general)
-- [esolutions/laravel](#esolutionslaravel)
-- [esolutions/datatable](#esolutionsdatatable)
+- [quirosys/laravel](#quirosyslaravel)
+- [quirosys/datatable](#quirosysdatatable)
 - [esolutions/peru](#esolutionsperu)
 - [esolutions/apiperudev](#esolutionsapiperudev)
 - [esolutions/ws](#esolutionsws)
@@ -20,8 +20,8 @@ Documentación de arquitectura para la refactorización de `esolutions/core` en 
 ## Visión general
 
 ```
-esolutions/laravel       → Base Laravel: helpers, cache, auth, response, logging, console
-esolutions/datatable     → DataTable server-side + exportación Excel
+quirosys/laravel       → Base Laravel: helpers, cache, auth, response, logging, console
+quirosys/datatable     → DataTable server-side + exportación Excel
 esolutions/peru          → Utilidades específicas de Perú: validadores, número a letras
 esolutions/apiperudev    → Cliente HTTP para api.apiconsulta.dev (RUC, DNI, tipo de cambio)
 esolutions/ws            → Cliente HTTP para WhatsApp API
@@ -30,9 +30,9 @@ esolutions/ws            → Cliente HTTP para WhatsApp API
 ### Dependencias entre paquetes
 
 ```
-esolutions/laravel        ← base, sin dependencias internas
-esolutions/datatable      ← requiere esolutions/laravel
-esolutions/apiperudev     ← requiere esolutions/laravel (ApiResponse)
+quirosys/laravel        ← base, sin dependencias internas
+quirosys/datatable      ← requiere quirosys/laravel
+esolutions/apiperudev     ← requiere quirosys/laravel (ApiResponse)
 esolutions/ws             ← independiente
 esolutions/peru           ← independiente
 ```
@@ -47,16 +47,16 @@ use App\ESolutions\Helpers\AuthHelper;
 use App\ESolutions\Utils\ApiResponse;
 
 // Después
-use Esolutions\Laravel\Auth\AuthHelper;
-use Esolutions\Laravel\Http\ApiResponse;
+use Quirosysaravel\Auth\AuthHelper;
+use Quirosysaravel\Http\ApiResponse;
 ```
 
 ---
 
-## esolutions/laravel
+## quirosys/laravel
 
 **Repo:** `github:eriquegasparcarlos/esolutions-laravel`
-**Namespace:** `Esolutions\Laravel\`
+**Namespace:** `Quirosysaravel\`
 **Descripción:** Utilidades base para proyectos Laravel del ecosistema ESolutions.
 
 ### Estructura
@@ -91,7 +91,7 @@ src/
 Verifica que la contraseña enviada coincida con la del usuario autenticado vía Sanctum.
 
 ```php
-use Esolutions\Laravel\Auth\AuthHelper;
+use Quirosysaravel\Auth\AuthHelper;
 
 if (!AuthHelper::checkPassword($request->input('password'))) {
     return ApiResponse::error('La contraseña es incorrecta', 403);
@@ -113,7 +113,7 @@ Al limpiar, dispara el evento `CacheTableCleared` para que los proyectos reaccio
 
 ```php
 // En el proyecto — app/Cache/System/PlanCache.php
-use Esolutions\Laravel\Cache\TraitCache;
+use Quirosysaravel\Cache\TraitCache;
 
 class PlanCache
 {
@@ -152,7 +152,7 @@ PlanCache::clearCache();
 Genera nombres de claves de cache consistentes.
 
 ```php
-use Esolutions\Laravel\Cache\HelperCache;
+use Quirosysaravel\Cache\HelperCache;
 
 $key = HelperCache::nameCache('plans'); // → "k_table_plans"
 ```
@@ -164,7 +164,7 @@ $key = HelperCache::nameCache('plans'); // → "k_table_plans"
 Escanea automáticamente el directorio `app/Cache/` del proyecto, ejecuta `getCache()` en cada clase encontrada y devuelve todos los datos agregados. Usado por `AppController::getTables()`.
 
 ```php
-use Esolutions\Laravel\Cache\CacheRegistry;
+use Quirosysaravel\Cache\CacheRegistry;
 
 // Retorna todas las tablas cacheadas del proyecto
 $tables = CacheRegistry::getTables();
@@ -181,7 +181,7 @@ Evento disparado automáticamente por `TraitCache::clearCache()`. Los proyectos 
 
 ```php
 // En el proyecto — app/Listeners/BroadcastCacheUpdate.php
-use Esolutions\Laravel\Events\CacheTableCleared;
+use Quirosysaravel\Events\CacheTableCleared;
 
 class BroadcastCacheUpdate
 {
@@ -213,7 +213,7 @@ Proyectos sin Reverb simplemente no registran el listener — el evento se dispa
 Respuestas JSON estandarizadas con encoding UTF-8.
 
 ```php
-use Esolutions\Laravel\Http\ApiResponse;
+use Quirosysaravel\Http\ApiResponse;
 
 return ApiResponse::success('Plan creado', 201, $data);
 return ApiResponse::error('No encontrado', 404);
@@ -244,7 +244,7 @@ apiError('Error al procesar', 500);
 ### `Support/StringHelper`
 
 ```php
-use Esolutions\Laravel\Support\StringHelper;
+use Quirosysaravel\Support\StringHelper;
 
 StringHelper::upper('hola mundo');          // → "HOLA MUNDO"
 StringHelper::lower('HOLA MUNDO');          // → "hola mundo"
@@ -269,7 +269,7 @@ StringHelper::random(6, '0123456789');      // → "482901"
 ### `Support/NumberHelper`
 
 ```php
-use Esolutions\Laravel\Support\NumberHelper;
+use Quirosysaravel\Support\NumberHelper;
 
 NumberHelper::format(1234.5678);     // → "1234.57"
 NumberHelper::format(1234.5678, 4);  // → "1234.5678"
@@ -287,7 +287,7 @@ NumberHelper::format('1,234.56');    // → "1234.56"
 ### `Support/SystemHelper`
 
 ```php
-use Esolutions\Laravel\Support\SystemHelper;
+use Quirosysaravel\Support\SystemHelper;
 
 SystemHelper::isWindows(); // → true/false
 SystemHelper::getDomain(); // → "garcia.intipos13.oo"
@@ -307,7 +307,7 @@ SystemHelper::getDomain(); // → "garcia.intipos13.oo"
 Registra excepciones en archivos de log por usuario con contexto completo (IP, headers, input, URL).
 
 ```php
-use Esolutions\Laravel\Logging\LogHelper;
+use Quirosysaravel\Logging\LogHelper;
 
 try {
     // ...
@@ -325,7 +325,7 @@ Genera archivos en `storage/logs/user-{id}.log` con JSON por línea.
 Barra de progreso visual para comandos Artisan.
 
 ```php
-use Esolutions\Laravel\Console\ProgressBarHelper;
+use Quirosysaravel\Console\ProgressBarHelper;
 
 $bar = new ProgressBarHelper(barLength: 30);
 
@@ -349,10 +349,10 @@ Progreso: [████████████████░░░░░░░
 
 ---
 
-## esolutions/datatable
+## quirosys/datatable
 
 **Repo:** `github:eriquegasparcarlos/esolutions-datatable`
-**Namespace:** `Esolutions\Datatable\`
+**Namespace:** `QuirosysDatatable\`
 **Descripción:** Infraestructura para tablas server-side con paginación, filtros, columnas, diálogos de acción y exportación Excel.
 
 ### Estructura
@@ -389,7 +389,7 @@ src/
 Genera la configuración del diálogo de confirmación para acciones destructivas o de cambio de estado. El frontend renderiza el diálogo con estos datos.
 
 ```php
-use Esolutions\Datatable\Dialog\DialogAction;
+use QuirosysDatatable\Dialog\DialogAction;
 
 // En recordDestroy($id)
 return DialogAction::getDeleteRecordActionData($record, 'name', 'plan');
@@ -433,7 +433,7 @@ return DialogAction::getActiveRecordActionData($record, 'name', 'plan');
 FormRequest para los endpoints de confirmación de acción (`storeDelete`, `storeActive`).
 
 ```php
-use Esolutions\Datatable\Dialog\Requests\ActionRequest;
+use QuirosysDatatable\Dialog\Requests\ActionRequest;
 
 public function storeDelete(ActionRequest $request)
 {
@@ -459,8 +459,8 @@ public function storeDelete(ActionRequest $request)
 Define las columnas de la tabla.
 
 ```php
-use Esolutions\Datatable\Table\Column;
-use Esolutions\Datatable\Table\ColumnBuilder;
+use QuirosysDatatable\Table\Column;
+use QuirosysDatatable\Table\ColumnBuilder;
 
 $columns = (new ColumnBuilder())
     ->addColumn(Column::make('name')->label('Nombre'))
@@ -477,8 +477,8 @@ $columns = (new ColumnBuilder())
 Define los filtros del encabezado de la tabla.
 
 ```php
-use Esolutions\Datatable\Table\Filter;
-use Esolutions\Datatable\Table\FilterBuilder;
+use QuirosysDatatable\Table\Filter;
+use QuirosysDatatable\Table\FilterBuilder;
 
 $filters = (new FilterBuilder())
     ->addFilter(Filter::makeInput('search')->label('Buscar por nombre')->cssClass('col-12'))
@@ -493,8 +493,8 @@ $filters = (new FilterBuilder())
 Define los botones del encabezado de la tabla.
 
 ```php
-use Esolutions\Datatable\Table\Button;
-use Esolutions\Datatable\Table\ButtonBuilder;
+use QuirosysDatatable\Table\Button;
+use QuirosysDatatable\Table\ButtonBuilder;
 
 $buttons = (new ButtonBuilder())
     ->addButton(Button::newButton())       // botón "Nuevo"
@@ -510,7 +510,7 @@ $buttons = (new ButtonBuilder())
 Traits para paginación en contexto de sistema (central) o tenant. Se usan en las clases DataTable.
 
 ```php
-use Esolutions\Datatable\Traits\PaginationSystemTrait;
+use QuirosysDatatable\Traits\PaginationSystemTrait;
 
 trait PlanDataTable
 {
@@ -536,7 +536,7 @@ trait PlanDataTable
 Exportador Excel genérico reutilizable. Genera un archivo `.xlsx` con título, encabezados estilizados y datos.
 
 ```php
-use Esolutions\Datatable\Exports\GenericReportExport;
+use QuirosysDatatable\Exports\GenericReportExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 return Excel::download(
@@ -824,8 +824,8 @@ config('esolutions.app.url_base')
 ```json
 {
     "require": {
-        "esolutions/laravel":     "^1.0",
-        "esolutions/datatable":   "^1.0",
+        "quirosys/laravel":     "^1.0",
+        "quirosys/datatable":   "^1.0",
         "esolutions/peru":        "^1.0",
         "esolutions/apiperudev":  "^1.0",
         "esolutions/ws":          "^1.0"
@@ -839,15 +839,15 @@ Remover: `"esolutions/core": "^1.4"`
 
 | Antes | Después |
 |---|---|
-| `App\ESolutions\Helpers\AuthHelper` | `Esolutions\Laravel\Auth\AuthHelper` |
-| `App\ESolutions\Utils\ApiResponse` | `Esolutions\Laravel\Http\ApiResponse` |
-| `App\ESolutions\Utils\CacheTable` | `Esolutions\Laravel\Cache\CacheRegistry` |
-| `App\ESolutions\Cache\TraitCache` | `Esolutions\Laravel\Cache\TraitCache` |
-| `App\ESolutions\DataTable\Dialog\DialogAction` | `Esolutions\Datatable\Dialog\DialogAction` |
-| `App\ESolutions\DataTable\Dialog\Requests\ActionRequest` | `Esolutions\Datatable\Dialog\Requests\ActionRequest` |
-| `App\ESolutions\DataTable\Table\Column` | `Esolutions\Datatable\Table\Column` |
-| `App\ESolutions\DataTable\Traits\PaginationSystemTrait` | `Esolutions\Datatable\Traits\PaginationSystemTrait` |
-| `App\ESolutions\Exports\GenericReportExport` | `Esolutions\Datatable\Exports\GenericReportExport` |
+| `App\ESolutions\Helpers\AuthHelper` | `Quirosysaravel\Auth\AuthHelper` |
+| `App\ESolutions\Utils\ApiResponse` | `Quirosysaravel\Http\ApiResponse` |
+| `App\ESolutions\Utils\CacheTable` | `Quirosysaravel\Cache\CacheRegistry` |
+| `App\ESolutions\Cache\TraitCache` | `Quirosysaravel\Cache\TraitCache` |
+| `App\ESolutions\DataTable\Dialog\DialogAction` | `QuirosysDatatable\Dialog\DialogAction` |
+| `App\ESolutions\DataTable\Dialog\Requests\ActionRequest` | `QuirosysDatatable\Dialog\Requests\ActionRequest` |
+| `App\ESolutions\DataTable\Table\Column` | `QuirosysDatatable\Table\Column` |
+| `App\ESolutions\DataTable\Traits\PaginationSystemTrait` | `QuirosysDatatable\Traits\PaginationSystemTrait` |
+| `App\ESolutions\Exports\GenericReportExport` | `QuirosysDatatable\Exports\GenericReportExport` |
 | `App\ESolutions\ApiPeruDev\Service` | `Esolutions\ApiPeruDev\Service` |
 | `App\ESolutions\WhatsAppApi\Service` | `Esolutions\Ws\Service` |
 
@@ -865,7 +865,7 @@ mv config/configuration.php config/esolutions.php
 
 ```php
 // app/Listeners/BroadcastCacheUpdate.php
-use Esolutions\Laravel\Events\CacheTableCleared;
+use Quirosysaravel\Events\CacheTableCleared;
 
 class BroadcastCacheUpdate
 {

@@ -1,6 +1,6 @@
 # @quirosys/x-components
 
-Componentes compartidos ESolutions — **Vue 3 + Quasar v2**. Librería de UI usada por los frontends SPA de QuiroSys (system y tenant).
+Componentes compartidos QuiroSys — **Vue 3 + Quasar v2**. Librería de UI usada por los frontends SPA de QuiroSys (system y tenant).
 
 ## Instalación
 
@@ -37,7 +37,7 @@ Más de 40 componentes con prefijo `X*`, entre ellos:
 - **Navegación**: XMainMenu, XDropdownMenu, XModulesTreePicker, XNested, XDnd
 - **Otros**: XFormatPrice, XPriceCalculator, XTokenDisplay, XVerifiedBadge, Mobile/, PrintTemplates/
 
-Ver [PACKAGES.md](PACKAGES.md) para la arquitectura del ecosistema de paquetes ESolutions.
+Ver [PACKAGES.md](PACKAGES.md) para la arquitectura del ecosistema de paquetes.
 
 ## Dependencias
 
