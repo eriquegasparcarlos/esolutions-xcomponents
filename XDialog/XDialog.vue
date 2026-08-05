@@ -137,6 +137,15 @@ onBeforeUnmount(() => {
 
 const isFullView = computed(() => props.isFullHeight || props.fullScreen);
 
+// El diálogo llega al borde inferior de la pantalla cuando está maximizado,
+// a pantalla completa, con is-full-height, o acoplado a un borde (position).
+// En esos casos el footer de acciones debe respetar el safe-area (home indicator
+// de iOS / barra de gestos Android). En un diálogo centrado no se aplica.
+const reachesBottomEdge = computed(() => isFullView.value || !!props.position);
+const actionsStyle = computed(() => reachesBottomEdge.value
+  ? { minHeight: ACTIONS_HEIGHT + 'px', height: 'auto', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }
+  : { height: ACTIONS_HEIGHT + 'px' });
+
 // Calcula el ancho y clase del diálogo
 const dialogWidth = computed(() => ($q.screen.xs ? '95vw' : props.width));
 const dialogPosition = computed(() => props.position);
@@ -288,7 +297,7 @@ const onClose = () => {
       <!-- Botones de acción -->
       <div class="x-dialog-actions"
            :class="{'justify-end': alignActionButtons === 'right', 'justify-between': alignActionButtons === 'between'}"
-           :style="{ height: ACTIONS_HEIGHT + 'px' }"
+           :style="actionsStyle"
            v-if="hasActionButtonsSlot">
         <slot name="action-buttons"/>
       </div>
