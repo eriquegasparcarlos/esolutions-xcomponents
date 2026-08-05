@@ -1,0 +1,115 @@
+# XInputNumeric
+
+Input numérico que envuelve `QInput type="number"` de Quasar, ocultando las flechas nativas del navegador. Es el componente estándar para **cantidades y precios/montos** (no usar `XInput` para números). Soporta prefijo/sufijo (moneda, unidad) y un modo stepper con botones −/+ para cantidades.
+
+## Instalacion
+
+```vue
+<script setup>
+import XInputNumeric from '@esolutions/x-components/XInputNumeric/XInputNumeric.vue'
+</script>
+```
+
+## Props
+
+| Prop | Tipo | Default | Descripcion |
+|------|------|---------|-------------|
+| `modelValue` | `Number \| String \| null` | — | Valor del input (v-model). Siempre emite `Number` o `null` (vacío/no numérico → `null`) |
+| `isClassic` | `Boolean` | `false` | Usa label flotante dentro del input |
+| `dense` | `Boolean` | `true` | Modo compacto |
+| `error` | `String` | `null` | Mensaje de error a mostrar |
+| `inputDebounce` | `Number \| String` | `0` | Debounce del `update:modelValue` |
+| `autofocus` | `Boolean` | `false` | Auto-focus al montar |
+| `isRequired` | `Boolean` | `false` | Muestra asterisco de requerido |
+| `prefix` | `String` | `null` | Texto fijo a la izquierda dentro del input (ej. `"S/"`, `"$"`) |
+| `suffix` | `String` | `null` | Texto fijo a la derecha dentro del input (ej. `"%"`, `"kg"`) |
+| `controls` | `Boolean` | `false` | Modo stepper: botones −/+ a los lados (uso típico: cantidades) |
+| `min` | `Number \| String` | `null` | Mínimo. Con `controls`, deshabilita el botón − en el límite y corrige en blur |
+| `max` | `Number \| String` | `null` | Máximo. Con `controls`, deshabilita el botón + en el límite y corrige en blur |
+| `step` | `Number \| String` | `1` | Incremento de los botones −/+ |
+
+Ademas, soporta los atributos de `QInput` como `label`, `placeholder`, `disable`, `readonly`, etc. (el `type` está fijado a `number`).
+
+## Eventos
+
+| Evento | Payload | Descripcion |
+|--------|---------|-------------|
+| `update:modelValue` | `Number \| null` | Emitido al cambiar el valor (ya convertido a número) |
+| `input` | `Event` | Evento nativo de input |
+| `change` | `Event` | Evento nativo de change |
+
+## Metodos expuestos (defineExpose)
+
+| Metodo | Descripcion |
+|--------|-------------|
+| `focus()` | Enfoca el input |
+| `select()` | Selecciona el contenido |
+| `focusAndSelect()` | Enfoca y selecciona (útil en grillas POS para sobreescribir rápido) |
+
+## Uso Basico
+
+```vue
+<XInputNumeric v-model="form.price" label="Precio" prefix="S/" min="0" />
+```
+
+## Ejemplos
+
+### Monto/precio con moneda
+
+La moneda va como `prefix`, no en el label:
+
+```vue
+<XInputNumeric v-model="form.opening_amount" label="Apertura" prefix="S/" min="0" />
+<XInputNumeric v-model="form.opening_amount_usd" label="Apertura" prefix="$" min="0" />
+```
+
+### Cantidad con stepper (controls)
+
+Para cantidades, agregar `controls`. El valor se acota a `[min, max]`: los botones se deshabilitan en el límite y un valor escrito fuera de rango se corrige al salir del campo (blur) — evita cantidades en 0/vacío:
+
+```vue
+<XInputNumeric v-model="row.quantity" controls min="1" :max="row.stock" />
+```
+
+### Paso decimal
+
+```vue
+<XInputNumeric v-model="form.weight" label="Peso" suffix="kg" controls min="0" step="0.5" />
+```
+
+### Porcentaje con sufijo
+
+```vue
+<XInputNumeric v-model="form.discount_percent" label="Descuento" suffix="%" min="0" max="100" />
+```
+
+### Con error de validacion
+
+```vue
+<XInputNumeric v-model="form.amount" label="Importe" prefix="S/" :error="errors.amount" />
+```
+
+## Caracteristicas Especiales
+
+### Sin flechas nativas
+
+Las flechas del `input[type=number]` del navegador se ocultan por CSS (Webkit y Firefox); el incremento visual solo existe en modo `controls`.
+
+### Emision siempre numerica
+
+`update:modelValue` nunca emite strings: convierte con `Number()` y emite `null` si el campo queda vacío o no es un número finito. El backend recibe números sin castear.
+
+### Modo controls
+
+- Botón − gris a la izquierda, botón + en color primario a la derecha.
+- El valor se centra entre ambos botones.
+- `prefix`/`suffix` conviven con los botones (quedan entre el botón y el valor).
+
+## Cuando usarlo
+
+| Campo | Componente |
+|------|------------|
+| Precio, monto, importe | `XInputNumeric` con `prefix` de moneda y `min="0"` |
+| Cantidad | `XInputNumeric` con `controls` (+ `min`/`max` si aplica) |
+| Porcentaje | `XInputNumeric` con `suffix="%"` y `min`/`max` |
+| Texto, código, serie | `XInput` |
