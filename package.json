@@ -1,5 +1,5 @@
 {
-  "name": "@esolutions/x-components",
+  "name": "@quirosys/x-components",
   "version": "2.4.42",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
