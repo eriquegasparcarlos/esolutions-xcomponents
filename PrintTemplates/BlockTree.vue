@@ -1,6 +1,6 @@
 <script setup>
   import { ref, watch } from 'vue'
-  import draggable from 'vuedraggable'
+  import { VueDraggable } from 'vue-draggable-plus'
   import BlockNode from './BlockNode.vue'
   import { ensureBlockIds } from 'src/utils/printTemplateDsl.js'
   
@@ -40,10 +40,20 @@
   
   /**
    * ✅ Bloquear “cut” dentro de contenedores anidados
+   *
+   * vue-draggable-plus (Sortable nativo) no trae draggedContext: el elemento
+   * arrastrado se trackea en @start por índice (mismo patrón que XDnd).
    */
+  const draggedElement = ref(null)
+  function onDragStart(evt) {
+    draggedElement.value = localList.value?.[evt?.oldIndex] ?? null
+  }
+  function onDragEnd() {
+    draggedElement.value = null
+  }
   function onMove(evt) {
     if (props.containerType === 'root') return true
-    const dragged = evt?.draggedContext?.element
+    const dragged = evt?.draggedContext?.element ?? draggedElement.value
     if (dragged?.cmd === 'cut') return false
     return true
   }
@@ -82,33 +92,38 @@
   </script>
   
   <template>
-    <draggable
-      :list="localList"
+    <VueDraggable
+      v-model="localList"
       :tag="props.tag"
       :group="props.group"
-      :item-key="props.itemKey"
       :handle="props.handle"
       :animation="150"
       :force-fallback="true"
       :fallback-on-body="true"
       :touch-start-threshold="5"
-      :move="onMove"
-      @change="onChange"
+      :on-move="onMove"
+      @start="onDragStart"
+      @end="onDragEnd"
+      @add="onChange"
+      @remove="onChange"
+      @update="onChange"
     >
-      <template #item="{ element }">
-        <div class="x-dnd-item">
-          <BlockNode
-            :block="element"
-            :selected-id="selectedId"
-            :group="props.group"
-            @select="b => emit('select', b)"
-            @duplicate="b => emit('duplicate', b)"
-            @remove="onRemoveBlock"
-            @update:block="onChildUpdateBlock"
-          />
-        </div>
-      </template>
-    </draggable>
+      <div
+        v-for="element in localList"
+        :key="typeof props.itemKey === 'function' ? props.itemKey(element) : element?.[props.itemKey]"
+        class="x-dnd-item"
+      >
+        <BlockNode
+          :block="element"
+          :selected-id="selectedId"
+          :group="props.group"
+          @select="b => emit('select', b)"
+          @duplicate="b => emit('duplicate', b)"
+          @remove="onRemoveBlock"
+          @update:block="onChildUpdateBlock"
+        />
+      </div>
+    </VueDraggable>
   </template>
   
   <style scoped>

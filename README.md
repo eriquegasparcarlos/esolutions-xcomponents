@@ -26,21 +26,18 @@ import XInput from '@esolutions/x-components/XInput/XInput.vue'
 
 Como los `.vue` se compilan en el proyecto consumidor, hay configuración que **debe** existir en su `quasar.config.js` → `extendViteConf`. Si falta, fallará en dev y/o build:
 
-### 1. `optimizeDeps.include: ['vuedraggable']` — OBLIGATORIO
+### 1. Drag & drop: `vue-draggable-plus` (desde v2.5.0)
 
-`XDnd` (usado por `XTableServer`, o sea por **todos los listados**) importa `vuedraggable`, que solo publica build **UMD/CommonJS**. Vite solo lo convierte a ESM en el pre-bundling, y como el import está dentro de este paquete, el escaneo inicial de Vite **no lo detecta**. Sin esto, el dev server lo sirve tal cual y revienta con:
+Desde **v2.5.0**, `XDnd` y `PrintTemplates/BlockTree` usan **`vue-draggable-plus`** (ESM nativo, mantenido) — no requiere configuración especial de Vite.
 
-```
-SyntaxError: The requested module '...vuedraggable.umd.js' does not provide an export named 'default'
-```
-
-Traicionero porque a veces "funciona" gracias a la caché `node_modules/.vite` — y explota recién al limpiarla o al actualizar el tag del paquete (cambia el hash en `.pnpm` y la caché se invalida).
+**Solo para tags ≤ v2.4.x** (usaban `vuedraggable`, UMD/CommonJS abandonado): el consumidor DEBE agregar en `quasar.config.js` → `extendViteConf`:
 
 ```js
-// quasar.config.js → build.extendViteConf(viteConf)
 viteConf.optimizeDeps = viteConf.optimizeDeps || {}
 viteConf.optimizeDeps.include = [...(viteConf.optimizeDeps.include || []), 'vuedraggable']
 ```
+
+Sin eso, al invalidarse la caché `node_modules/.vite` el dev server revienta con `does not provide an export named 'default'` en todos los listados (`XDnd` → `XTableServer`).
 
 ### 2. Tema SCSS
 

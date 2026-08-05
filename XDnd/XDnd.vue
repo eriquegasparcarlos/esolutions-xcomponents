@@ -1,31 +1,46 @@
 <script setup>
   import { computed, onBeforeUnmount, ref, useAttrs } from 'vue'
-  import draggable from 'vuedraggable'
-  
+  import { VueDraggable } from 'vue-draggable-plus'
+
   defineOptions({ name: 'XDnd', inheritAttrs: false })
-  
+
+  /**
+   * XDnd — wrapper de drag & drop sobre vue-draggable-plus (SortableJS).
+   *
+   * Migrado desde vuedraggable (UMD, abandonado) manteniendo la MISMA API pública:
+   * v-model o :list, slot #item="{ element, index }", slots #header/#footer,
+   * props de Sortable (animation, handle, group, ghost/chosen/drag class, …),
+   * rules/canMove y el drag overlay flotante. Diferencias internas:
+   * - El v-for de los items lo renderiza XDnd (vue-draggable-plus no trae slot #item).
+   * - #header/#footer se renderizan FUERA del contenedor sortable (antes eran hijos
+   *   no arrastrables dentro de él; ningún consumidor actual los usa dentro del flow).
+   * - En onMove ya no existe draggedContext/relatedContext de vuedraggable: el
+   *   elemento arrastrado se trackea en start/choose y se inyecta un shim compatible
+   *   (evt.draggedContext.element) para rules.lockedKey / canMove / rules.custom.
+   *   Para rules.maxItems, la lista destino se aproxima con evt.to.children.length.
+   */
   const props = defineProps({
     // v-model o list
     modelValue: { type: Array, default: () => [] },
     list: { type: Array, default: null },
-  
+
     // Sortable options
     tag: { type: String, default: 'div' },
     group: { type: [String, Object], default: () => ({ name: 'x-dnd' }) },
     itemKey: { type: [String, Function], default: 'id' },
     handle: { type: String, default: null },
     disabled: { type: Boolean, default: false },
-  
+
     animation: { type: Number, default: 150 },
     ghostClass: { type: String, default: 'x-dnd-ghost' },
     chosenClass: { type: String, default: 'x-dnd-chosen' },
     dragClass: { type: String, default: 'x-dnd-drag' },
-  
+
     // mejoras para Quasar/touch/navegadores
     forceFallback: { type: Boolean, default: true },
     fallbackOnBody: { type: Boolean, default: true },
     touchStartThreshold: { type: Number, default: 5 },
-  
+
     /**
      * Drag Overlay (flotante)
      */
@@ -33,20 +48,20 @@
     overlayOffsetX: { type: Number, default: 14 },
     overlayOffsetY: { type: Number, default: 14 },
     overlayZIndex: { type: Number, default: 9999 },
-  
+
     /**
      * Reglas + hook
      */
     canMove: { type: Function, default: null },
-  
+
     rules: { type: Object, default: () => ({}) },
-  
+
     /**
      * Meta opcional del contenedor (útil en árboles)
      */
     containerMeta: { type: Object, default: null }
   })
-  
+
   const emit = defineEmits([
     'update:modelValue',
     'update:list',
@@ -61,42 +76,53 @@
     'sort',
     'move'
   ])
-  
+
   const attrs = useAttrs()
   const isListMode = computed(() => props.list !== null)
-  
+
   /**
-   * v-model SOLO para modo modelValue
+   * Lista efectiva que se renderiza y se le pasa a VueDraggable.
+   * - modo list: vue-draggable-plus muta el array en el set; replicamos la
+   *   semántica de vuedraggable (mutar props.list in place) + notificar.
+   * - modo v-model: emitimos update:modelValue como siempre.
    */
   const internalModel = computed({
     get() {
-      return props.modelValue
+      return isListMode.value ? (props.list ?? []) : props.modelValue
     },
     set(val) {
-      emit('update:modelValue', val)
-      emit('update:list', val)
+      if (isListMode.value) {
+        const target = props.list
+        if (Array.isArray(target) && target !== val) {
+          target.splice(0, target.length, ...val)
+        }
+        emit('update:list', target ?? [])
+      } else {
+        emit('update:modelValue', val)
+        emit('update:list', val)
+      }
     }
   })
-  
+
+  const keyOf = (element, index) => {
+    if (typeof props.itemKey === 'function') return props.itemKey(element) ?? index
+    return element?.[props.itemKey] ?? index
+  }
+
   /**
    * helper: notificar lista actual
    */
   const notifyList = () => {
-    if (isListMode.value) {
-      // en modo list, vuedraggable muta props.list, así que solo notificamos
-      emit('update:list', props.list ?? [])
-    } else {
-      emit('update:list', internalModel.value ?? [])
-    }
+    emit('update:list', internalModel.value ?? [])
   }
-  
+
   /**
    * ============ Drag Overlay ============
    */
   const isDragging = ref(false)
   const draggedElement = ref(null)
   const pointer = ref({ x: 0, y: 0 })
-  
+
   const updatePointer = (e) => {
     const t = e.touches?.[0]
     pointer.value = {
@@ -104,7 +130,7 @@
       y: t?.clientY ?? e.clientY ?? 0
     }
   }
-  
+
   const addPointerListeners = () => {
     window.addEventListener('mousemove', updatePointer, { passive: true })
     window.addEventListener('touchmove', updatePointer, { passive: true })
@@ -113,9 +139,9 @@
     window.removeEventListener('mousemove', updatePointer)
     window.removeEventListener('touchmove', updatePointer)
   }
-  
+
   onBeforeUnmount(() => removePointerListeners())
-  
+
   const overlayStyle = computed(() => ({
     position: 'fixed',
     left: '0px',
@@ -124,7 +150,7 @@
     zIndex: props.overlayZIndex,
     pointerEvents: 'none'
   }))
-  
+
   /**
    * ============ Reglas ============
    */
@@ -137,26 +163,29 @@
     }
     return Math.max(depth, 0)
   }
-  
+
   const applyRules = (evt) => {
     const rules = props.rules || {}
     const dragged = evt?.draggedContext?.element
     const fromEl = evt?.from
     const toEl = evt?.to
-  
+
     if (rules.lockedKey && dragged && dragged[rules.lockedKey]) return false
     if (rules.disallowCrossList && fromEl && toEl && fromEl !== toEl) return false
-  
+
     if (rules.maxItems != null && fromEl && toEl && fromEl !== toEl) {
+      // Sin relatedContext.list (vuedraggable), el tamaño de la lista destino se
+      // aproxima por la cantidad de hijos del contenedor destino.
       const toList = evt?.relatedContext?.list
-      if (Array.isArray(toList) && toList.length >= Number(rules.maxItems)) return false
+      const count = Array.isArray(toList) ? toList.length : (toEl?.children?.length ?? 0)
+      if (count >= Number(rules.maxItems)) return false
     }
-  
+
     if (rules.maxDepth != null && toEl) {
       const depth = countContainerDepth(toEl)
       if (depth >= Number(rules.maxDepth)) return false
     }
-  
+
     if (rules.disallowDropIntoInactiveParent) {
       const meta = props.containerMeta || rules.containerMeta
       const parent = meta?.parent
@@ -164,45 +193,59 @@
       const v = rules.parentActiveValue ?? 'is_active'
       if (parent && parent[k] !== v) return false
     }
-  
+
     if (typeof rules.custom === 'function') {
       const ok = rules.custom(evt, props.containerMeta)
       if (ok === false) return false
     }
-  
+
     return true
   }
-  
+
+  /**
+   * Shim de compatibilidad con la firma de vuedraggable: inyecta
+   * draggedContext.element (trackeado en start/choose) sobre el evt nativo
+   * de Sortable, para canMove / rules.custom escritos contra la API vieja.
+   */
+  const withDraggedContext = (evt) => {
+    if (evt && !evt.draggedContext) {
+      evt.draggedContext = { element: draggedElement.value }
+    }
+    return evt
+  }
+
   const onMoveInternal = (evt, originalEvent) => {
     if (props.disabled) return false
-  
+
+    const shimmed = withDraggedContext(evt)
+
     if (typeof props.canMove === 'function') {
-      const ok = props.canMove(evt, originalEvent)
+      const ok = props.canMove(shimmed, originalEvent)
       if (ok === false) return false
     }
-  
-    return applyRules(evt)
+
+    if (applyRules(shimmed) === false) return false
+
+    emit('move', shimmed, originalEvent)
+    return true
   }
-  
-  const forward = (name) => (evt, originalEvent) => {
-    emit(name, evt, originalEvent)
+
+  const forward = (name) => (evt) => {
+    emit(name, evt)
+    // vuedraggable emitía 'change' en add/remove/update; se sintetiza igual.
+    if (name === 'add' || name === 'remove' || name === 'update') emit('change', evt)
     notifyList()
   }
-  
-  const getDraggedFromEvt = (evt) => {
-    return evt?.item?.__draggable_context?.element
-      ?? evt?.clone?.__draggable_context?.element
-      ?? evt?.draggedContext?.element
-      ?? null
-  }
-  
+
+  const elementAt = (evt) => internalModel.value?.[evt?.oldIndex] ?? null
+
   const onStart = (evt) => {
     isDragging.value = true
-    draggedElement.value = getDraggedFromEvt(evt)
+    draggedElement.value = elementAt(evt) ?? draggedElement.value
     addPointerListeners()
     emit('start', evt)
   }
-  
+
   const onEnd = (evt) => {
     isDragging.value = false
     draggedElement.value = null
@@ -211,56 +254,20 @@
     notifyList()
   }
   const onChoose = (evt) => {
-    draggedElement.value = getDraggedFromEvt(evt) ?? draggedElement.value
+    draggedElement.value = elementAt(evt) ?? draggedElement.value
     emit('choose', evt)
     notifyList()
   }
   </script>
-  
+
   <template>
-    <!-- ✅ MODO LIST: usar :list (mutable), NO v-model -->
-    <draggable
-      v-if="isListMode"
-      v-bind="attrs"
-      :list="props.list"
-      :tag="tag"
-      :group="group"
-      :item-key="itemKey"
-      :handle="handle"
-      :disabled="disabled"
-      :animation="animation"
-      :ghost-class="ghostClass"
-      :chosen-class="chosenClass"
-      :drag-class="dragClass"
-      :force-fallback="forceFallback"
-      :fallback-on-body="fallbackOnBody"
-      :touch-start-threshold="touchStartThreshold"
-      :move="onMoveInternal"
-      data-x-dnd-container="1"
-      @change="forward('change')"
-      @start="onStart"
-      @end="onEnd"
-      @add="forward('add')"
-      @remove="forward('remove')"
-      @update="forward('update')"
-      @choose="onChoose"
-      @unchoose="forward('unchoose')"
-      @sort="forward('sort')"
-      @move="forward('move')"
-    >
-      <template #header><slot name="header" /></template>
-      <template #item="slotProps"><slot name="item" v-bind="slotProps" /></template>
-      <template #footer><slot name="footer" /></template>
-    </draggable>
-  
-    <!-- ✅ MODO V-MODEL: usar v-model (inmutable / emit update:modelValue) -->
-    <draggable
-      v-else
+    <slot name="header" />
+
+    <VueDraggable
       v-bind="attrs"
       v-model="internalModel"
       :tag="tag"
       :group="group"
-      :item-key="itemKey"
       :handle="handle"
       :disabled="disabled"
       :animation="animation"
@@ -270,9 +277,8 @@
       :force-fallback="forceFallback"
       :fallback-on-body="fallbackOnBody"
       :touch-start-threshold="touchStartThreshold"
-      :move="onMoveInternal"
+      :on-move="onMoveInternal"
       data-x-dnd-container="1"
-      @change="forward('change')"
       @start="onStart"
       @end="onEnd"
       @add="forward('add')"
@@ -281,13 +287,14 @@
       @choose="onChoose"
       @unchoose="forward('unchoose')"
       @sort="forward('sort')"
-      @move="forward('move')"
     >
-      <template #header><slot name="header" /></template>
-      <template #item="slotProps"><slot name="item" v-bind="slotProps" /></template>
-      <template #footer><slot name="footer" /></template>
-    </draggable>
-  
+      <template v-for="(element, index) in internalModel" :key="keyOf(element, index)">
+        <slot name="item" :element="element" :index="index" />
+      </template>
+    </VueDraggable>
+
+    <slot name="footer" />
+
     <teleport to="body" v-if="dragOverlay && isDragging">
       <div :style="overlayStyle" class="x-dnd-overlay">
         <slot name="overlay" :element="draggedElement">
@@ -300,7 +307,7 @@
       </div>
     </teleport>
   </template>
-  
+
   <style scoped>
   /* clave para touch y para que el handle siempre sea “arrastrable” */
   :deep(.block-handle) {
@@ -311,4 +318,3 @@
     cursor: grabbing;
   }
   </style>
-  
