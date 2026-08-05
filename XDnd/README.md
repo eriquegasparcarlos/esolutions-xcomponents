@@ -10,7 +10,7 @@ Componente de drag & drop (reordenar listas) usado internamente por el diálogo 
 init_runtime_dom_esm_bundler is not defined
 ```
 
-Esto afecta a **cualquier proyecto que consuma `@esolutions/x-components`** y use `XDnd` (o `XTableServer`, cuyo diálogo de export usa XDnd). La causa raíz es del paquete `vuedraggable`, así que la solución vive en la **configuración del consumidor**.
+Esto afecta a **cualquier proyecto que consuma `@quirosys/x-components`** y use `XDnd` (o `XTableServer`, cuyo diálogo de export usa XDnd). La causa raíz es del paquete `vuedraggable`, así que la solución vive en la **configuración del consumidor**.
 
 ### Solución: aliasar `vuedraggable` a un stub ESM propio
 

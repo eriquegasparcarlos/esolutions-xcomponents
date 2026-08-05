@@ -8,7 +8,7 @@ Visor de PDF embebido basado en [`@embedpdf/vue-pdf-viewer`](https://www.embedpd
 
 ```vue
 <script setup>
-import XPdfViewer from '@esolutions/x-components/XPdfViewer/XPdfViewer.vue'
+import XPdfViewer from '@quirosys/x-components/XPdfViewer/XPdfViewer.vue'
 </script>
 ```
 
@@ -105,7 +105,7 @@ Activan secciones del toolbar interno que vienen ocultas:
 
 <script setup>
 import { ref } from 'vue'
-import XPdfViewer from '@esolutions/x-components/XPdfViewer/XPdfViewer.vue'
+import XPdfViewer from '@quirosys/x-components/XPdfViewer/XPdfViewer.vue'
 
 const pdfUrl = ref('https://mi-api.test/document/download/pdf/UUID')
 const pdfFilename = ref('B001-123.pdf')

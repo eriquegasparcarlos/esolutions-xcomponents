@@ -1,4 +1,4 @@
-# @esolutions/x-components
+# @quirosys/x-components
 
 Componentes compartidos ESolutions — **Vue 3 + Quasar v2**. Librería de UI usada por los frontends SPA de QuiroSys (system y tenant).
 
@@ -8,7 +8,7 @@ Se instala directamente desde este repositorio de GitHub, **pineado por tag**:
 
 ```json
 "dependencies": {
-    "@esolutions/x-components": "github:AdrianRodU/QuiroSys-XComponents#v2.4.53"
+    "@quirosys/x-components": "github:AdrianRodU/QuiroSys-XComponents#v2.4.53"
 }
 ```
 
@@ -21,7 +21,7 @@ pnpm install
 ## Uso
 
 ```js
-import { XInput, XSelect, XTableServer, XDialog } from '@esolutions/x-components'
+import { XInput, XSelect, XTableServer, XDialog } from '@quirosys/x-components'
 ```
 
 Los estilos base se importan desde `index.scss` / `_variables.scss`, con temas en `themes/`.

@@ -16,7 +16,7 @@ pnpm add @vue-flow/core @dagrejs/dagre
 
 ```vue
 <script setup>
-import XLineageTree from '@esolutions/x-components/XLineageTree/XLineageTree.vue'
+import XLineageTree from '@quirosys/x-components/XLineageTree/XLineageTree.vue'
 </script>
 ```
 
@@ -125,7 +125,7 @@ Tres niveles, de menor a mayor control:
 
 <script setup>
 import { ref } from 'vue'
-import XLineageTree from '@esolutions/x-components/XLineageTree/XLineageTree.vue'
+import XLineageTree from '@quirosys/x-components/XLineageTree/XLineageTree.vue'
 
 const visible = ref(true)
 const tree = ref(/* … tu árbol … */)
