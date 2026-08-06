@@ -35,7 +35,43 @@
       <PDFViewer v-if="src" :key="`${src}::${zoom}`" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
+      <!-- Loading propio en español: cubre el "Loading document..." del motor
+           hasta que el documento esté realmente listo (estado de zoom disponible). -->
+      <div v-if="src && !docReady" class="x-pdf-viewer__loading">
+        <span class="x-pdf-viewer__loading-spinner"></span>
+        Cargando documento…
+      </div>
+
       <div v-if="showActions" class="x-pdf-actions">
+        <!-- Zoom inline (compactZoom=false, default): botones −/%/+ siempre
+             visibles; el menú de zoom del toolbar interno se oculta.
+             Con compactZoom=true se conserva el menú del motor. -->
+        <div v-if="!compactZoom" class="x-pdf-actions__zoom" role="group" aria-label="Zoom">
+          <button
+            class="x-pdf-actions__btn"
+            type="button"
+            title="Alejar"
+            :disabled="!docReady || zoomLevel <= 0.25"
+            @click="zoomBy(-0.25)"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+          <span class="x-pdf-actions__zoom-info">{{ Math.round(zoomLevel * 100) }}%</span>
+          <button
+            class="x-pdf-actions__btn"
+            type="button"
+            title="Acercar"
+            :disabled="!docReady || zoomLevel >= 4"
+            @click="zoomBy(0.25)"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" />
+              <line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+          </button>
+        </div>
         <div v-if="formats.length > 1" class="x-pdf-actions__formats" role="group" aria-label="Formato del PDF">
           <button
             v-for="f in formats"
@@ -85,7 +121,7 @@
 </template>
 
 <script setup>
-import { computed, ref, nextTick } from 'vue'
+import { computed, ref, nextTick, watch } from 'vue'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 
 /**
@@ -129,6 +165,11 @@ const props = defineProps({
   // ticket (70mm de ancho): quien consume el visor decide el zoom según el
   // formato activo (p. ej. dentro de cada entrada de `formats`).
   zoom:         { type: [String, Number], default: 'fit-width' },
+
+  // — Zoom compacto — false (default): botones −/%/+ siempre visibles en el
+  // overlay y se oculta el menú de zoom del toolbar interno (que requiere un
+  // click para desplegarse). true: se conserva el menú compacto del motor.
+  compactZoom:  { type: Boolean, default: false },
 
   // — Toolbar embedpdf (features off por default, opt-in) —
   showDocumentMenu: { type: Boolean, default: false }, // hamburger izquierdo
@@ -186,6 +227,56 @@ const config = computed(() => {
 const busy = ref(false)
 const viewportRef = ref(null)
 
+// — Estado del zoom inline y del loading en español —
+const registryRef = ref(null)
+const zoomLevel   = ref(1)
+const docReady    = ref(false)
+
+// El PDFViewer se remonta con cada src/zoom (via :key): resetear el estado
+// para que el loading vuelva a mostrarse y el tracking se re-enganche.
+watch(() => `${props.src}::${props.zoom}`, () => {
+  docReady.value = false
+  registryRef.value = null
+})
+
+/**
+ * Espera a que el documento esté realmente cargado (el plugin de zoom recién
+ * expone currentZoomLevel numérico cuando hay documento) y se suscribe a los
+ * cambios de zoom (menú del motor, ctrl+rueda o nuestros botones) para que
+ * el porcentaje mostrado nunca quede desfasado.
+ */
+function initZoomTracking(registry, retriesLeft = 30) {
+  try {
+    const capability = registry?.getPlugin?.('zoom')?.provides?.()
+    const current    = capability?.getState?.()?.currentZoomLevel
+    if (typeof current !== 'number') throw new Error('documento aún no cargado')
+
+    zoomLevel.value = current
+    docReady.value  = true
+
+    capability.onZoomChange?.((state) => {
+      const z = typeof state === 'number' ? state : state?.currentZoomLevel
+      if (typeof z === 'number') zoomLevel.value = z
+    })
+  } catch {
+    if (retriesLeft > 0) {
+      setTimeout(() => initZoomTracking(registry, retriesLeft - 1), 150)
+    } else {
+      // No bloquear el visor si el tracking falla: se libera el loading.
+      docReady.value = true
+    }
+  }
+}
+
+function zoomBy(delta) {
+  const capability = registryRef.value?.getPlugin?.('zoom')?.provides?.()
+  if (!capability) return
+  const target = Math.min(4, Math.max(0.25, Math.round((zoomLevel.value + delta) * 100) / 100))
+  capability.requestZoom(target)
+  const applied = capability.getState?.()?.currentZoomLevel
+  if (typeof applied === 'number') zoomLevel.value = applied
+}
+
 /**
  * Inyecta un <style> dentro del shadowRoot del <embedpdf-container> para
  * ocultar bloques del toolbar interno que no tienen data-epdf-cat propia.
@@ -206,10 +297,12 @@ const viewportRef = ref(null)
  *   right-group → search + comment
  */
 function onEmbedReady(registry) {
+  registryRef.value = registry
   nextTick(() => injectShadowStyles())
   if (typeof props.zoom === 'number') {
     applyNumericZoom(registry)
   }
+  initZoomTracking(registry)
 }
 
 /**
@@ -286,6 +379,13 @@ function injectShadowStyles(retriesLeft = 5) {
   if (shadow.querySelector('style[data-x-pdf-viewer="overrides"]')) return
 
   const rules = []
+
+  // Zoom inline activo: ocultar el menú de zoom del toolbar interno para no
+  // duplicar controles (los botones −/%/+ viven en nuestro overlay).
+  if (!props.compactZoom) {
+    rules.push('[data-epdf-i="zoom-toolbar"]{display:none!important;}')
+    rules.push('[data-epdf-i="zoom-menu-button"]{display:none!important;}')
+  }
 
   if (!props.showDocumentMenu && !props.showPageSettings
       && !props.showSidebar && !props.showOverflowMenu) {
@@ -441,6 +541,34 @@ function printPdf() {
   font-size: 14px;
 }
 
+/* Loading en español: cubre el viewport (y el "Loading document..." del
+   motor) hasta que el documento esté listo. */
+.x-pdf-viewer__loading {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f3f4f6; /* --ep-background-app */
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.x-pdf-viewer__loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #d1d5db;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: x-pdf-spin 0.8s linear infinite;
+}
+
+@keyframes x-pdf-spin {
+  to { transform: rotate(360deg); }
+}
+
 /* Overlay Print/Download — mismos tamanos y estilo del toolbar embedpdf
    (32x32, radius 6px, hover #f3f4f6). El toolbar interno usa `py-2 px-4`
    (padding vertical 8px) + botones 32px, altura total 48px. Nuestro overlay
@@ -487,6 +615,24 @@ function printPdf() {
       width: 20px;
       height: 20px;
     }
+  }
+
+  /* Zoom inline: botones −/+ con el porcentaje al centro, mismos tokens
+     visuales que el resto del overlay. */
+  &__zoom {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-right: 4px;
+  }
+
+  &__zoom-info {
+    min-width: 44px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+    user-select: none;
   }
 
   /* Selector de formato: segmented control compacto, misma altura visual
