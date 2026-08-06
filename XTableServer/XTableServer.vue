@@ -952,6 +952,10 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
           </template>
         </x-dropdown-menu>
 
+        <!-- Botones extra del consumidor (existía hasta v2.4.x; el rediseño del
+             header lo perdió y rompió silenciosamente a quienes lo usaban). -->
+        <slot name="header-buttons" />
+
         <q-btn flat round no-caps icon="fa-light fa-columns-3">
           <q-menu class="column-visibility-menu">
             <q-list dense style="min-width: 180px; max-height: 320px; overflow-y: auto;">
