@@ -41,6 +41,9 @@ const props = defineProps({
   outline: Boolean,
   round: Boolean,
   rounded: Boolean,
+  // Botón de ícono perfectamente circular que NO se deforma aunque un contenedor
+  // flex lo estire (ej. dentro del slot #append de un q-field). Implica `round`.
+  circle: Boolean,
   unelevated: { type: Boolean, default: true },
   flat: Boolean,
   stretch: Boolean,
@@ -151,7 +154,7 @@ function handleClick (event) {
       color: finalColor,
       'text-color': finalTextColor,
       outline: isTrueAttr('outline') ?? outline,
-      round:   isTrueAttr('round')   ?? round,
+      round:   isTrueAttr('round')   ?? (round || circle),
       rounded: isTrueAttr('rounded') ?? rounded,
       unelevated: isTrueAttr('unelevated') ?? unelevated,
       flat:    isTrueAttr('flat')    ?? flat,
@@ -165,7 +168,7 @@ function handleClick (event) {
       icon: finalIcon || undefined,
       'icon-right': finalIconRight || undefined
     }"
-    :class="['x-button', attrs.class]"
+    :class="['x-button', { 'x-button--circle': circle }, attrs.class]"
     no-caps
     @click="handleClick"
   >
@@ -188,3 +191,15 @@ function handleClick (event) {
     </q-badge>
   </q-btn>
 </template>
+
+<style scoped>
+/* Botón circular de ícono: mantiene relación 1:1 y no se estira aunque un
+   contenedor flex (p. ej. el slot #append de un q-field) intente deformarlo. */
+.x-button--circle {
+  flex: 0 0 auto;
+  aspect-ratio: 1 / 1;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+}
+</style>
