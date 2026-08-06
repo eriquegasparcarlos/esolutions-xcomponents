@@ -1,103 +1,108 @@
 # XDnd
 
-Componente de drag & drop (reordenar listas) usado internamente por el diálogo de exportación de **XTableServer**. Está construido sobre `vuedraggable@4`.
+Componente de drag & drop (reordenar listas, mover entre listas, árboles) construido sobre **`vue-draggable-plus`** (SortableJS, ESM) desde **v2.5.0**. Lo usan internamente `XTableServer` (orden de columnas del diálogo de exportación), `XNested` (árboles) y `PrintTemplates`.
 
-## ⚠️ Requisito del proyecto CONSUMIDOR: alias de `vuedraggable`
+> Hasta v2.4.x estaba construido sobre `vuedraggable@4` (UMD, abandonado), que exigía configuración especial en el consumidor (`optimizeDeps.include` o alias a un stub). **Desde v2.5.0 no se requiere NINGUNA configuración de Vite** — ver "Historial / legacy" abajo si consumes un tag viejo.
 
-`vuedraggable@4.x` **solo distribuye un build UMD que importa Vue internamente**. Al pre-bundlearse con Vite/esbuild junto con Vue, revienta con:
+## Instalacion
 
+```vue
+<script setup>
+import XDnd from '@esolutions/x-components/XDnd/XDnd.vue'
+</script>
 ```
-init_runtime_dom_esm_bundler is not defined
+
+## Props
+
+| Prop | Tipo | Default | Descripcion |
+|------|------|---------|-------------|
+| `modelValue` | `Array` | `[]` | Lista (v-model, inmutable: emite `update:modelValue`) |
+| `list` | `Array` | `null` | Modo alternativo: lista mutada in place (emite `update:list`) |
+| `tag` | `String` | `'div'` | Elemento raíz del contenedor |
+| `group` | `String \| Object` | `{ name: 'x-dnd' }` | Grupo Sortable (mismo nombre = arrastre entre listas) |
+| `itemKey` | `String \| Function` | `'id'` | Key de cada item (campo o función) |
+| `handle` | `String` | `null` | Selector CSS del agarre (ej. `.block-handle`) |
+| `disabled` | `Boolean` | `false` | Desactiva el drag |
+| `animation` | `Number` | `150` | Duración de la animación (ms) |
+| `ghostClass` / `chosenClass` / `dragClass` | `String` | `x-dnd-*` | Clases de estado de Sortable |
+| `forceFallback` | `Boolean` | `true` | Fallback no-nativo (mejor en Quasar/touch) |
+| `fallbackOnBody` | `Boolean` | `true` | El clon del drag se monta en `<body>` |
+| `touchStartThreshold` | `Number` | `5` | Píxeles antes de iniciar drag táctil |
+| `dragOverlay` | `Boolean` | `true` | Overlay flotante junto al cursor durante el drag |
+| `overlayOffsetX/Y` | `Number` | `14` | Offset del overlay |
+| `overlayZIndex` | `Number` | `9999` | z-index del overlay |
+| `canMove` | `Function` | `null` | Hook `(evt, originalEvent) => boolean` — `false` cancela el movimiento |
+| `rules` | `Object` | `{}` | Reglas declarativas (ver abajo) |
+| `containerMeta` | `Object` | `null` | Meta del contenedor (útil en árboles; la recibe `rules.custom`) |
+
+### `rules`
+
+| Regla | Descripcion |
+|------|-------------|
+| `lockedKey` | Si el elemento arrastrado tiene ese campo truthy, no se mueve |
+| `disallowCrossList` | Prohíbe mover a otra lista |
+| `maxItems` | Máximo de items en la lista destino (aprox. por hijos del contenedor destino) |
+| `maxDepth` | Profundidad máxima de anidamiento (contenedores `data-x-dnd-container`) |
+| `disallowDropIntoInactiveParent` | Bloquea drop en padres inactivos (`parentActiveKey`/`parentActiveValue`) |
+| `custom` | `(evt, containerMeta) => boolean` |
+
+## Eventos
+
+`update:modelValue`, `update:list`, `change` (sintetizado en add/remove/update), `start`, `end`, `add`, `remove`, `update`, `choose`, `unchoose`, `sort`, `move`.
+
+## Slots
+
+| Slot | Descripcion |
+|------|-------------|
+| `item` (`{ element, index }`) | Render de cada item (el `v-for` lo hace XDnd) |
+| `header` / `footer` | Contenido antes/después del contenedor sortable (NO arrastrable) |
+| `overlay` (`{ element }`) | Contenido del overlay flotante (default: card con `label`/`name`) |
+
+## Uso Basico
+
+```vue
+<x-dnd v-model="columns" item-key="value" handle=".drag-grip">
+  <template #item="{ element }">
+    <div class="row items-center">
+      <q-icon name="drag_indicator" class="drag-grip" />
+      <span>{{ element.label }}</span>
+    </div>
+  </template>
+</x-dnd>
 ```
 
-Esto afecta a **cualquier proyecto que consuma `@esolutions/x-components`** y use `XDnd` (o `XTableServer`, cuyo diálogo de export usa XDnd). La causa raíz es del paquete `vuedraggable`, así que la solución vive en la **configuración del consumidor**.
+### Entre listas (kanban / árbol)
 
-### Solución: aliasar `vuedraggable` a un stub ESM propio
+```vue
+<x-dnd :list="colA" group="board" item-key="id">…</x-dnd>
+<x-dnd :list="colB" group="board" item-key="id">…</x-dnd>
+```
 
-1. Copia el stub `src/stubs/vuedraggable.js` a tu proyecto (implementación de referencia abajo). Reimplementa el subconjunto de la API que usa XDnd con **drag & drop nativo HTML5** (sin `sortablejs`): `v-model` / `:list`, `item-key`, `handle`, `tag`, slots `#header` / `#item="{ element, index }"` / `#footer`, y emite `change` / `start` / `end`.
+### Con reglas
 
-2. Agrega el alias en tu `vite.config.js` (o `extendViteConf` de Quasar):
+```vue
+<x-dnd
+  v-model="nodes"
+  :rules="{ lockedKey: 'is_locked', maxDepth: 2 }"
+  :can-move="(evt) => evt.draggedContext?.element?.type !== 'system'"
+>…</x-dnd>
+```
+
+## Notas de la migración a vue-draggable-plus (v2.5.0)
+
+API pública sin cambios. Diferencias internas que conviene conocer:
+
+- El `v-for` de items lo renderiza XDnd (vue-draggable-plus no trae slot `#item`).
+- `#header`/`#footer` se renderizan **fuera** del contenedor sortable (antes eran hijos no arrastrables dentro de él).
+- En `canMove`/`rules.custom`, `evt.draggedContext.element` es un **shim**: el elemento se trackea en `start`/`choose` (Sortable nativo no trae contexto del elemento). `evt.relatedContext` ya no existe; `rules.maxItems` aproxima la lista destino con `evt.to.children.length`.
+- El evento `change` se sintetiza a partir de `add`/`remove`/`update` (payload = evt nativo de Sortable, no el `{added|removed|moved}` de vuedraggable).
+
+## Historial / legacy (tags ≤ v2.4.x)
+
+Versiones anteriores usaban `vuedraggable@4` (solo build UMD). El consumidor necesitaba en `extendViteConf`:
 
 ```js
-import path from 'node:path'
-import { fileURLToPath } from 'node:url'
-
-// dentro de extendViteConf(viteConf) { ... } o vite.config resolve
-const projectRoot = path.dirname(fileURLToPath(import.meta.url))
-viteConf.resolve.alias['vuedraggable'] =
-  path.resolve(projectRoot, 'src/stubs/vuedraggable.js')
+viteConf.optimizeDeps.include = [...(viteConf.optimizeDeps.include || []), 'vuedraggable']
 ```
 
-3. Listo — no requiere `vuedraggable` real instalado; el alias lo intercepta.
-
-> Si tu proyecto NO usa `XDnd` ni `XTableServer`, el stub puede ser uno vacío mínimo. Si usas `XTableServer` (export dialog), usa el stub completo.
-
-### Stub de referencia (`src/stubs/vuedraggable.js`)
-
-Contrato mínimo que consume XDnd, con drag&drop nativo:
-
-```js
-import { defineComponent, h, ref } from 'vue'
-
-export default defineComponent({
-  name: 'VueDraggableStub',
-  inheritAttrs: false,
-  props: {
-    modelValue: { type: Array, default: null },
-    list: { type: Array, default: null },
-    tag: { type: String, default: 'div' },
-    itemKey: { type: [String, Function], default: 'id' },
-    handle: { type: String, default: null },
-    disabled: { type: Boolean, default: false },
-  },
-  emits: ['update:modelValue', 'update:list', 'change', 'start', 'end', 'sort'],
-  setup (props, { slots, emit, attrs }) {
-    const dragIndex = ref(-1)
-    const handleActive = ref(false)
-    const currentList = () => (props.list !== null ? props.list : (props.modelValue || []))
-    const keyOf = (el, i) => {
-      if (typeof props.itemKey === 'function') return props.itemKey(el)
-      if (props.itemKey && el && typeof el === 'object') return el[props.itemKey] ?? i
-      return i
-    }
-    const commit = (next) => {
-      if (props.list !== null) { props.list.splice(0, props.list.length, ...next); emit('update:list', props.list) }
-      else emit('update:modelValue', next)
-      emit('change', { moved: true }); emit('sort', { moved: true })
-    }
-    const reorder = (from, to) => {
-      if (from === to || from < 0 || to < 0) return
-      const next = currentList().slice(); const [m] = next.splice(from, 1); next.splice(to, 0, m); commit(next)
-    }
-    const onPointerDown = (e) => {
-      if (!props.handle) { handleActive.value = true; return }
-      const t = e.target; handleActive.value = !!(t && t.closest && t.closest(props.handle))
-    }
-    const onDragStart = (i, e) => {
-      if (props.disabled || (props.handle && !handleActive.value)) { e.preventDefault(); return }
-      dragIndex.value = i
-      if (e.dataTransfer) { e.dataTransfer.effectAllowed = 'move'; try { e.dataTransfer.setData('text/plain', String(i)) } catch (x) {} }
-      emit('start', { oldIndex: i })
-    }
-    const onDragOver = (i, e) => {
-      if (dragIndex.value === -1) return
-      e.preventDefault(); if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
-      if (i !== dragIndex.value) { reorder(dragIndex.value, i); dragIndex.value = i }
-    }
-    const onDragEnd = () => { const o = dragIndex.value; dragIndex.value = -1; handleActive.value = false; emit('end', { newIndex: o }) }
-    return () => {
-      const rows = currentList().map((element, index) =>
-        h('div', {
-          key: keyOf(element, index), draggable: !props.disabled,
-          style: dragIndex.value === index ? 'opacity:0.5;' : null,
-          onMousedown: onPointerDown, onTouchstart: onPointerDown,
-          onDragstart: (e) => onDragStart(index, e), onDragover: (e) => onDragOver(index, e),
-          onDragend: onDragEnd, onDrop: (e) => e.preventDefault(),
-        }, slots.item ? slots.item({ element, index }) : null))
-      return h(props.tag || 'div', { ...attrs }, [
-        slots.header ? slots.header() : null, rows, slots.footer ? slots.footer() : null,
-      ])
-    }
-  },
-})
-```
+(o, en setups más viejos, un alias de `vuedraggable` a un stub ESM propio). Sin eso, al invalidarse `node_modules/.vite` el dev server fallaba con `does not provide an export named 'default'` en todos los listados. Si consumes un tag viejo, mantén esa configuración; desde v2.5.0 elimínala.
