@@ -249,7 +249,24 @@ function onSelect(val) {
     return;
   }
 
-  const opt = (optionsToShow.value || []).find(o => o.value === val) || null;
+  // Resolver la opción elegida priorizando el objeto ORIGINAL (con todos sus
+  // campos), no la versión mapeada `{value,label}`.
+  //
+  // ¿Por qué? En filtrado local (`handleLocalFilter`) las opciones se despojan a
+  // `{value,label}`, y además el `value` mapeado puede diferir en tipo (number
+  // vs string) respecto al `val` emitido por QSelect → `find(o => o.value ===
+  // val)` devolvía `null` y `@select` entregaba `null`, dejando al consumidor
+  // sin el registro completo (p. ej. un selector de cliente no resolvía su
+  // nombre/dirección). Ahora buscamos en las opciones crudas por `optionValue`
+  // (con match estricto y, si no, laxo por String) y solo caemos a la mapeada
+  // como último recurso. No cambia el contrato: `@select` sigue emitiendo el
+  // objeto de la opción — solo que ahora es el completo y nunca null si existe.
+  const rawOptions = props.remoteUrl ? (remoteOptions.value || []) : (attrs.options || []);
+  const opt =
+    rawOptions.find(o => o?.[props.optionValue] === val) ||
+    rawOptions.find(o => String(o?.[props.optionValue]) === String(val)) ||
+    (optionsToShow.value || []).find(o => o.value === val) ||
+    null;
 
   // Mantén v-model con ID
   emit('update:modelValue', val);

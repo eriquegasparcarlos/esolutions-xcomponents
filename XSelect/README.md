@@ -230,3 +230,13 @@ Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip]
 ```vue
 <XSelect label="Incluye IGV" help="El precio ya trae el IGV incluido." />
 ```
+
+## Evento `select` robusto (v2.5.4)
+
+El evento **`@select`** siempre entrega el **objeto original completo** de la opción elegida (con todos sus campos: `id`, `name`, etc.), no la versión mapeada `{value, label}`.
+
+**Qué se corrigió:** antes, `onSelect` resolvía la opción con `optionsToShow.find(o => o.value === val)`. En **filtrado local** las opciones se despojan a `{value, label}`, y el `value` mapeado podía diferir en **tipo** (número vs string) respecto al `val` emitido por QSelect → el `find` devolvía `null` y `@select` emitía `null`. Un consumidor que dependía de ese objeto (p. ej. un selector de cliente que muestra nombre/dirección al elegir) se quedaba sin datos.
+
+**Cómo funciona ahora:** `onSelect` busca primero en las opciones **crudas** (`options` / resultados remotos) por `optionValue`, con match estricto y, si no, laxo por `String(...)`; solo cae a la opción mapeada como último recurso. 
+
+**Compatibilidad:** no cambia el contrato — `@select` sigue emitiendo el objeto de la opción; ahora es el completo y nunca `null` si la opción existe. `@update:model-value` sigue emitiendo el `optionValue` (ID). No requiere cambios en el código que ya usa el componente.
