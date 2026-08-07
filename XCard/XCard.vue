@@ -41,6 +41,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  /**
+   * Tamaño del padding del contenido: '' (default, hereda de `contentPadding`
+   * — none/md) | 'none' | 'xs' | 'sm' | 'md' | 'lg'. Usar cuando `contentPadding`
+   * (fijo en md=16px) no encaja — p. ej. mini-cards de resumen con `sm`=8px.
+   * Si se pasa, tiene prioridad sobre `contentPadding`.
+   */
+  padding: {
+    type: String,
+    default: '',
+    validator: (v) => ['', 'none', 'xs', 'sm', 'md', 'lg'].includes(v),
+  },
+  /** Alineación del slot #actions (footer de botones tipo q-card-actions). */
+  actionsAlign: {
+    type: String,
+    default: 'right',
+  },
   loading: {
     type: Boolean,
     default: false,
@@ -54,6 +70,13 @@ const props = defineProps({
 const slots = useSlots()
 const hasHeaderButtons = computed(() => !!slots['header-buttons'])
 const hasHeader = computed(() => props.title || props.subtitle || props.icon || hasHeaderButtons.value)
+const hasActions = computed(() => !!slots['actions'])
+
+// `padding` (si se pasa) manda; si no, cae al booleano `contentPadding` (md/none).
+const paddingClass = computed(() => {
+  const p = props.padding || (props.contentPadding ? 'md' : 'none')
+  return `q-pa-${p}`
+})
 </script>
 
 <template>
@@ -70,9 +93,12 @@ const hasHeader = computed(() => props.title || props.subtitle || props.icon || 
         <slot name="header-buttons"/>
       </div>
     </q-card-section>
-    <q-card-section class="x-form-section-content" :class="contentPadding ? 'q-pa-md' : 'q-pa-none'">
+    <q-card-section class="x-form-section-content" :class="paddingClass">
       <slot/>
     </q-card-section>
+    <q-card-actions v-if="hasActions" :align="actionsAlign">
+      <slot name="actions"/>
+    </q-card-actions>
     <x-loading :loading="loading" :icon="loadingIcon"/>
   </q-card>
 </template>
