@@ -34,7 +34,16 @@ import XDialog from '@/components/XDialog/XDialog.vue'
 | `show` | - | Dialogo visible |
 | `confirm` | - | Accion de confirmacion |
 | `cancel` | - | Accion de cancelacion/cierre |
-| `action-button-close` | - | Click en boton cerrar del header |
+| `action-button-close` | - | Click en boton cerrar (X) del header |
+
+> **Comportamiento del boton X (`show-button-close`).** Siempre emite
+> `action-button-close`, para que puedas **interceptar** el cierre (p. ej. pedir
+> confirmacion si hay cambios sin guardar). Si **no** escuchas ese evento, el
+> dialogo se cierra solo.
+>
+> Antes de v2.6.6 el boton X **solo emitia el evento**: si el consumidor no lo
+> escuchaba, el boton no hacia nada y parecia roto. Ahora ese caso cierra por
+> defecto; los consumidores que ya lo escuchaban no cambian de comportamiento.
 
 ## Slots
 

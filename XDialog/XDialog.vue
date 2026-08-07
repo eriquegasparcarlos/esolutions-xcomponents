@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed, watchEffect, useSlots, nextTick, onBeforeUnmount} from 'vue';
+import {ref, computed, watchEffect, useSlots, nextTick, onBeforeUnmount, getCurrentInstance} from 'vue';
 import {useQuasar} from 'quasar';
 import XLoading from '../XLoading/XLoading.vue';
 
@@ -219,6 +219,24 @@ const onClose = () => {
   emit('cancel');
   emit('update:modelValue', false);
 };
+
+/**
+ * Botón X de la cabecera (`show-button-close`).
+ *
+ * Siempre emite `action-button-close` para que el consumidor pueda interceptar
+ * el cierre (p. ej. confirmar cambios sin guardar). Si NADIE escucha ese evento,
+ * el botón cerraba "en falso": se veía como un cierre pero no hacía nada. En ese
+ * caso se cierra por defecto.
+ *
+ * Los consumidores que SÍ escuchan el evento no cambian de comportamiento —
+ * siguen teniendo el control total del cierre.
+ */
+const instance = getCurrentInstance();
+const onCloseButtonClick = () => {
+  emit('action-button-close');
+  const hasListener = !!instance?.vnode?.props?.onActionButtonClose;
+  if (!hasListener) onClose();
+};
 </script>
 
 <template>
@@ -256,7 +274,7 @@ const onClose = () => {
                dense
                size="md"
                class="x-dialog-button-close"
-               @click="emit('action-button-close')" />
+               @click="onCloseButtonClick" />
       </div>
 
       <!-- Header adicional si se define el slot -->
