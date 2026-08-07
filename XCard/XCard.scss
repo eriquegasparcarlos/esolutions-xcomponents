@@ -16,6 +16,17 @@
   box-shadow: var(--x-card-shadow);
 
   // --------------------------------------------------------------------------
+  // Variante bordered: look "plano + borde fino, sin sombra" — equivalente al
+  // `q-card flat bordered` crudo de Quasar (patrón dominante del proyecto
+  // consumidor antes de que existiera XCard). El borde en sí lo pone el prop
+  // nativo `bordered` de q-card (ya adaptado a dark mode); acá solo se anula
+  // el box-shadow propio de `.x-card`.
+  // --------------------------------------------------------------------------
+  &.x-card--bordered {
+    box-shadow: none;
+  }
+
+  // --------------------------------------------------------------------------
   // Section title
   // --------------------------------------------------------------------------
   .x-card-section-title {
