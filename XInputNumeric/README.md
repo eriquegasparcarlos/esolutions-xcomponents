@@ -38,6 +38,30 @@ Ademas, soporta los atributos de `QInput` como `label`, `placeholder`, `disable`
 | `input` | `Event` | Evento nativo de input |
 | `change` | `Event` | Evento nativo de change |
 
+## Slots
+
+| Slot | Descripcion |
+|--------|-------------|
+| `prepend` | Contenido al inicio del campo. Se renderiza ANTES de los controles propios (`controls`) y del `prefix`, sin reemplazarlos. Util para inyectar un selector (p. ej. `%` \| `S/`) dentro del input. |
+| `append` | Contenido al final del campo. Se renderiza DESPUES del `suffix` y de los controles propios. |
+
+```vue
+<!-- Selector %|moneda dentro del propio campo de descuento -->
+<XInputNumeric v-model="row.value" outlined>
+  <template #prepend>
+    <XButton flat size="sm" label="%" @click="row.type = 'percentage'" />
+    <XButton flat size="sm" label="S/" @click="row.type = 'amount'" />
+  </template>
+  <template #append>
+    <span>= S/ {{ amount.toFixed(2) }}</span>
+  </template>
+</XInputNumeric>
+```
+
+> Antes de v2.6.5 estos slots se descartaban en silencio: el componente definia sus
+> propios `#prepend`/`#append` sobre el `q-input` interno y no reenviaba los del
+> padre, asi que el contenido inyectado nunca se renderizaba.
+
 ## Metodos expuestos (defineExpose)
 
 | Metodo | Descripcion |

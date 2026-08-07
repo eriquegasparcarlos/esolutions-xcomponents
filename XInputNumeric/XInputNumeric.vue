@@ -132,7 +132,11 @@ defineExpose({ focus, select, focusAndSelect })
         <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
       </template>
 
-      <template v-if="prefixValue || props.controls" #prepend>
+      <!-- El slot del padre se ANTEPONE a lo propio (controls/prefix), para que
+           quien consume el componente pueda inyectar contenido (p. ej. un
+           selector %|moneda) sin perder los controles nativos. -->
+      <template v-if="$slots.prepend || prefixValue || props.controls" #prepend>
+        <slot name="prepend" />
         <q-btn
           v-if="props.controls"
           dense flat round size="sm"
@@ -144,7 +148,7 @@ defineExpose({ focus, select, focusAndSelect })
         <span v-if="prefixValue" class="x-input-numeric__affix">{{ prefixValue }}</span>
       </template>
 
-      <template v-if="suffixValue || props.controls" #append>
+      <template v-if="$slots.append || suffixValue || props.controls" #append>
         <span v-if="suffixValue" class="x-input-numeric__affix">{{ suffixValue }}</span>
         <q-btn
           v-if="props.controls"
@@ -154,6 +158,7 @@ defineExpose({ focus, select, focusAndSelect })
           :disable="!canIncrement"
           @click="changeBy(1)"
         />
+        <slot name="append" />
       </template>
     </q-input>
   </div>
