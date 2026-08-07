@@ -43,14 +43,14 @@ const props = defineProps({
   },
   /**
    * Tamaño del padding del contenido: '' (default, hereda de `contentPadding`
-   * — none/md) | 'none' | 'xs' | 'sm' | 'md' | 'lg'. Usar cuando `contentPadding`
-   * (fijo en md=16px) no encaja — p. ej. mini-cards de resumen con `sm`=8px.
-   * Si se pasa, tiene prioridad sobre `contentPadding`.
+   * — none/md) | 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'. Usar cuando
+   * `contentPadding` (fijo en md=16px) no encaja — p. ej. mini-cards de resumen
+   * con `sm`=8px. Si se pasa, tiene prioridad sobre `contentPadding`.
    */
   padding: {
     type: String,
     default: '',
-    validator: (v) => ['', 'none', 'xs', 'sm', 'md', 'lg'].includes(v),
+    validator: (v) => ['', 'none', 'xs', 'sm', 'md', 'lg', 'xl'].includes(v),
   },
   /** Alineación del slot #actions (footer de botones tipo q-card-actions). */
   actionsAlign: {
