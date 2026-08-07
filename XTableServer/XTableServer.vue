@@ -849,13 +849,17 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
     <q-card-section v-if="initialLoadDone && !isTrulyEmpty"
                     class="q-py-none x-table-server-title"
                     :class="{ 'has-subtitle': tableSubtitle }">
-      <div>
-        <div class="text-h6">
-          {{ tableTitle }}
-          <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
-        </div>
-        <div v-if="tableSubtitle" class="text-caption text-grey-7 q-mt-xs x-table-server-subtitle">
-          {{ tableSubtitle }}
+      <div class="x-table-header-left">
+        <!-- Contenido opcional a la izquierda del título (ej. botón de volver) -->
+        <slot name="header-left" />
+        <div>
+          <div class="text-h6">
+            {{ tableTitle }}
+            <q-badge v-if="tableBadge" :color="tableBadge.color" class="q-ml-sm text-body2 q-pa-xs">{{ tableBadge.label }}</q-badge>
+          </div>
+          <div v-if="tableSubtitle" class="text-caption text-grey-7 q-mt-xs x-table-server-subtitle">
+            {{ tableSubtitle }}
+          </div>
         </div>
       </div>
       <div>
@@ -1467,6 +1471,11 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
 </template>
 
 <style>
+.x-table-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 .column-visibility-menu .q-list::-webkit-scrollbar {
   width: 4px;
 }

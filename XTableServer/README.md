@@ -298,6 +298,27 @@ Las acciones se definen por fila en el backend:
 ]
 ```
 
+## Slots
+
+| Slot | Ubicación | Uso |
+|---|---|---|
+| `#header-left` | A la **izquierda del título** de la tabla | Contenido contextual antes del título — típicamente un botón de volver (`← Título`). |
+| `#header-buttons` | A la **derecha**, junto a los botones del header (refresh, columnas) | Botones extra del consumidor además de los `headerButtons` del backend. |
+
+Ejemplo — botón de volver a la izquierda del título:
+
+```vue
+<x-table-server :resource="`servers/${id}/cron-jobs-table`" @actions="handleAction">
+  <template #header-left>
+    <q-btn flat round dense icon="fa-light fa-arrow-left" color="primary" @click="goBack">
+      <q-tooltip>Volver</q-tooltip>
+    </q-btn>
+  </template>
+</x-table-server>
+```
+
+En vista móvil (sin header de tabla) el slot `#header-left` no se muestra.
+
 ## Vista Movil
 
 En dispositivos moviles (`$q.platform.is.mobile || $q.screen.lt.lg`):
