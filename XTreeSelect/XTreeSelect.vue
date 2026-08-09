@@ -144,6 +144,22 @@ const filteredNodes = computed(() => {
 const internalSelected = ref(null)   // single
 const internalTicked = ref([])       // multiple
 
+// Fix: QTree `default-expand-all` solo aplica al montar, no es reactivo a
+// cambios de `:nodes` (ej. al filtrar) — los nodos hijos que recién aparecen
+// quedan colapsados/invisibles. Forzamos expandir siempre TODO el árbol
+// filtrado actual vía v-model:expanded.
+const expandedKeys = ref([])
+function collectKeys (nodes, acc) {
+  for (const n of nodes) {
+    acc.push(n.__key)
+    if (Array.isArray(n.children) && n.children.length) collectKeys(n.children, acc)
+  }
+  return acc
+}
+watch(filteredNodes, (nodes) => {
+  expandedKeys.value = collectKeys(nodes, [])
+}, { immediate: true })
+
 // Sincronizar props.modelValue -> internos
 watch(
   () => props.modelValue,
@@ -317,7 +333,7 @@ function onFieldBlur () {
             <q-tree
               :nodes="filteredNodes"
               node-key="__key"
-              default-expand-all
+              v-model:expanded="expandedKeys"
               :accordion="false"
               v-model:selected="internalSelected"
               v-model:ticked="internalTicked"
@@ -341,3 +357,10 @@ function onFieldBlur () {
     </q-input>
   </div>
 </template>
+
+<style scoped>
+.x-tree-select :deep(.q-tree__node--selectable.q-tree__node--disabled) {
+  opacity: 0.55;
+  font-weight: 600;
+}
+</style>
