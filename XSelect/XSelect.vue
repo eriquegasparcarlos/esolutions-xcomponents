@@ -191,10 +191,20 @@ async function handleRemoteFilter(val, update, abort) {
   }
 }
 
+// Normaliza tildes/diacríticos para que filtrar "san martin" encuentre
+// "SAN MARTÍN" sin obligar al usuario a escribir el acento.
+function normalizeForFilter (str) {
+  return String(str ?? '')
+    .normalize('NFD')
+    .replace(new RegExp('[\\u0300-\\u036f]', 'g'), '')
+    .toLowerCase();
+}
+
 function handleLocalFilter(val, update) {
   const fromAttrs = attrs.options || [];
+  const needle = normalizeForFilter(val);
   let filtered = fromAttrs
-    .filter(opt => String(opt[props.optionLabel] ?? '').toLowerCase().includes(String(val).toLowerCase()))
+    .filter(opt => normalizeForFilter(opt[props.optionLabel]).includes(needle))
     .map(opt => ({ value: opt[props.optionValue], label: opt[props.optionLabel] }));
 
   if (!val && props.includeAllOption) {
