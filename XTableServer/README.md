@@ -334,3 +334,9 @@ En dispositivos moviles (`$q.platform.is.mobile || $q.screen.lt.lg`):
 - `XMobileMenuAction.vue` - Bottom sheet para acciones movil
 - `MobileLinkAction.vue` - Item de accion en el bottom sheet
 - `MobileLinkTitle.vue` - Titulo del bottom sheet
+
+## Evento `loaded` (v2.6.7)
+
+Emitido tras cada carga con la respuesta completa del backend (`{ data, meta }`).
+Permite al consumidor leer totales/resúmenes de `meta` (p. ej. `meta.summary` en
+el reporte de rentabilidad). Ejemplo: `<XTableServer @loaded="onLoaded" />`.

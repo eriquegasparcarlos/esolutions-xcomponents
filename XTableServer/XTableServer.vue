@@ -35,7 +35,7 @@ const props = defineProps({
 
 const { proxy } = getCurrentInstance()
 const $q = useQuasar()
-const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action'])
+const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action', 'loaded'])
 
 // --- Bulk actions config (viene del backend en initTableBase) ---
 const bulkActions = ref([])
@@ -695,6 +695,11 @@ const fetchData = async () => {
     pagination.value.sortBy = response.data.meta.sort_by
     pagination.value.descending = response.data.meta.descending
     unfilteredTotal.value = response.data.meta.unfiltered_total ?? null
+
+    // Cada carga expone la respuesta completa (data + meta) para que el
+    // consumidor pueda leer totales/resúmenes del backend (p.ej. reporte de
+    // rentabilidad: meta.summary con ventas/costo/utilidad/margen del período).
+    emit('loaded', response.data)
   } catch (err) {
     error.value = err.message
   } finally {
