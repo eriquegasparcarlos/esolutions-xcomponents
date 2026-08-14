@@ -12,12 +12,12 @@ import CmpXCamposVarios from './componentes/XCamposVarios.vue'
 import CmpXCardBadge from './componentes/XCardBadge.vue'
 import CmpXDialogDropdown from './componentes/XDialogDropdown.vue'
 import CmpXDatos from './componentes/XDatos.vue'
-import GalleryForms from './sections/GalleryForms.vue'
-import GalleryFeedback from './sections/GalleryFeedback.vue'
-import GalleryMisc from './sections/GalleryMisc.vue'
-import GalleryOtp from './sections/GalleryOtp.vue'
-import GalleryDocs from './sections/GalleryDocs.vue'
-import GalleryData from './sections/GalleryData.vue'
+import CmpXSeleccion from './componentes/XSeleccion.vue'
+import CmpXButton from './componentes/XButton.vue'
+import CmpXBanner from './componentes/XBanner.vue'
+import CmpXInputOtp from './componentes/XInputOtp.vue'
+import CmpXPdfReport from './componentes/XPdfReport.vue'
+import CmpXTableServer from './componentes/XTableServer.vue'
 
 const $q = useQuasar()
 const { global, setVar, getVar, reset, scss, totalCambios } = useTheme()
@@ -137,11 +137,11 @@ async function copiar () {
       <CmpXCardBadge />
       <CmpXDialogDropdown />
       <CmpXDatos />
-      <GalleryForms />
-      <GalleryFeedback />
-      <GalleryMisc />
-      <GalleryOtp />
-      <GalleryDocs />
+      <CmpXSeleccion />
+      <CmpXButton />
+      <CmpXBanner />
+      <CmpXInputOtp />
+      <CmpXPdfReport />
       <GalleryData :key="recargaTabla" />
     </main>
   </div>
