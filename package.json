@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.6.9",
+  "version": "2.7.1",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -64,7 +64,9 @@
     "XImageUpload",
     "XImageCropperUpload",
     "themes",
-    "i18n"
+    "i18n",
+    "XReportView",
+    "XcTable"
   ],
   "dependencies": {
     "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils",
