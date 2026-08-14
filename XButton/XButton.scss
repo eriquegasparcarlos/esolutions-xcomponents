@@ -12,25 +12,57 @@
   --x-button-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   min-height: var(--x-button-height);
-  padding-left: var(--x-button-padding-x);
-  padding-right: var(--x-button-padding-x);
   font-weight: var(--x-button-font-weight);
   transition: all var(--x-button-transition);
+
+  // El padding horizontal ensancha el boton. En los round/circle eso lo estiraba
+  // a un OVALO en vez de un circulo, porque el ancho quedaba height + 2*padding.
+  // Quasar ya les da un padding simetrico propio, asi que aca se excluyen.
+  &:not(.q-btn--round) {
+    padding-left: var(--x-button-padding-x);
+    padding-right: var(--x-button-padding-x);
+  }
 
   // border-radius solo cuando NO es round (los round usan 50% nativo de Quasar = circulo)
   &:not(.q-btn--round) {
     border-radius: var(--x-button-border-radius);
   }
 
-  // Tamaños
-  &.q-btn--size-sm {
+  // Los round salian OVALADOS: Quasar les calcula un min-width propio (42px con
+  // la fuente por defecto) mientras que el `min-height` de arriba les imponia la
+  // altura del boton (36px). Igualar ambos ejes al alto los vuelve circulares y
+  // los deja siguiendo el tamanio (sm/md/lg) como el resto.
+  &.q-btn--round {
+    min-width: var(--x-button-height);
+    width: var(--x-button-height);
+    height: var(--x-button-height);
+  }
+
+  // Tamaños.
+  //
+  // Antes se enganchaban a `.q-btn--size-*`, una clase que Quasar NO genera
+  // (dimensiona por font-size, con paddings en em), asi que estas reglas eran
+  // codigo muerto: el prop `size` no cambiaba nada porque el `min-height` fijo
+  // de arriba anulaba el sizing de Quasar y todos quedaban en 36px. Ahora
+  // XButton emite su propia clase `x-button--size-{size}`.
+  &.x-button--size-xs {
+    --x-button-height: 24px;
+    --x-button-padding-x: 8px;
+  }
+
+  &.x-button--size-sm {
     --x-button-height: #{$x-button-height-sm};
     --x-button-padding-x: 12px;
   }
 
-  &.q-btn--size-lg {
+  &.x-button--size-lg {
     --x-button-height: #{$x-button-height-lg};
     --x-button-padding-x: 20px;
+  }
+
+  &.x-button--size-xl {
+    --x-button-height: 52px;
+    --x-button-padding-x: 24px;
   }
 
   // Estado hover

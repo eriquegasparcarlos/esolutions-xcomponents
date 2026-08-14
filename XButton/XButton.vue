@@ -118,9 +118,19 @@ const finalColor = computed(() =>
   attrs.color ?? props.color ?? resolvedColorByVariant.value ?? 'primary'
 )
 
-const finalTextColor = computed(() =>
-  attrs['text-color'] ?? props.textColor ?? resolvedTextColorByVariant.value ?? null
+// `flat` y `outline` NO pintan fondo: ahi `color` colorea el TEXTO. Aplicarles
+// el text-color de la variante (blanco en casi todas) dejaba la etiqueta blanca
+// sobre fondo claro, es decir invisible. Solo se fuerza cuando hay fondo que
+// contrastar; un text-color explicito del consumidor siempre manda.
+const sinFondo = computed(() =>
+  (isTrueAttr('flat') ?? props.flat) || (isTrueAttr('outline') ?? props.outline),
 )
+
+const finalTextColor = computed(() => {
+  const explicito = attrs['text-color'] ?? props.textColor
+  if (explicito) return explicito
+  return sinFondo.value ? null : (resolvedTextColorByVariant.value ?? null)
+})
 
 // Iconos: solo usamos props / attrs y se los pasamos directo a QBtn
 const finalIcon = computed(() => attrs.icon ?? props.icon ?? null)
@@ -168,7 +178,7 @@ function handleClick (event) {
       icon: finalIcon || undefined,
       'icon-right': finalIconRight || undefined
     }"
-    :class="['x-button', { 'x-button--circle': circle }, attrs.class]"
+    :class="['x-button', `x-button--size-${size}`, { 'x-button--circle': circle }, attrs.class]"
     no-caps
     @click="handleClick"
   >
