@@ -7,7 +7,7 @@ import XTableServer from '@x/XTableServer/XTableServer.vue'
 </script>
 
 <template>
-  <Seccion titulo="Tabla con backend" nota="XTableServer + mock del contrato" :cubre="['XTableServer']">
+  <Seccion titulo="XTableServer" nota="paginacion, filtros y orden reales contra el mock" :cubre="['XTableServer']">
     <p style="margin:-6px 0 14px; font-size:12px; color:#64748b">
       Probá paginar, ordenar por columna, buscar y filtrar por estado: todo lo
       resuelve el mock en JS. Con los chips del panel podés forzar

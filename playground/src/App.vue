@@ -5,6 +5,10 @@ import { useTheme, TOKENS } from './composables/useTheme.js'
 import { useFoco } from './composables/useFoco.js'
 import { scenario } from './mock/api.js'
 import PanelComponente from './components/PanelComponente.vue'
+import CmpXInput from './componentes/XInput.vue'
+import CmpXSelect from './componentes/XSelect.vue'
+import CmpXToggleCheckbox from './componentes/XToggleCheckbox.vue'
+import CmpXCamposVarios from './componentes/XCamposVarios.vue'
 import GalleryForms from './sections/GalleryForms.vue'
 import GalleryFeedback from './sections/GalleryFeedback.vue'
 import GalleryOverlays from './sections/GalleryOverlays.vue'
@@ -124,6 +128,10 @@ async function copiar () {
         <pre class="pg-output">{{ scss() }}</pre>
       </section>
 
+      <CmpXInput />
+      <CmpXSelect />
+      <CmpXToggleCheckbox />
+      <CmpXCamposVarios />
       <GalleryForms />
       <GalleryFeedback />
       <GalleryOverlays />

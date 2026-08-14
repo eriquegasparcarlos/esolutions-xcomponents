@@ -15,7 +15,7 @@ const cargando = ref(true)
 </script>
 
 <template>
-  <Seccion titulo="Dialogos" nota=".x-dialog · --x-radius-md" :cubre="['XDialog']">
+  <Seccion titulo="XDialog" nota=".x-dialog · --x-radius-md" :cubre="['XDialog']">
     <div class="pg-demo">
       <XButton label="Dialogo estandar" variant="primary" @click="abierto = true" />
       <XButton label="Dialogo lateral" variant="secondary" @click="lateral = true" />
@@ -43,7 +43,7 @@ const cargando = ref(true)
     </XDialog>
   </Seccion>
 
-  <Seccion titulo="Menu desplegable" nota=".x-dropdown-menu · 16 variables" :cubre="['XDropdownMenu']">
+  <Seccion titulo="XDropdownMenu" nota=".x-dropdown-menu · 16 variables" :cubre="['XDropdownMenu']">
     <div class="pg-demo">
       <!-- El slot #trigger expone `open`: hay que invocarlo en el @click -->
       <XDropdownMenu>
@@ -65,7 +65,7 @@ const cargando = ref(true)
     </div>
   </Seccion>
 
-  <Seccion titulo="Loading" nota=".x-loading · variantes sm / md / lg / xl" :cubre="['XLoading']">
+  <Seccion titulo="XLoading · tamaños" nota=".x-loading · variantes sm / md / lg / xl" :cubre="['XLoading']">
     <div class="pg-demo">
       <div v-for="s in ['sm', 'md', 'lg', 'xl']" :key="s" class="pg-tile">
         <div style="position:relative; height:90px">

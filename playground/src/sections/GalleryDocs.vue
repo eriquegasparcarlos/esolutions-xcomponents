@@ -42,7 +42,7 @@ const kpis = [
 </script>
 
 <template>
-  <Seccion titulo="Visor de PDF" nota="XPdfPreview · XPdfViewer" :cubre="['XPdfViewer', 'XPdfPreview']">
+  <Seccion titulo="XPdfPreview · XPdfViewer" nota="visor en dialogo · requiere peers opcionales" :cubre="['XPdfViewer', 'XPdfPreview']">
     <p style="margin:-6px 0 14px; font-size:12px; color:#64748b">
       Requiere las peer deps opcionales <code>@embedpdf/vue-pdf-viewer</code> y
       <code>pdfjs-dist</code>; sin ellas el componente no se puede montar. El PDF
@@ -54,7 +54,7 @@ const kpis = [
     <XPdfPreview v-model="verPdf" :src="pdfDataUri" filename="F001-000123.pdf" />
   </Seccion>
 
-  <Seccion titulo="Vista de reporte" nota="XReportView · cabecera + KPIs" :cubre="['XReportView']">
+  <Seccion titulo="XReportView" nota="cabecera, breadcrumb y fila de KPIs" :cubre="['XReportView']">
     <p style="margin:-6px 0 14px; font-size:12px; color:#64748b">
       Layout de reporte (breadcrumb, titulo, descripcion y fila de KPIs). No
       expone variables <code>--x-*</code> propias: hereda de los tokens globales.

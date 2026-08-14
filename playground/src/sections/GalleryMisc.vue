@@ -1,7 +1,6 @@
 <script setup>
 import Seccion from '../components/Seccion.vue'
 import { ref } from 'vue'
-import XFile from '@x/XFile/XFile.vue'
 import XTracking from '@x/XTracking/XTracking.vue'
 import XButtonToggle from '@x/XButtonToggle/XButtonToggle.vue'
 import XOptionCard from '@x/XOptionCard/XOptionCard.vue'
@@ -11,14 +10,12 @@ import XVerifiedBadge from '@x/XVerifiedBadge/XVerifiedBadge.vue'
 import XHelpTip from '@x/XHelpTip/XHelpTip.vue'
 import XFormatPrice from '@x/XFormatPrice/XFormatPrice.vue'
 import XSettingToggle from '@x/XSettingToggle/XSettingToggle.vue'
-import XImageUpload from '@x/XImageUpload/XImageUpload.vue'
 import XTableCard from '@x/XTableCard/XTableCard.vue'
 
 const archivo = ref(null)
 const vista = ref('lista')
 const plan = ref('pro')
 const inventariable = ref(true)
-const logo = ref(null)
 
 const historial = [
   { title: 'Comprobante emitido', created_at: '2026-08-14 09:12', status: true },
@@ -29,18 +26,7 @@ const historial = [
 </script>
 
 <template>
-  <Seccion titulo="Entrada de datos" nota=".x-file · XImageUpload" :cubre="['XFile','XImageUpload']">
-    <div class="pg-demo">
-      <div style="min-width:280px">
-        <XFile v-model="archivo" label="Adjuntar XML" />
-      </div>
-      <div style="min-width:200px">
-        <XImageUpload v-model="logo" label="Logo" />
-      </div>
-    </div>
-  </Seccion>
-
-  <Seccion titulo="Seleccion" nota="XButtonToggle · XOptionCard" :cubre="['XButtonToggle','XOptionCard','XSettingToggle']">
+  <Seccion titulo="XButtonToggle · XOptionCard · XSettingToggle" nota="grupo de botones · tarjetas de opcion · toggle con descripcion" :cubre="['XButtonToggle','XOptionCard','XSettingToggle']">
     <div class="pg-demo">
       <XButtonToggle v-model="vista" :options="[
         { label: 'Lista', value: 'lista' },
@@ -62,7 +48,7 @@ const historial = [
     </div>
   </Seccion>
 
-  <Seccion titulo="Presentacion de datos" nota="XTokenDisplay · XVerifiedBadge · XFormatPrice · XHelpTip" :cubre="['XTokenDisplay','XVerifiedBadge','XFormatPrice','XHelpTip']">
+  <Seccion titulo="XTokenDisplay · XVerifiedBadge · XFormatPrice · XHelpTip" nota="token enmascarado · verificado · precio · ayuda" :cubre="['XTokenDisplay','XVerifiedBadge','XFormatPrice','XHelpTip']">
     <div class="pg-demo">
       <div style="min-width:300px">
         <XTokenDisplay token="xmp_live_4f8a92bd7c1e5036af2b" label="Token de firma" />
@@ -78,13 +64,13 @@ const historial = [
     </div>
   </Seccion>
 
-  <Seccion titulo="Historial" nota=".x-tracking · 9 variables" :cubre="['XTracking']">
+  <Seccion titulo="XTracking" nota=".x-tracking · 9 variables" :cubre="['XTracking']">
     <div style="max-width:460px">
       <XTracking :records="historial" />
     </div>
   </Seccion>
 
-  <Seccion titulo="Tarjeta de tabla" nota="XTableCard" :cubre="['XTableCard']">
+  <Seccion titulo="XTableCard" nota="tarjeta contenedora para tablas o resumenes" :cubre="['XTableCard']">
     <XTableCard title="Resumen del dia" subtitle="14 de agosto">
       <div style="font-size:13px">Contenido libre dentro de la tarjeta.</div>
     </XTableCard>

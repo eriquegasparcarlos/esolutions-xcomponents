@@ -45,30 +45,13 @@ const ESTILOS = [
 </script>
 
 <template>
-  <Seccion titulo="Formularios" nota="--x-radius · --x-brand"
-           :cubre="['XInput','XSelect','XInputNumeric','XDatepicker','XInputColor','XToggle','XCheckbox']">
-    <div class="pg-demo">
-      <XInput v-model="texto" label="Razon social" />
-      <XSelect v-model="seleccion" label="Estado" :options="opciones" />
-      <XSelect v-model="moneda" label="Moneda" :options="monedas"
-               option-value="codigo" option-label="nombre" filter-local />
-      <XInputNumeric v-model="numero" label="Total" prefix="S/" />
-      <XDatepicker v-model="fecha" label="Fecha de emision" />
-      <XInputColor v-model="color" label="Color" />
-    </div>
-    <div class="pg-demo" style="margin-top:14px">
-      <XToggle v-model="activo" label="Controlar inventario" />
-      <XCheckbox v-model="marcado" label="Acepto los terminos" />
-    </div>
-  </Seccion>
-
-  <Seccion titulo="Botones · variantes de color" nota="prop variant" :cubre="['XButton']">
+  <Seccion titulo="XButton · variantes de color" nota="prop variant" :cubre="['XButton']">
     <div class="pg-demo">
       <XButton v-for="v in VARIANTES" :key="v" :label="v" :variant="v" />
     </div>
   </Seccion>
 
-  <Seccion titulo="Botones · estilos de Quasar" nota="XButton reenvia flat / outline / rounded / unelevated / push al q-btn"
+  <Seccion titulo="XButton · estilos de Quasar" nota="XButton reenvia flat / outline / rounded / unelevated / push al q-btn"
            :cubre="['XButton']">
     <div class="pg-demo">
       <div v-for="e in ESTILOS" :key="e.attr" class="pg-tile">
@@ -78,7 +61,7 @@ const ESTILOS = [
     </div>
   </Seccion>
 
-  <Seccion titulo="Botones · tamaños y estado" nota="size · loading · disable" :cubre="['XButton']">
+  <Seccion titulo="XButton · tamaños y estado" nota="size · loading · disable" :cubre="['XButton']">
     <div class="pg-demo">
       <div v-for="s in ['xs', 'sm', 'md', 'lg', 'xl']" :key="s" class="pg-tile">
         <XButton label="Guardar" variant="primary" :size="s" />
@@ -92,7 +75,7 @@ const ESTILOS = [
     </div>
   </Seccion>
 
-  <Seccion titulo="Botones · iconos" nota="requiere FontAwesome Pro (fa-light)" :cubre="['XButton']">
+  <Seccion titulo="XButton · iconos" nota="requiere FontAwesome Pro (fa-light)" :cubre="['XButton']">
     <div class="pg-demo">
       <div class="pg-tile"><XButton label="Guardar" variant="primary" icon="fa-light fa-floppy-disk" /><code>icon</code></div>
       <div class="pg-tile"><XButton label="Siguiente" variant="secondary" icon-right="fa-light fa-arrow-right" /><code>icon-right</code></div>

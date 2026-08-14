@@ -21,7 +21,7 @@ const set = (k, v) => { porPreset.value = { ...porPreset.value, [k]: v } }
 </script>
 
 <template>
-  <Seccion titulo="Codigo OTP · tamaños" nota=".x-input-otp-sm · base · .x-input-otp-lg"
+  <Seccion titulo="XInputOtp · tamaños" nota=".x-input-otp-sm · base · .x-input-otp-lg"
            :cubre="['XInputOtp']">
     <div style="display:flex; flex-direction:column; gap:18px">
       <div v-for="t in TAMANIOS" :key="t">
@@ -34,7 +34,7 @@ const set = (k, v) => { porPreset.value = { ...porPreset.value, [k]: v } }
     </div>
   </Seccion>
 
-  <Seccion titulo="Codigo OTP · estilos" nota="presets combinables con los de tamaño"
+  <Seccion titulo="XInputOtp · estilos" nota="presets combinables con los de tamaño"
            :cubre="['XInputOtp']">
     <div style="display:flex; flex-direction:column; gap:18px">
       <div v-for="e in ESTILOS" :key="e.clase">
@@ -54,7 +54,7 @@ const set = (k, v) => { porPreset.value = { ...porPreset.value, [k]: v } }
     </div>
   </Seccion>
 
-  <Seccion titulo="Codigo OTP · estados" nota="error · disabled · longitudes"
+  <Seccion titulo="XInputOtp · estados" nota="error · disabled · longitudes"
            :cubre="['XInputOtp']">
     <div style="display:flex; flex-direction:column; gap:18px">
       <div>
