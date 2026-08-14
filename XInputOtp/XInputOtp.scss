@@ -14,8 +14,8 @@
   --x-otp-border-color: #{$x-border-color};
   --x-otp-border-color-focus: #{$x-border-color-focus};
   --x-otp-border-color-error: #{$x-border-color-error};
-  --x-otp-border-radius: #{$x-border-radius};
-  --x-otp-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-otp-border-radius: var(--x-radius, #{$x-border-radius});
+  --x-otp-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 }
 
 // --------------------------------------------------------------------------

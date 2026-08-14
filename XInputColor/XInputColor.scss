@@ -11,7 +11,7 @@
   --x-input-color-preview-size: 20px;
   --x-input-color-preview-border-radius: 50%;
   --x-input-color-icon-size: 20px;
-  --x-input-color-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-input-color-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 }
 
 // --------------------------------------------------------------------------

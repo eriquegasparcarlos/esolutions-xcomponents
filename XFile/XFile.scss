@@ -12,12 +12,12 @@
   --x-file-border-color: #{$x-border-color};
   --x-file-border-color-focus: #{$x-border-color-focus};
   --x-file-border-color-error: #{$x-border-color-error};
-  --x-file-border-radius: #{$x-border-radius};
+  --x-file-border-radius: var(--x-radius, #{$x-border-radius});
   --x-file-label-color: #{$x-input-label-color};
   --x-file-icon-color: #{$x-file-icon-color};
   --x-file-font-size: #{$x-font-size-md};
   --x-file-placeholder-color: #{$x-input-placeholder-color};
-  --x-file-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-file-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 }
 
 // --------------------------------------------------------------------------

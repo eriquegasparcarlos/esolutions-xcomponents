@@ -9,7 +9,7 @@
 .x-input-search-person {
   --x-search-person-gap: #{$x-spacing-sm};
   --x-search-person-button-min-width: 80px;
-  --x-search-person-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-search-person-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   display: flex;
   align-items: flex-end;

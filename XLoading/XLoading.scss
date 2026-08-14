@@ -12,7 +12,7 @@
   --x-loading-message-color: #{$x-text-secondary};
   --x-loading-message-font-size: #{$x-font-size-md};
   --x-loading-z-index: 10;
-  --x-loading-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-loading-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 }
 
 // --------------------------------------------------------------------------

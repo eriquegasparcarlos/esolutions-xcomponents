@@ -60,7 +60,42 @@ importar solo lo que se usa (menos CSS muerto: el paquete completo son ~46 KB):
 @import '@esolutions/x-components/XInput/XInput';
 ```
 
-### 3. Tema SCSS (opcional desde v2.8.0)
+### 3. Tokens de tema (desde v2.9.0) — la forma recomendada de re-tematizar
+
+Las ~129 variables `--x-*` de los componentes derivan ahora de **~25 tokens raíz**
+(`_tokens.scss`, emitido en `:root` por `index.scss`). Cambiar un token re-tematiza
+todos los componentes que lo usan, **en runtime y sin recompilar Sass**:
+
+```scss
+// app.scss del consumidor — después del @import del paquete
+:root {
+  --x-brand: #0e8f5e;   // toggle, checkbox, datepicker, file…
+  --x-radius: 10px;     // input, select, botón, card, checkbox…
+  --x-radius-md: 10px;  // diálogos
+  --x-radius-lg: 14px;  // menús desplegables
+}
+```
+
+**Tokens disponibles**
+
+| Grupo | Tokens |
+|---|---|
+| Marca | `--x-brand`, `--x-brand-contrast` |
+| Escala neutral | `--x-white`, `--x-gray-50` … `--x-gray-900` |
+| Semánticos | `--x-success`, `--x-danger`, `--x-warning`, `--x-info` |
+| Roles | `--x-surface`, `--x-surface-hover`, `--x-border`, `--x-text`, `--x-text-body`, `--x-text-muted` |
+| Forma | `--x-radius` (4px), `--x-radius-md` (8px), `--x-radius-lg` (12px) |
+| Movimiento | `--x-duration`, `--x-ease` |
+
+Los **roles** son la capa que conviene tocar para un cambio de fondo: `_tokens.scss`
+los reasigna en `.body--dark`, así que un componente que derive de roles obtiene el
+dark mode sin escribir un solo bloque `.body--dark` propio.
+
+Cada componente usa `var(--x-token, <valor histórico>)`, con fallback. Por eso un
+`.scss` importado suelto (sin `index.scss`, que es quien emite el `:root`) sigue
+renderizando exactamente igual.
+
+### 4. Tema SCSS (opcional desde v2.8.0)
 
 Para adoptar la identidad visual de un tema, en `src/css/quasar.variables.scss`:
 

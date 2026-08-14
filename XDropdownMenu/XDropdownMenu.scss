@@ -7,26 +7,29 @@
 // --------------------------------------------------------------------------
 // Variables CSS personalizables
 // --------------------------------------------------------------------------
+// Derivan de los roles de _tokens.scss (--x-surface/--x-text/--x-border...).
+// El fallback de cada var() es el valor historico exacto, asi que este archivo
+// sigue compilando y renderizando igual si se importa suelto, sin index.scss.
 .x-dropdown-menu {
-  --x-dropdown-bg: #ffffff;
-  --x-dropdown-border: #e4e7ec; // gray-200
-  --x-dropdown-border-radius: 12px;
+  --x-dropdown-bg: var(--x-surface, #ffffff);
+  --x-dropdown-border: var(--x-border, #e4e7ec); // gray-200
+  --x-dropdown-border-radius: var(--x-radius-lg, 12px);
   --x-dropdown-shadow: 0 4px 16px rgba(16, 24, 40, 0.12);
   --x-dropdown-padding: 12px;
 
-  --x-dropdown-header-color: #1d2939; // gray-800
-  --x-dropdown-header-meta-color: #667085; // gray-500
+  --x-dropdown-header-color: var(--x-text, #1d2939); // gray-800
+  --x-dropdown-header-meta-color: var(--x-text-muted, #667085); // gray-500
 
-  --x-dropdown-item-color: #344054; // gray-700
-  --x-dropdown-item-hover-bg: #f2f4f7; // gray-100
-  --x-dropdown-item-hover-color: #1d2939;
+  --x-dropdown-item-color: var(--x-text-body, #344054); // gray-700
+  --x-dropdown-item-hover-bg: var(--x-surface-hover, #f2f4f7); // gray-100
+  --x-dropdown-item-hover-color: var(--x-text, #1d2939);
   --x-dropdown-item-radius: 8px;
   --x-dropdown-item-padding: 8px 12px;
-  --x-dropdown-item-icon-color: #667085; // gray-500
-  --x-dropdown-item-icon-hover-color: #344054;
+  --x-dropdown-item-icon-color: var(--x-text-muted, #667085); // gray-500
+  --x-dropdown-item-icon-hover-color: var(--x-text-body, #344054);
 
-  --x-dropdown-divider-color: #e4e7ec;
-  --x-dropdown-divider-label-color: #667085;
+  --x-dropdown-divider-color: var(--x-border, #e4e7ec);
+  --x-dropdown-divider-label-color: var(--x-text-muted, #667085);
 }
 
 // --------------------------------------------------------------------------
@@ -205,24 +208,15 @@
 
 // ==========================================================================
 // DARK MODE
+//
+// Las 12 reasignaciones de color que habia aca ya NO hacen falta: los
+// --x-dropdown-* derivan de los roles (--x-surface/--x-text/--x-border) y
+// _tokens.scss ya los invierte en .body--dark. Solo queda lo que no sale de
+// un rol: la sombra (mas densa sobre fondo oscuro) y el rojo de "danger".
 // ==========================================================================
 .body--dark {
   .x-dropdown-menu {
-    --x-dropdown-bg: #1d2939; // gray-800
-    --x-dropdown-border: #344054; // gray-700
     --x-dropdown-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-
-    --x-dropdown-header-color: #f2f4f7;
-    --x-dropdown-header-meta-color: #98a2b3;
-
-    --x-dropdown-item-color: #d0d5dd;
-    --x-dropdown-item-hover-bg: #344054;
-    --x-dropdown-item-hover-color: #f2f4f7;
-    --x-dropdown-item-icon-color: #98a2b3;
-    --x-dropdown-item-icon-hover-color: #d0d5dd;
-
-    --x-dropdown-divider-color: #344054;
-    --x-dropdown-divider-label-color: #98a2b3;
   }
 
   .x-dropdown-item--danger {

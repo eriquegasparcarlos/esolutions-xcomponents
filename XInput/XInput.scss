@@ -12,12 +12,12 @@
   --x-input-border-color: #{$x-border-color};
   --x-input-border-color-focus: #{$x-border-color-focus};
   --x-input-border-color-error: #{$x-border-color-error};
-  --x-input-border-radius: #{$x-border-radius};
+  --x-input-border-radius: var(--x-radius, #{$x-border-radius});
   --x-input-label-color: #{$x-input-label-color};
   --x-input-placeholder-color: #{$x-input-placeholder-color};
   --x-input-font-size: #{$x-font-size-md};
   --x-input-padding-x: #{$x-spacing-sm};
-  --x-input-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-input-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
   // Label

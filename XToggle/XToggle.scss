@@ -9,14 +9,14 @@
 .x-toggle {
   --x-toggle-width: #{$x-toggle-width};
   --x-toggle-height: #{$x-toggle-height};
-  --x-toggle-color: #{$x-primary};
+  --x-toggle-color: var(--x-brand, #{$x-primary});
   --x-toggle-track-color: rgba(0, 0, 0, 0.38);
-  --x-toggle-thumb-color: #fafafa;
+  --x-toggle-thumb-color: var(--x-gray-50, #fafafa);
   --x-toggle-border-radius: 10px;
   --x-toggle-label-color: #{$x-text-primary};
   --x-toggle-label-font-size: #{$x-font-size-md};
   --x-toggle-hint-color: #{$x-text-secondary};
-  --x-toggle-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-toggle-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
   // Label superior
@@ -134,7 +134,7 @@
 // Colores predefinidos
 // --------------------------------------------------------------------------
 .x-toggle-primary {
-  --x-toggle-color: #{$x-primary};
+  --x-toggle-color: var(--x-brand, #{$x-primary});
 }
 
 .x-toggle-secondary {

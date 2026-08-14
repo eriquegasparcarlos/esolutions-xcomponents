@@ -1,0 +1,99 @@
+// ==========================================================================
+// Tokens raiz del design system X
+//
+// POR QUE EXISTE
+// --------------
+// Las ~129 variables CSS --x-* de los componentes eran un sistema PLANO:
+// cada una derivaba de una variable Sass o de un literal, y NINGUNA derivaba
+// de otra (0 composicion). Consecuencia: re-tematizar exigia tocar 129
+// valores sueltos, y 24 colores estaban hardcodeados en los componentes
+// (la escala de grises repetida en XDropdown/XCard/XToggle), o sea que ni
+// siquiera eran customizables.
+//
+// Esta capa introduce ~25 tokens de los que derivan los demas. Cambiar
+// `--x-brand` o `--x-gray-*` re-tematiza todo el sistema, en RUNTIME y sin
+// recompilar Sass — que es lo que habilita un generador de temas en vivo.
+//
+// COMO SE USA DESDE UN COMPONENTE
+// -------------------------------
+// Siempre con fallback al valor historico, para que el componente siga
+// funcionando aunque se importe suelto (sin index.scss, que es quien emite
+// este bloque :root una unica vez):
+//
+//   --x-dropdown-bg: var(--x-surface, #ffffff);
+//
+// COMO SE SOBRESCRIBE DESDE EL CONSUMIDOR
+// ---------------------------------------
+//   :root { --x-brand: #0e8f5e; --x-radius: 10px; }
+// ==========================================================================
+@import "./variables";
+
+:root {
+  // ------------------------------------------------------------------------
+  // Marca
+  // ------------------------------------------------------------------------
+  --x-brand: #{$x-primary};
+  --x-brand-contrast: #ffffff;
+
+  // ------------------------------------------------------------------------
+  // Escala neutral. Estos 10 grises estaban repetidos y hardcodeados 24 veces
+  // dentro de los componentes; son la base de superficies, texto y bordes.
+  // ------------------------------------------------------------------------
+  --x-white: #ffffff;
+  --x-gray-50: #fafafa;
+  --x-gray-100: #f2f4f7;
+  --x-gray-200: #e4e7ec;
+  --x-gray-300: #d0d5dd;
+  --x-gray-400: #98a2b3;
+  --x-gray-500: #667085;
+  --x-gray-600: #475467;
+  --x-gray-700: #344054;
+  --x-gray-800: #1d2939;
+  --x-gray-900: #101828;
+
+  // ------------------------------------------------------------------------
+  // Semanticos
+  // ------------------------------------------------------------------------
+  --x-success: #{$x-positive};
+  --x-danger: #{$x-negative};
+  --x-warning: #{$x-warning};
+  --x-info: #{$x-info};
+
+  // ------------------------------------------------------------------------
+  // Roles. Esta es la capa que un theme (o el dark mode) reasigna: los
+  // componentes apuntan aca, no a la escala, asi invertir el modo es
+  // reasignar 6 tokens en vez de tocar cada componente.
+  // ------------------------------------------------------------------------
+  --x-surface: var(--x-white); // fondo de superficies elevadas (card, menu)
+  --x-surface-hover: var(--x-gray-100); // hover de items
+  --x-border: var(--x-gray-200); // bordes y divisores
+  --x-text: var(--x-gray-800); // titulos / texto fuerte
+  --x-text-body: var(--x-gray-700); // texto de cuerpo
+  --x-text-muted: var(--x-gray-500); // secundario / metadatos
+
+  // ------------------------------------------------------------------------
+  // Forma
+  // ------------------------------------------------------------------------
+  // Escala 4/8/12: base (inputs, botones), media (dialogos), grande (menus).
+  --x-radius: #{$x-border-radius};
+  --x-radius-md: #{$x-dialog-border-radius};
+  --x-radius-lg: 12px;
+
+  // ------------------------------------------------------------------------
+  // Movimiento
+  // ------------------------------------------------------------------------
+  --x-duration: #{$x-transition-duration};
+  --x-ease: #{$x-transition-timing};
+}
+
+// Dark mode: reasignar los roles alcanza. Los componentes que hoy repiten un
+// bloque .body--dark propio pueden ir eliminandolo a medida que migren a los
+// roles (ver XDropdownMenu).
+.body--dark {
+  --x-surface: var(--x-gray-800);
+  --x-surface-hover: var(--x-gray-700);
+  --x-border: var(--x-gray-700);
+  --x-text: var(--x-gray-100);
+  --x-text-body: var(--x-gray-300);
+  --x-text-muted: var(--x-gray-400);
+}

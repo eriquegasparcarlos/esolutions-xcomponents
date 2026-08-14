@@ -8,8 +8,8 @@
   --x-button-height: #{$x-button-height-md};
   --x-button-padding-x: #{$x-button-padding-x};
   --x-button-font-weight: #{$x-button-font-weight};
-  --x-button-border-radius: #{$x-border-radius};
-  --x-button-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-button-border-radius: var(--x-radius, #{$x-border-radius});
+  --x-button-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   min-height: var(--x-button-height);
   padding-left: var(--x-button-padding-x);

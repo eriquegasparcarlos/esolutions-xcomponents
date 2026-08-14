@@ -1,6 +1,11 @@
 // Variables de componentes (usar !default para permitir sobrescritura)
 @import "./variables";
 
+// Tokens raiz (:root). Se importa SOLO aca — emite CSS, asi que importarlo
+// desde cada componente duplicaria el bloque. Por eso los componentes usan
+// var(--x-token, <fallback>) y siguen funcionando si se importan sueltos.
+@import "./tokens";
+
 // Componentes X
 @import "./XBadge/XBadge";
 @import "./XCard/XCard";

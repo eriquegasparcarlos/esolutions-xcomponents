@@ -8,13 +8,13 @@
 // --------------------------------------------------------------------------
 .custom-checkbox {
   --x-checkbox-size: #{$x-checkbox-size};
-  --x-checkbox-color: #{$x-primary};
+  --x-checkbox-color: var(--x-brand, #{$x-primary});
   --x-checkbox-border-color: #{$x-border-color};
-  --x-checkbox-border-radius: #{$x-border-radius};
+  --x-checkbox-border-radius: var(--x-radius, #{$x-border-radius});
   --x-checkbox-label-color: #{$x-text-primary};
   --x-checkbox-label-font-size: #{$x-font-size-md};
   --x-checkbox-hint-color: #{$x-text-secondary};
-  --x-checkbox-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-checkbox-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
   // Label superior
@@ -118,7 +118,7 @@
 // Colores predefinidos
 // --------------------------------------------------------------------------
 .custom-checkbox-primary {
-  --x-checkbox-color: #{$x-primary};
+  --x-checkbox-color: var(--x-brand, #{$x-primary});
 }
 
 .custom-checkbox-secondary {

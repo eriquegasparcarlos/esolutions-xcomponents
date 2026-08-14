@@ -7,14 +7,14 @@
 // Variables CSS personalizables
 // --------------------------------------------------------------------------
 .x-dialog {
-  --x-dialog-border-radius: #{$x-dialog-border-radius};
+  --x-dialog-border-radius: var(--x-radius-md, #{$x-dialog-border-radius});
   --x-dialog-header-padding: #{$x-dialog-header-padding};
   --x-dialog-content-padding: #{$x-dialog-content-padding};
   --x-dialog-footer-padding: #{$x-dialog-footer-padding};
   --x-dialog-title-font-size: #{$x-font-size-xl};
   --x-dialog-title-color: #{$x-text-primary};
   --x-dialog-shadow: #{$x-shadow-lg};
-  --x-dialog-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-dialog-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 }
 
 // --------------------------------------------------------------------------

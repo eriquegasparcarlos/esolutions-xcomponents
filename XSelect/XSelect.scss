@@ -11,11 +11,11 @@
   --x-select-border-color: #{$x-border-color};
   --x-select-border-color-focus: #{$x-border-color-focus};
   --x-select-border-color-error: #{$x-border-color-error};
-  --x-select-border-radius: #{$x-border-radius};
+  --x-select-border-radius: var(--x-radius, #{$x-border-radius});
   --x-select-label-color: #{$x-input-label-color};
   --x-select-font-size: #{$x-font-size-md};
   --x-select-dropdown-max-height: #{$x-select-dropdown-max-height};
-  --x-select-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-select-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
   // Label

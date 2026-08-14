@@ -12,11 +12,11 @@
   --x-datepicker-border-color: #{$x-border-color};
   --x-datepicker-border-color-focus: #{$x-border-color-focus};
   --x-datepicker-border-color-error: #{$x-border-color-error};
-  --x-datepicker-border-radius: #{$x-border-radius};
+  --x-datepicker-border-radius: var(--x-radius, #{$x-border-radius});
   --x-datepicker-label-color: #{$x-input-label-color};
   --x-datepicker-icon-color: #{$x-datepicker-icon-color};
   --x-datepicker-font-size: #{$x-font-size-md};
-  --x-datepicker-transition: #{$x-transition-duration} #{$x-transition-timing};
+  --x-datepicker-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
   // Label
