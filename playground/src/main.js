@@ -1,0 +1,33 @@
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import { createI18n } from 'vue-i18n'
+import { Quasar, Notify, Dialog, Loading } from 'quasar'
+import quasarLangEs from 'quasar/lang/es'
+import { setFormDefaults } from '@esolutions/js-utils'
+
+import 'quasar/src/css/index.sass'
+import '@quasar/extras/material-icons/material-icons.css'
+import '@x/index.scss' // <- CSS de los componentes + el :root de tokens
+import './css/app.scss'
+
+import { messages } from '@x/i18n/index.js'
+import { createMockApi } from './mock/api.js'
+import App from './App.vue'
+
+const app = createApp(App)
+
+app.use(createPinia())
+app.use(createI18n({ legacy: false, locale: 'es', fallbackLocale: 'es', messages }))
+app.use(Quasar, {
+  plugins: { Notify, Dialog, Loading },
+  lang: quasarLangEs, // sin esto, la paginacion de las tablas sale en ingles
+  config: { notify: { position: 'top-right' } },
+})
+
+// 8 componentes del paquete leen la global $api del consumidor. El mock cumple
+// el mismo contrato que Laravel, asi que se comportan igual que en produccion.
+app.config.globalProperties.$api = createMockApi()
+
+setFormDefaults({ dense: true, outlined: true })
+
+app.mount('#app')

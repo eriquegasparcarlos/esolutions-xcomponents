@@ -16,3 +16,7 @@ PACKAGES.md
 # Metadata muerta: quedo congelada en 2.4.45 mientras package.json siguio
 # avanzando. La version real es la de package.json / el tag de git.
 version.json
+
+# Playground / generador de temas: app de desarrollo, no forma parte del
+# paquete que consume nadie (y trae su propio node_modules).
+playground

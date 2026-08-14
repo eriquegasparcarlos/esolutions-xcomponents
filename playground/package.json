@@ -1,0 +1,26 @@
+{
+  "name": "x-components-playground",
+  "private": true,
+  "type": "module",
+  "description": "Galeria de componentes + generador de temas. No se publica (ver .npmignore del paquete).",
+  "scripts": {
+    "dev": "vite --port 8106",
+    "build": "vite build",
+    "preview": "vite preview --port 8106"
+  },
+  "dependencies": {
+    "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils",
+    "pinia": "^3.0.0",
+    "quasar": "^2.24.0",
+    "vue": "^3.5.0",
+    "vue-i18n": "^11.0.0",
+    "vue-draggable-plus": "^0.6.0"
+  },
+  "devDependencies": {
+    "@quasar/extras": "^1.18.0",
+    "@quasar/vite-plugin": "^1.12.0",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "sass": "^1.83.4",
+    "vite": "^7.0.0"
+  }
+}

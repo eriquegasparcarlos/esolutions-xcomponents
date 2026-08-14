@@ -1,0 +1,17 @@
+// Paleta base del playground. Su sola presencia (via sassVariables en
+// vite.config.js) es lo que activa la inyeccion de quasar/src/css/variables.sass,
+// sin la cual $primary y compania no existirian.
+//
+// Deliberadamente son los defaults de Quasar: el playground arranca "neutro"
+// para que se note el efecto de mover los tokens.
+$primary: #1976d2 !default;
+$secondary: #26a69a !default;
+$accent: #9c27b0 !default;
+
+$dark: #1d1d1d !default;
+$dark-page: #121212 !default;
+
+$positive: #21ba45 !default;
+$negative: #c10015 !default;
+$info: #31ccec !default;
+$warning: #f2c037 !default;
