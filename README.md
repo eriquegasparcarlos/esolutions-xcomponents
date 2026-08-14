@@ -133,6 +133,7 @@ Estos son los tropiezos más frecuentes:
 | `XDropdownItem` | Marcar el ítem destructivo con una clase. | Prop `variant="danger"`. |
 | `XBanner` | `message` + `type="info"`. | `label` + `type="information"` (válidos: `success`, `error`, `warning`, `information`). |
 | `XTableServer` | Esperar que funcione suelto. | Requiere `$api` global, el alias `stores/data.js` del consumidor y un backend que cumpla el contrato (ver `playground/src/mock/api.js`). |
+| `XTableServer` (filtros) | Que el backend mande `filter.options` como `{label, value}`: el filtro sale **con las opciones en blanco**. Los pasa a un `XSelect` **sin** `option-value`/`option-label`, así que valen los defaults. | El backend debe mandarlas como `{id, name}`. |
 
 > El `playground/` monta todo junto y es la referencia viva de uso correcto.
 

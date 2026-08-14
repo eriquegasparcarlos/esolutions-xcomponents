@@ -118,16 +118,21 @@ export function createMockApi () {
             columns: COLUMNS,
             visibleColumns: COLUMNS.filter((c) => c.visible !== false).map((c) => c.name),
             exportColumns: [],
+            // OJO (parte del contrato): XTableServer pasa filter.options a un
+            // XSelect SIN option-value/option-label, asi que se aplican los
+            // defaults 'id'/'name'. Si el backend manda {label, value} el
+            // filtro se ve con las opciones EN BLANCO y sin error en consola.
             filters: [
               {
                 name: 'estado',
                 label: 'Estado',
                 type: 'select',
                 includeAllOption: true,
+                filterLocal: true,
                 options: [
-                  { label: 'Aceptado', value: 'Aceptado' },
-                  { label: 'Pendiente', value: 'Pendiente' },
-                  { label: 'Rechazado', value: 'Rechazado' },
+                  { id: 'Aceptado', name: 'Aceptado' },
+                  { id: 'Pendiente', name: 'Pendiente' },
+                  { id: 'Rechazado', name: 'Rechazado' },
                 ],
               },
             ],

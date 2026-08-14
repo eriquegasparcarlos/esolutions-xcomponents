@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --port 8106",
     "build": "vite build",
-    "preview": "vite preview --port 8106"
+    "preview": "vite preview --port 8106",
+    "catalog": "node scripts/build-catalog.mjs"
   },
   "dependencies": {
     "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils",
