@@ -1,0 +1,57 @@
+// ==========================================================================
+// Defaults neutros de TODAS las variables Sass que consumen los componentes X
+//
+// POR QUE EXISTE ESTE ARCHIVO
+// ---------------------------
+// Los .scss del paquete referencian variables que NO define el paquete:
+//   a) variables de Quasar ($primary, $body-font-size, ...) — solo existen si
+//      el consumidor tiene un `src/css/quasar.variables.scss`, porque la sola
+//      presencia de ese archivo es lo que activa el plugin de Quasar que
+//      inyecta `quasar/src/css/variables.sass` (ver @quasar/vite-plugin →
+//      scss-transform.js). Sin ese archivo NINGUNA de esas variables existe.
+//   b) variables que inventa este paquete ($body-font-color, $table-*) y que
+//      NO son de Quasar: antes solo las definian los themes (shadcn/tailadmin),
+//      asi que un consumidor con identidad visual propia (que no adopta un
+//      theme) se quedaba sin ellas.
+//
+// En ambos casos el resultado era un `Undefined variable` que ROMPIA EL BUILD
+// del consumidor — y peor: podia romperlo un componente que ni siquiera usa
+// (index.scss compila todos los .scss, no solo los importados).
+//
+// Con `!default` estos valores solo aplican si nadie los definio antes. Un
+// consumidor con quasar.variables.scss y/o un theme sigue mandando igual que
+// siempre: esto es puramente aditivo, no cambia la apariencia de nadie.
+// ==========================================================================
+
+// --------------------------------------------------------------------------
+// (a) Paleta y tokens de Quasar — valores identicos a los oficiales de
+//     quasar/src/css/variables.sass, para no alterar nada si faltan.
+// --------------------------------------------------------------------------
+$primary: #1976d2 !default;
+$secondary: #26a69a !default;
+$accent: #9c27b0 !default;
+$dark: #1d1d1d !default;
+$positive: #21ba45 !default;
+$negative: #c10015 !default;
+$info: #31ccec !default;
+$warning: #f2c037 !default;
+
+$body-font-size: 14px !default;
+$typography-font-family: 'Roboto', '-apple-system', 'Helvetica Neue', Helvetica, Arial, sans-serif !default;
+$generic-border-radius: 4px !default;
+$button-border-radius: 3px !default;
+$input-label-color: rgba(0, 0, 0, 0.6) !default;
+$table-tbody-td-font-size: 13px !default;
+
+// --------------------------------------------------------------------------
+// (b) Variables propias del paquete (NO existen en Quasar). Defaults neutros
+//     estilo Material, para que el paquete se vea correcto sin ningun theme.
+// --------------------------------------------------------------------------
+$body-font-color: rgba(0, 0, 0, 0.87) !default;
+$bg-color: #f5f5f5 !default;
+
+$table-thead-bg-color: transparent !default;
+$table-th-font-color: rgba(0, 0, 0, 0.54) !default;
+$table-font-color: rgba(0, 0, 0, 0.87) !default;
+$table-tbody-td-font-color: rgba(0, 0, 0, 0.87) !default;
+$table-td-padding: 8px 16px !default;

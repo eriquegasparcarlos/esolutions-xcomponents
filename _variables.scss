@@ -3,6 +3,12 @@
 // Hereda de las variables de Quasar definidas en quasar.variables.scss
 // ==========================================================================
 
+// Defaults de todo lo que este archivo consume pero no define (paleta de
+// Quasar + variables propias del paquete). Van con !default, asi que el
+// consumidor y/o su theme siguen mandando. Sin esto, un consumidor sin
+// `src/css/quasar.variables.scss` o sin theme rompia con "Undefined variable".
+@import "./defaults";
+
 // --------------------------------------------------------------------------
 // Colores base (heredan de Quasar si existen)
 // --------------------------------------------------------------------------

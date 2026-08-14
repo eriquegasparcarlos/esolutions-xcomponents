@@ -1,0 +1,18 @@
+# Que NO viaja al consumidor.
+#
+# Sustituye al array `files` del package.json, que era un whitelist manual de
+# 59 entradas: cada componente nuevo habia que acordarse de agregarlo ahi o el
+# tag se publicaba SIN el (paso en v2.7.0 con XReportView/XcTable — el consumidor
+# instalaba y las carpetas simplemente no estaban, con un error que no apuntaba
+# a la causa). Con blacklist el default se invierte: todo componente nuevo viaja
+# solo, y se excluye explicitamente lo que es interno.
+#
+# npm ya excluye por su cuenta: .git, node_modules, .npmignore.
+# npm siempre incluye, se liste o no: package.json, README.md, LICENSE.
+
+# Documentacion interna de arquitectura del ecosistema (no del paquete)
+PACKAGES.md
+
+# Metadata muerta: quedo congelada en 2.4.45 mientras package.json siguio
+# avanzando. La version real es la de package.json / el tag de git.
+version.json

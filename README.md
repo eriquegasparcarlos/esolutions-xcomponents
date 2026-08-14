@@ -39,15 +39,52 @@ viteConf.optimizeDeps.include = [...(viteConf.optimizeDeps.include || []), 'vued
 
 Sin eso, al invalidarse la caché `node_modules/.vite` el dev server revienta con `does not provide an export named 'default'` en todos los listados (`XDnd` → `XTableServer`).
 
-### 2. Tema SCSS
+### 2. Estilos (SCSS) — **obligatorio, si no los componentes salen sin estilo**
 
-`src/css/quasar.variables.scss` del consumidor debe importar las variables del tema:
+Los `.vue` traen el markup, pero el CSS de los componentes vive en `.scss` aparte.
+Si no lo importás, todo **renderiza pero sin layout ni tipografía** (síntoma típico:
+el título de `XDialog` aparece como texto suelto pegado al botón de cerrar).
+
+En el `app.scss` (o el entry CSS) del consumidor:
+
+```scss
+// Todos los componentes
+@import '@esolutions/x-components/index';
+```
+
+Desde **v2.8.0** cada `.scss` es **auto-suficiente**, así que también se puede
+importar solo lo que se usa (menos CSS muerto: el paquete completo son ~46 KB):
+
+```scss
+@import '@esolutions/x-components/XDialog/XDialog';
+@import '@esolutions/x-components/XInput/XInput';
+```
+
+### 3. Tema SCSS (opcional desde v2.8.0)
+
+Para adoptar la identidad visual de un tema, en `src/css/quasar.variables.scss`:
 
 ```scss
 @import '@esolutions/x-components/themes/shadcn.variables';
 ```
 
 (Existen `shadcn` y `tailadmin`, cada uno con `.variables.scss` y `.overrides.scss`.)
+
+**Ya no es obligatorio.** Hasta v2.7.x, un consumidor con identidad visual propia
+(sin tema) o sin `src/css/quasar.variables.scss` rompía el build con
+`Undefined variable: $primary` / `$table-th-font-color` / `$body-font-color`,
+porque el paquete consumía variables que nadie le daba — y podía romperlo
+**un componente que ni siquiera usa**, ya que `index.scss` compila todos los `.scss`.
+
+Desde v2.8.0, `_defaults.scss` define con `!default` todo lo que el paquete
+consume: la paleta de Quasar (con sus valores oficiales) y las variables propias
+del paquete (`$body-font-color`, `$table-*`). El paquete compila solo; el tema y
+las variables del consumidor siguen mandando cuando existen.
+
+> Si querés controlar la paleta sin adoptar un tema, definí las variables de
+> Quasar en tu `src/css/quasar.variables.scss` como siempre. **Ojo**: la sola
+> existencia de ese archivo es lo que activa el plugin de Quasar que inyecta
+> `quasar/src/css/variables.sass`; sin él, ninguna variable `$primary` existe.
 
 ## Actualizar de versión en un consumidor
 
@@ -67,6 +104,25 @@ rm -rf node_modules/.vite .quasar
 
 ```bash
 git tag vX.Y.Z && git push origin main --tags
+```
+
+### Qué se publica (desde v2.8.0)
+
+El paquete usa **`.npmignore`** (blacklist): **todo viaja por defecto** y solo se
+excluye lo interno (`PACKAGES.md`, `version.json`). **Un componente nuevo no
+requiere ningún registro** — se publica solo.
+
+Hasta v2.7.x había un array `files` en `package.json` (whitelist de 59 entradas)
+que había que actualizar a mano por cada componente. Olvidarlo publicaba un tag
+**sin** ese componente: en v2.7.0 pasó con `XReportView`/`XcTable`, y el
+consumidor instalaba una versión a la que simplemente le faltaban las carpetas,
+con un error que no apuntaba a la causa. La whitelist tampoco excluía nada útil,
+así que era solo riesgo.
+
+Verificar qué va a viajar antes de taggear:
+
+```bash
+npm pack --dry-run
 ```
 
 ## Convención de documentación
