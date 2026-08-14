@@ -33,6 +33,15 @@ const monedas = [
   { codigo: 'USD', nombre: 'Dolares (USD)' },
 ]
 const moneda = ref('PEN')
+
+const VARIANTES = ['primary', 'secondary', 'success', 'danger', 'warning', 'info']
+
+// XButton reenvia estos props al q-btn subyacente (ver su v-bind), asi que
+// todo el catalogo visual de Quasar sigue disponible.
+const ESTILOS = [
+  { attr: 'flat' }, { attr: 'outline' }, { attr: 'rounded' },
+  { attr: 'unelevated' }, { attr: 'push' }, { attr: 'dense' }, { attr: 'stretch' },
+]
 </script>
 
 <template>
@@ -53,15 +62,51 @@ const moneda = ref('PEN')
     </div>
   </Seccion>
 
-  <Seccion titulo="Botones" nota="--x-radius · --x-brand · --x-duration" :cubre="['XButton']">
+  <Seccion titulo="Botones · variantes de color" nota="prop variant" :cubre="['XButton']">
     <div class="pg-demo">
-      <XButton label="Primario" variant="primary" />
-      <XButton label="Secundario" variant="secondary" />
-      <XButton label="Exito" variant="success" />
-      <XButton label="Peligro" variant="danger" />
-      <XButton label="Advertencia" variant="warning" />
-      <XButton label="Info" variant="info" />
-      <XButton label="Con icono" variant="primary" icon="fa-light fa-floppy-disk" />
+      <XButton v-for="v in VARIANTES" :key="v" :label="v" :variant="v" />
     </div>
+  </Seccion>
+
+  <Seccion titulo="Botones · estilos de Quasar" nota="XButton reenvia flat / outline / rounded / unelevated / push al q-btn"
+           :cubre="['XButton']">
+    <div class="pg-demo">
+      <div v-for="e in ESTILOS" :key="e.attr" class="pg-tile">
+        <XButton label="Guardar" variant="primary" v-bind="{ [e.attr]: true }" />
+        <code>{{ e.attr }}</code>
+      </div>
+    </div>
+  </Seccion>
+
+  <Seccion titulo="Botones · tamaños y estado" nota="size · loading · disable" :cubre="['XButton']">
+    <div class="pg-demo">
+      <div v-for="s in ['xs', 'sm', 'md', 'lg', 'xl']" :key="s" class="pg-tile">
+        <XButton label="Guardar" variant="primary" :size="s" />
+        <code>size={{ s }}</code>
+      </div>
+    </div>
+    <div class="pg-demo" style="margin-top:12px">
+      <div class="pg-tile"><XButton label="Cargando" variant="primary" loading /><code>loading</code></div>
+      <div class="pg-tile"><XButton label="Desactivado" variant="primary" disable /><code>disable</code></div>
+      <div class="pg-tile"><XButton label="Ancho" variant="primary" class="full-width" /><code>full-width</code></div>
+    </div>
+  </Seccion>
+
+  <Seccion titulo="Botones · iconos" nota="requiere FontAwesome Pro (fa-light)" :cubre="['XButton']">
+    <div class="pg-demo">
+      <div class="pg-tile"><XButton label="Guardar" variant="primary" icon="fa-light fa-floppy-disk" /><code>icon</code></div>
+      <div class="pg-tile"><XButton label="Siguiente" variant="secondary" icon-right="fa-light fa-arrow-right" /><code>icon-right</code></div>
+      <div class="pg-tile"><XButton icon="fa-light fa-trash" variant="danger" round /><code>round + icon</code></div>
+      <div class="pg-tile"><XButton icon="fa-light fa-pen" variant="secondary" flat round /><code>flat round</code></div>
+      <div class="pg-tile"><XButton icon="fa-solid fa-check" variant="success" circle /><code>circle</code></div>
+      <div class="pg-tile"><XButton label="Con tooltip" variant="info" icon="fa-light fa-circle-info" tooltip="Texto de ayuda" /><code>tooltip</code></div>
+      <div class="pg-tile"><XButton label="Notificaciones" variant="secondary" icon="fa-light fa-bell" badge="9" /><code>badge</code></div>
+    </div>
+    <p style="margin:12px 0 0; font-size:12px; color:#64748b">
+      Los propios componentes traen <strong>29 iconos <code>fa-*</code> hardcodeados</strong>
+      (24 son <code>fa-light</code>, exclusivo del plan <strong>Pro</strong>). Sin FontAwesome
+      cargado se ven cuadros vacios: el X de cerrar de los dialogos, el + de XSelect,
+      XFile, XTracking…
+    </p>
   </Seccion>
 </template>

@@ -14,6 +14,9 @@ importers:
       '@esolutions/js-utils':
         specifier: github:eriquegasparcarlos/esolutions-jsutils
         version: https://codeload.github.com/eriquegasparcarlos/esolutions-jsutils/tar.gz/afb5152d52841ca6a3be41f5fafe10432f8a852f
+      '@fortawesome/fontawesome-pro':
+        specifier: ^7.3.1
+        version: 7.3.1
       pdfjs-dist:
         specifier: ^6.2.108
         version: 6.2.108
@@ -621,6 +624,10 @@ packages:
   '@esolutions/js-utils@https://codeload.github.com/eriquegasparcarlos/esolutions-jsutils/tar.gz/afb5152d52841ca6a3be41f5fafe10432f8a852f':
     resolution: {tarball: https://codeload.github.com/eriquegasparcarlos/esolutions-jsutils/tar.gz/afb5152d52841ca6a3be41f5fafe10432f8a852f}
     version: 1.1.0
+
+  '@fortawesome/fontawesome-pro@7.3.1':
+    resolution: {integrity: sha512-Y7cPcgdqYkuwa1huWuB3N57ICm2+3XdepQ3hZN0Zm0lJFxujtzl10FmvTQu86/21rpUMIQcBUCYsWBdenaWuMw==}
+    engines: {node: '>=6'}
 
   '@intlify/core-base@11.4.8':
     resolution: {integrity: sha512-A+Q7SKm5oEcy1E/cghqd7n/St4XjTqLhiiyDuieNcMrJcrHlkY5n0jp7Q9dD3txvVHzvsmBVV5M9wD5/s1zfzw==}
@@ -1984,6 +1991,8 @@ snapshots:
     optional: true
 
   '@esolutions/js-utils@https://codeload.github.com/eriquegasparcarlos/esolutions-jsutils/tar.gz/afb5152d52841ca6a3be41f5fafe10432f8a852f': {}
+
+  '@fortawesome/fontawesome-pro@7.3.1': {}
 
   '@intlify/core-base@11.4.8':
     dependencies:

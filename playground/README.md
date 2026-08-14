@@ -6,6 +6,23 @@ App de desarrollo del paquete. **No se publica** (excluida en `.npmignore`).
 cd playground && pnpm install && pnpm dev    # http://localhost:8106
 ```
 
+### FontAwesome Pro es obligatorio
+
+No es una preferencia: los componentes traen **29 iconos `fa-*` hardcodeados** y
+**24 son `fa-light`**, que solo existe en el plan **Pro** (de pago) — el X de
+cerrar de los diálogos, el + de `XSelect`, `XFile`, `XTracking`… Sin FontAwesome
+cargado se ven cuadros vacíos.
+
+El `pnpm install` necesita el token en el `~/.npmrc` **global**:
+
+```
+@fortawesome:registry=https://npm.fontawesome.com/
+//npm.fontawesome.com/:_authToken=<TOKEN>
+```
+
+El `.npmrc` del playground declara **solo el registro**, nunca el token, para que
+sea versionable.
+
 ## Para qué sirve
 
 1. **Ver los componentes funcionando** — incluidos los que dependen de un backend.
