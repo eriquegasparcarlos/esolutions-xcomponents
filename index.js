@@ -53,3 +53,11 @@ export { useNotify } from './XNotify/useNotify'
 
 // i18n
 export { default as xComponentsMessages } from './i18n/index.js'
+
+// Reportes: plantilla de página + compound datatable headless (ago-2026)
+export { default as XReportView } from './XReportView/XReportView.vue'
+export { default as XcTable } from './XcTable/XcTable.vue'
+export { default as XcTableToolbar } from './XcTable/XcTableToolbar.vue'
+export { default as XcTableFilters } from './XcTable/XcTableFilters.vue'
+export { default as XcTableGrid } from './XcTable/XcTableGrid.vue'
+export { useXcTable } from './XcTable/useXcTable.js'
