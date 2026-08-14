@@ -9,9 +9,11 @@ import CmpXInput from './componentes/XInput.vue'
 import CmpXSelect from './componentes/XSelect.vue'
 import CmpXToggleCheckbox from './componentes/XToggleCheckbox.vue'
 import CmpXCamposVarios from './componentes/XCamposVarios.vue'
+import CmpXCardBadge from './componentes/XCardBadge.vue'
+import CmpXDialogDropdown from './componentes/XDialogDropdown.vue'
+import CmpXDatos from './componentes/XDatos.vue'
 import GalleryForms from './sections/GalleryForms.vue'
 import GalleryFeedback from './sections/GalleryFeedback.vue'
-import GalleryOverlays from './sections/GalleryOverlays.vue'
 import GalleryMisc from './sections/GalleryMisc.vue'
 import GalleryOtp from './sections/GalleryOtp.vue'
 import GalleryDocs from './sections/GalleryDocs.vue'
@@ -132,9 +134,11 @@ async function copiar () {
       <CmpXSelect />
       <CmpXToggleCheckbox />
       <CmpXCamposVarios />
+      <CmpXCardBadge />
+      <CmpXDialogDropdown />
+      <CmpXDatos />
       <GalleryForms />
       <GalleryFeedback />
-      <GalleryOverlays />
       <GalleryMisc />
       <GalleryOtp />
       <GalleryDocs />

@@ -1,38 +1,10 @@
 <script setup>
 import Seccion from '../components/Seccion.vue'
-import XCard from '@x/XCard/XCard.vue'
-import XBadge from '@x/XBadge/XBadge.vue'
 import XBanner from '@x/XBanner/XBanner.vue'
 
 </script>
 
 <template>
-  <Seccion titulo="XCard" nota=".x-card · --x-surface · --x-radius" :cubre="['XCard']">
-    <div class="pg-demo">
-      <XCard title="Comprobante" subtitle="F001-000123" bordered style="width:250px">
-        <div style="font-size:13px">Emitido y aceptado por SUNAT.</div>
-      </XCard>
-      <XCard title="Sin borde" subtitle="flat" flat style="width:250px">
-        <div style="font-size:13px">Variante <code>flat</code>.</div>
-      </XCard>
-    </div>
-  </Seccion>
-
-  <Seccion titulo="XBadge · tipos y variantes" nota=".x-badge · variantes sm / md / lg / pill" :cubre="['XBadge']">
-    <div class="pg-demo">
-      <div v-for="tipo in ['success', 'warning', 'danger', 'info']" :key="tipo" class="pg-tile">
-        <XBadge :label="tipo" :type="tipo" />
-        <code>{{ tipo }}</code>
-      </div>
-    </div>
-    <div class="pg-demo" style="margin-top:12px">
-      <div v-for="v in ['x-badge-sm', 'x-badge-md', 'x-badge-lg', 'x-badge-pill']" :key="v" class="pg-tile">
-        <XBadge label="Aceptado" type="success" :class="v" />
-        <code>.{{ v }}</code>
-      </div>
-    </div>
-  </Seccion>
-
   <Seccion titulo="XBanner · tipos" nota="success / warning / error / information" :cubre="['XBanner']">
     <div style="display:flex; flex-direction:column; gap:10px">
       <XBanner type="success" label="Comprobante aceptado por SUNAT." />
