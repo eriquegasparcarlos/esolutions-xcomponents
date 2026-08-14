@@ -16,6 +16,18 @@
   --x-otp-border-color-error: #{$x-border-color-error};
   --x-otp-border-radius: var(--x-radius, #{$x-border-radius});
   --x-otp-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
+
+  // Tipografia y color del digito. Antes estaban hardcodeados con variables
+  // Sass ($x-text-primary, $x-primary, $x-text-hint) y un font-weight fijo:
+  // no habia forma de cambiar el color del texto en runtime.
+  --x-otp-color: var(--x-text, #{$x-text-primary});
+  --x-otp-font-weight: 700;
+  --x-otp-caret-color: var(--x-brand, #{$x-primary});
+  --x-otp-placeholder-color: #{$x-text-hint};
+  --x-otp-bg: transparent;
+  --x-otp-focus-ring: #{rgba($x-primary, 0.15)};
+  --x-otp-focus-ring-width: 3px;
+  --x-otp-border-width-focus: 2px;
 }
 
 // --------------------------------------------------------------------------
@@ -37,7 +49,9 @@
   .q-field__control {
     height: var(--x-otp-input-height);
     border-radius: var(--x-otp-border-radius);
-    transition: border-color var(--x-otp-transition), box-shadow var(--x-otp-transition);
+    background-color: var(--x-otp-bg);
+    transition: border-color var(--x-otp-transition), box-shadow var(--x-otp-transition),
+      background-color var(--x-otp-transition);
 
     &::before {
       border-color: var(--x-otp-border-color);
@@ -49,28 +63,28 @@
   input {
     text-align: center;
     font-size: var(--x-otp-input-font-size);
-    font-weight: 700;
+    font-weight: var(--x-otp-font-weight);
     letter-spacing: 0;
     padding: 0;
-    color: $x-text-primary;
-    caret-color: $x-primary;
+    color: var(--x-otp-color);
+    caret-color: var(--x-otp-caret-color);
   }
 
   // Placeholder
   input::placeholder {
-    color: $x-text-hint;
+    color: var(--x-otp-placeholder-color);
     font-weight: 400;
   }
 
   // Estado focus
   &.q-field--focused .q-field__control::before {
     border-color: var(--x-otp-border-color-focus);
-    border-width: 2px;
+    border-width: var(--x-otp-border-width-focus);
   }
 
   // Sombra en focus
   &.q-field--focused .q-field__control {
-    box-shadow: 0 0 0 3px rgba($x-primary, 0.15);
+    box-shadow: 0 0 0 var(--x-otp-focus-ring-width) var(--x-otp-focus-ring);
   }
 }
 
@@ -126,6 +140,67 @@
 
 .x-input-otp-shake {
   animation: otp-shake 0.5s ease-in-out;
+}
+
+// ==========================================================================
+// Presets — clases listas para usar. Se combinan entre si (un tamanio + un
+// estilo) y cualquiera de sus variables se puede seguir ajustando a mano.
+//
+//   <XInputOtp class="x-input-otp-lg x-input-otp-underline" />
+// ==========================================================================
+
+// ---- Tamanios ----
+.x-input-otp-sm {
+  --x-otp-input-size: 38px;
+  --x-otp-input-height: 44px;
+  --x-otp-input-font-size: 18px;
+  --x-otp-input-gap: 6px;
+}
+
+.x-input-otp-lg {
+  --x-otp-input-size: 60px;
+  --x-otp-input-height: 68px;
+  --x-otp-input-font-size: 30px;
+  --x-otp-input-gap: 12px;
+}
+
+// ---- Estilos ----
+
+// Solo una linea abajo, sin caja. Aire y foco en el digito.
+.x-input-otp-underline {
+  --x-otp-bg: transparent;
+
+  .x-input-otp .q-field__control {
+    border-radius: 0;
+
+    &::before {
+      border-width: 0 0 2px 0;
+      border-radius: 0;
+    }
+  }
+}
+
+// Caja rellena y sin borde: mas suave, util sobre fondos claros.
+.x-input-otp-soft {
+  --x-otp-bg: var(--x-surface-hover, #f2f4f7); // gray-100
+  --x-otp-border-color: transparent;
+
+  .x-input-otp .q-field__control::before {
+    border-color: transparent;
+  }
+}
+
+// Circular, estilo "pin".
+.x-input-otp-pill {
+  --x-otp-border-radius: 999px;
+  --x-otp-input-size: 52px;
+  --x-otp-input-height: 52px;
+}
+
+// Monoespaciado: los digitos no bailan al tipear.
+.x-input-otp-mono .x-input-otp input {
+  font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  font-variant-numeric: tabular-nums;
 }
 
 // --------------------------------------------------------------------------

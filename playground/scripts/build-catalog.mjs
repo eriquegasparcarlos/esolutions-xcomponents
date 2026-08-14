@@ -61,28 +61,59 @@ for (const dir of fs.readdirSync(ROOT, { withFileTypes: true })) {
   const archivos = fs.readdirSync(path.join(ROOT, dir.name)).filter((f) => /\.(scss|vue)$/.test(f))
   const vars = {}
   const variantes = new Set()
+  const conteoPorSelector = {} // cuantas variables declara cada selector
 
   for (const f of archivos) {
     const txt = fs.readFileSync(path.join(ROOT, dir.name, f), 'utf8')
 
-    // Declaraciones de variables dentro de un bloque
-    for (const m of txt.matchAll(/^\s{2,}(--x-[a-z0-9-]+)\s*:\s*([^;]+);/gm)) {
-      const [, nombre, valor] = m
-      // Se queda con la PRIMERA declaracion: es la del bloque base.
-      // Las siguientes suelen ser variantes (.x-toggle-sm, dark mode, etc.).
-      if (!vars[nombre]) vars[nombre] = inferir(valor)
+    // Bloques de nivel raiz `.x-algo { ... }`, con las llaves BALANCEADAS.
+    // Un regex tipo `\{([^}]*)\}` no sirve: para en la primera llave interna,
+    // asi que un bloque con reglas anidadas (.x-toggle { .q-toggle { … } })
+    // quedaba truncado y aparentaba declarar menos variables que sus propias
+    // variantes planas (.x-toggle-sm).
+    for (const inicio of [...txt.matchAll(/^\.(x-[a-z0-9-]+)\s*\{/gm)]) {
+      const selector = '.' + inicio[1]
+      let i = inicio.index + inicio[0].length
+      let nivel = 1
+      const desde = i
+      while (i < txt.length && nivel > 0) {
+        if (txt[i] === '{') nivel++
+        else if (txt[i] === '}') nivel--
+        i++
+      }
+      const cuerpo = txt.slice(desde, i - 1)
+
+      // Solo las declaraciones del PRIMER nivel del bloque: las anidadas
+      // pertenecen a otro selector.
+      const primerNivel = cuerpo.replace(/\{[^{}]*\}/g, '')
+      const declaradas = [...primerNivel.matchAll(/(--x-[a-z0-9-]+)\s*:\s*([^;]+);/g)]
+      if (!declaradas.length) continue
+
+      variantes.add(selector)
+      conteoPorSelector[selector] = (conteoPorSelector[selector] || 0) + declaradas.length
+
+      for (const [, nombre, valor] of declaradas) {
+        if (!vars[nombre]) vars[nombre] = inferir(valor)
+      }
     }
 
-    // Clases modificadoras de nivel raiz que redefinen variables = variantes
-    for (const m of txt.matchAll(/^\.(x-[a-z0-9-]+)\s*\{([^}]*)\}/gm)) {
-      if (/--x-/.test(m[2])) variantes.add('.' + m[1])
+    // Declaraciones dentro de media queries u otros contextos: solo para no
+    // perder la variable del catalogo.
+    for (const m of txt.matchAll(/^\s{2,}(--x-[a-z0-9-]+)\s*:\s*([^;]+);/gm)) {
+      if (!vars[m[1]]) vars[m[1]] = inferir(m[2])
     }
   }
 
   if (!Object.keys(vars).length) continue
 
-  // El selector base es la clase mas corta (p.ej. .x-toggle frente a .x-toggle-sm)
-  const base = [...variantes].sort((a, b) => a.length - b.length)[0] ||
+  // El selector base es DONDE SE DECLARAN las variables, es decir el que mas
+  // declara — no la clase mas corta.
+  //
+  // La heuristica anterior ("la mas corta") fallaba en XInputOtp: elegia
+  // `.x-input-otp` (el input hijo) cuando las variables viven en
+  // `.x-input-otp-container`, asi que el generador escribia en el selector
+  // equivocado y los cambios no se veian.
+  const base = Object.entries(conteoPorSelector).sort((a, b) => b[1] - a[1])[0]?.[0] ||
     '.' + dir.name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
 
   componentes[dir.name] = {

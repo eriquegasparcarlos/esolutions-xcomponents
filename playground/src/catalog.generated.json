@@ -10,15 +10,15 @@
     "vars": {
       "--x-badge-padding": {
         "control": "texto",
-        "def": "4px 8px"
+        "def": "#"
       },
       "--x-badge-font-size": {
-        "control": "px",
-        "def": 12
+        "control": "texto",
+        "def": "#"
       },
       "--x-badge-border-radius": {
-        "control": "px",
-        "def": 4
+        "control": "texto",
+        "def": "#"
       },
       "--x-badge-font-weight": {
         "control": "number",
@@ -35,24 +35,24 @@
     "variantes": [],
     "vars": {
       "--x-button-height": {
-        "control": "px",
-        "def": 36
+        "control": "texto",
+        "def": "#"
       },
       "--x-button-padding-x": {
-        "control": "px",
-        "def": 16
+        "control": "texto",
+        "def": "#"
       },
       "--x-button-font-weight": {
-        "control": "number",
-        "def": 500
+        "control": "texto",
+        "def": "#"
       },
       "--x-button-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-button-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -62,7 +62,7 @@
     "vars": {
       "--x-card-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-card-bg": {
         "control": "derivado",
@@ -70,7 +70,7 @@
       },
       "--x-card-shadow": {
         "control": "texto",
-        "def": "0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)"
+        "def": "#"
       }
     }
   },
@@ -119,83 +119,78 @@
     ],
     "vars": {
       "--x-datepicker-height": {
-        "control": "px",
-        "def": 32
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-border-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.24)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-border-color-focus": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-border-color-error": {
-        "control": "color",
-        "def": "#c10015"
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-datepicker-label-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.6)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-icon-color": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-datepicker-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
   "XDialog": {
     "selector": ".x-dialog",
-    "variantes": [
-      ".x-dialog-actions",
-      ".x-dialog-content-header",
-      ".x-dialog-section-full-height",
-      ".x-dialog-title"
-    ],
+    "variantes": [],
     "vars": {
       "--x-dialog-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius-md, #{$x-dialog-border-radius})"
+        "def": "var(--x-radius-md, #)"
       },
       "--x-dialog-header-padding": {
-        "control": "px",
-        "def": 16
+        "control": "texto",
+        "def": "#"
       },
       "--x-dialog-content-padding": {
-        "control": "px",
-        "def": 16
+        "control": "texto",
+        "def": "#"
       },
       "--x-dialog-footer-padding": {
         "control": "texto",
-        "def": "12px 16px"
+        "def": "#"
       },
       "--x-dialog-title-font-size": {
-        "control": "px",
-        "def": 20
+        "control": "texto",
+        "def": "#"
       },
       "--x-dialog-title-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.87)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-dialog-shadow": {
         "control": "texto",
-        "def": "0 10px 20px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.10)"
+        "def": "#"
       },
       "--x-dialog-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -272,49 +267,48 @@
   "XFile": {
     "selector": ".x-file",
     "variantes": [
-      ".x-file-dropzone",
       ".x-file-large"
     ],
     "vars": {
       "--x-file-height": {
-        "control": "px",
-        "def": 32
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-border-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.24)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-border-color-focus": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-border-color-error": {
-        "control": "color",
-        "def": "#c10015"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-file-label-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.6)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-icon-color": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-placeholder-color": {
-        "control": "color",
-        "def": "#9e9e9e"
+        "control": "texto",
+        "def": "#"
       },
       "--x-file-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -323,48 +317,48 @@
     "variantes": [],
     "vars": {
       "--x-input-height": {
-        "control": "px",
-        "def": 40
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-height-dense": {
-        "control": "px",
-        "def": 32
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-border-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.24)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-border-color-focus": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-border-color-error": {
-        "control": "color",
-        "def": "#c10015"
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-input-label-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.6)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-placeholder-color": {
-        "control": "color",
-        "def": "#9e9e9e"
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-padding-x": {
-        "control": "px",
-        "def": 8
+        "control": "texto",
+        "def": "#"
       },
       "--x-input-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -386,52 +380,87 @@
       },
       "--x-input-color-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
   "XInputOtp": {
-    "selector": ".x-input-otp",
+    "selector": ".x-input-otp-container",
     "variantes": [
-      ".x-input-otp-container",
-      ".x-input-otp-error"
+      ".x-input-otp-lg",
+      ".x-input-otp-pill",
+      ".x-input-otp-sm",
+      ".x-input-otp-soft",
+      ".x-input-otp-underline"
     ],
     "vars": {
       "--x-otp-input-size": {
-        "control": "px",
-        "def": 50
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-input-height": {
         "control": "px",
         "def": 56
       },
       "--x-otp-input-font-size": {
-        "control": "px",
-        "def": 24
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-input-gap": {
-        "control": "px",
-        "def": 8
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-border-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.24)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-border-color-focus": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-border-color-error": {
-        "control": "color",
-        "def": "#c10015"
+        "control": "texto",
+        "def": "#"
       },
       "--x-otp-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-otp-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
+      },
+      "--x-otp-color": {
+        "control": "derivado",
+        "def": "var(--x-text, #)"
+      },
+      "--x-otp-font-weight": {
+        "control": "number",
+        "def": 700
+      },
+      "--x-otp-caret-color": {
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
+      },
+      "--x-otp-placeholder-color": {
+        "control": "texto",
+        "def": "#"
+      },
+      "--x-otp-bg": {
+        "control": "texto",
+        "def": "transparent"
+      },
+      "--x-otp-focus-ring": {
+        "control": "texto",
+        "def": "#"
+      },
+      "--x-otp-focus-ring-width": {
+        "control": "px",
+        "def": 3
+      },
+      "--x-otp-border-width-focus": {
+        "control": "px",
+        "def": 2
       }
     }
   },
@@ -442,8 +471,8 @@
     ],
     "vars": {
       "--x-search-person-gap": {
-        "control": "px",
-        "def": 8
+        "control": "texto",
+        "def": "#"
       },
       "--x-search-person-button-min-width": {
         "control": "px",
@@ -451,7 +480,7 @@
       },
       "--x-search-person-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -466,20 +495,20 @@
     ],
     "vars": {
       "--x-loading-overlay-bg": {
-        "control": "color-rgba",
-        "def": "rgba(255, 255, 255, 0.7)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-loading-spinner-size": {
-        "control": "px",
-        "def": 50
+        "control": "texto",
+        "def": "#"
       },
       "--x-loading-message-color": {
-        "control": "color",
-        "def": "#757575"
+        "control": "texto",
+        "def": "#"
       },
       "--x-loading-message-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-loading-z-index": {
         "control": "number",
@@ -487,7 +516,7 @@
       },
       "--x-loading-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -510,40 +539,40 @@
     "variantes": [],
     "vars": {
       "--x-select-height": {
-        "control": "px",
-        "def": 40
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-border-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.24)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-border-color-focus": {
-        "control": "color",
-        "def": "#1976d2"
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-border-color-error": {
-        "control": "color",
-        "def": "#c10015"
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-border-radius": {
         "control": "derivado",
-        "def": "var(--x-radius, #{$x-border-radius})"
+        "def": "var(--x-radius, #)"
       },
       "--x-select-label-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.6)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-dropdown-max-height": {
-        "control": "px",
-        "def": 300
+        "control": "texto",
+        "def": "#"
       },
       "--x-select-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -570,11 +599,11 @@
       },
       "--x-table-th-color": {
         "control": "derivado",
-        "def": "var(--x-text-muted, #{$table-th-font-color})"
+        "def": "var(--x-text-muted, #)"
       },
       "--x-table-th-bg": {
         "control": "derivado",
-        "def": "var(--x-surface, #{$table-thead-bg-color})"
+        "def": "var(--x-surface, #)"
       },
       "--x-table-th-padding-x": {
         "control": "px",
@@ -582,11 +611,11 @@
       },
       "--x-table-td-color": {
         "control": "derivado",
-        "def": "var(--x-text, #{$table-tbody-td-font-color})"
+        "def": "var(--x-text, #)"
       },
       "--x-table-td-padding": {
         "control": "texto",
-        "def": "8px 16px"
+        "def": "#"
       },
       "--x-table-actions-height": {
         "control": "px",
@@ -641,16 +670,16 @@
     ],
     "vars": {
       "--x-toggle-width": {
-        "control": "px",
-        "def": 36
+        "control": "texto",
+        "def": "#"
       },
       "--x-toggle-height": {
-        "control": "px",
-        "def": 20
+        "control": "texto",
+        "def": "#"
       },
       "--x-toggle-color": {
         "control": "derivado",
-        "def": "var(--x-brand, #{$x-primary})"
+        "def": "var(--x-brand, #)"
       },
       "--x-toggle-track-color": {
         "control": "color-rgba",
@@ -665,20 +694,20 @@
         "def": 10
       },
       "--x-toggle-label-color": {
-        "control": "color-rgba",
-        "def": "rgba(0, 0, 0, 0.87)"
+        "control": "texto",
+        "def": "#"
       },
       "--x-toggle-label-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-toggle-hint-color": {
-        "control": "color",
-        "def": "#757575"
+        "control": "texto",
+        "def": "#"
       },
       "--x-toggle-transition": {
         "control": "derivado",
-        "def": "var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing})"
+        "def": "var(--x-duration, #) var(--x-ease, #)"
       }
     }
   },
@@ -699,28 +728,28 @@
         "def": 14
       },
       "--x-tracking-title-font-size": {
-        "control": "px",
-        "def": 14
+        "control": "texto",
+        "def": "#"
       },
       "--x-tracking-title-font-weight": {
         "control": "number",
         "def": 600
       },
       "--x-tracking-date-font-size": {
-        "control": "px",
-        "def": 10
+        "control": "texto",
+        "def": "#"
       },
       "--x-tracking-date-color": {
-        "control": "color",
-        "def": "#9e9e9e"
+        "control": "texto",
+        "def": "#"
       },
       "--x-tracking-desc-font-size": {
-        "control": "px",
-        "def": 12
+        "control": "texto",
+        "def": "#"
       },
       "--x-tracking-desc-color": {
-        "control": "color",
-        "def": "#757575"
+        "control": "texto",
+        "def": "#"
       }
     }
   }

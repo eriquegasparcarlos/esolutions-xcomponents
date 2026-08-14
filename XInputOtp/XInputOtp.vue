@@ -124,7 +124,12 @@ defineExpose({
 </script>
 
 <template>
-  <div class="flex justify-center q-gutter-sm" @paste="handlePaste">
+  <!-- La clase `x-input-otp-container` es la que declara TODAS las variables
+       --x-otp-*. Faltaba: el contenedor usaba solo utilidades de Quasar, asi
+       que ese bloque del .scss nunca se aplicaba y nada era customizable
+       (ni el color ni el tamanio). Tambien se saca `q-gutter-sm`, que imponia
+       su propio espaciado por encima de --x-otp-input-gap. -->
+  <div class="x-input-otp-container" @paste="handlePaste">
     <q-input
       v-for="(digit, index) in code"
       :key="index"
@@ -143,23 +148,17 @@ defineExpose({
   </div>
 </template>
 
-<style scoped>
-.x-input-otp {
-  width: 50px;
-}
+<!--
+  SIN <style scoped>.
 
-.x-input-otp :deep(.q-field__control) {
-  height: 56px;
-}
+  Habia uno que repetia lo mismo que XInputOtp.scss pero con valores FIJOS
+  (width 50px, height 56px, font-size 24px, font-weight bold). Al llevar el
+  atributo [data-v-...] ganaba en especificidad, asi que pisaba las
+  var(--x-otp-*) del .scss: cambiar el tamanio o el peso de la letra no hacia
+  nada. El .scss ya cubre todo eso, y con variables.
 
-.x-input-otp :deep(input) {
-  text-align: center;
-  font-size: 24px;
-  font-weight: bold;
-  letter-spacing: 0;
-}
+  Igual que el resto de la libreria, los estilos llegan importando el CSS del
+  paquete (`@import '@esolutions/x-components/index'` o el .scss del
+  componente). Ver el README raiz.
+-->
 
-.x-input-otp-error :deep(.q-field__control) {
-  border-color: var(--q-negative) !important;
-}
-</style>

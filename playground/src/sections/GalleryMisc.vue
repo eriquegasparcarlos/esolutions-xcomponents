@@ -2,7 +2,6 @@
 import Seccion from '../components/Seccion.vue'
 import { ref } from 'vue'
 import XFile from '@x/XFile/XFile.vue'
-import XInputOtp from '@x/XInputOtp/XInputOtp.vue'
 import XTracking from '@x/XTracking/XTracking.vue'
 import XButtonToggle from '@x/XButtonToggle/XButtonToggle.vue'
 import XOptionCard from '@x/XOptionCard/XOptionCard.vue'
@@ -16,7 +15,6 @@ import XImageUpload from '@x/XImageUpload/XImageUpload.vue'
 import XTableCard from '@x/XTableCard/XTableCard.vue'
 
 const archivo = ref(null)
-const otp = ref('')
 const vista = ref('lista')
 const plan = ref('pro')
 const inventariable = ref(true)
@@ -31,14 +29,10 @@ const historial = [
 </script>
 
 <template>
-  <Seccion titulo="Entrada de datos" nota=".x-file · .x-input-otp" :cubre="['XFile','XInputOtp','XImageUpload']">
+  <Seccion titulo="Entrada de datos" nota=".x-file · XImageUpload" :cubre="['XFile','XImageUpload']">
     <div class="pg-demo">
       <div style="min-width:280px">
         <XFile v-model="archivo" label="Adjuntar XML" />
-      </div>
-      <div>
-        <XInputOtp v-model="otp" :length="6" />
-        <div style="font-size:11px;color:#64748b;margin-top:6px">XInputOtp · length 6</div>
       </div>
       <div style="min-width:200px">
         <XImageUpload v-model="logo" label="Logo" />

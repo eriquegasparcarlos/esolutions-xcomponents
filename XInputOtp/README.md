@@ -217,3 +217,46 @@ Los inputs se ajustan automaticamente en pantallas pequenas:
 ### Evento Complete
 
 El evento `complete` se emite solo cuando todos los digitos han sido ingresados, facilitando la validacion automatica.
+
+## Presets (clases listas para usar)
+
+Se combinan entre sí — un tamaño + un estilo — y cualquiera de sus variables se
+puede seguir ajustando a mano.
+
+```vue
+<XInputOtp v-model="code" :length="6" class="x-input-otp-lg x-input-otp-soft" />
+```
+
+| Clase | Efecto |
+|---|---|
+| `x-input-otp-sm` | 38×44 px, fuente 18 |
+| *(base)* | 50×56 px, fuente 24 |
+| `x-input-otp-lg` | 60×68 px, fuente 30 |
+| `x-input-otp-underline` | solo línea inferior, sin caja |
+| `x-input-otp-soft` | caja rellena, sin borde |
+| `x-input-otp-pill` | circular |
+| `x-input-otp-mono` | dígitos monoespaciados (no bailan al tipear) |
+
+## Variables CSS
+
+Se declaran en `.x-input-otp-container`, así que los overrides van sobre ese
+selector:
+
+```scss
+.x-input-otp-container {
+  --x-otp-color: #0e8f5e;
+  --x-otp-input-font-size: 30px;
+  --x-otp-font-weight: 900;
+}
+```
+
+| Variable | Default |
+|---|---|
+| `--x-otp-input-size` / `--x-otp-input-height` | 50px / 56px |
+| `--x-otp-input-font-size` / `--x-otp-font-weight` | 24px / 700 |
+| `--x-otp-input-gap` | 8px |
+| `--x-otp-color` / `--x-otp-caret-color` / `--x-otp-placeholder-color` | texto, marca, hint |
+| `--x-otp-bg` | transparent |
+| `--x-otp-border-color` / `-focus` / `-error` | borde, foco, error |
+| `--x-otp-border-radius` / `--x-otp-border-width-focus` | del token `--x-radius` / 2px |
+| `--x-otp-focus-ring` / `--x-otp-focus-ring-width` | halo de foco / 3px |

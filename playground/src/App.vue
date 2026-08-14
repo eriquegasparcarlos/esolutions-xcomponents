@@ -9,6 +9,7 @@ import GalleryForms from './sections/GalleryForms.vue'
 import GalleryFeedback from './sections/GalleryFeedback.vue'
 import GalleryOverlays from './sections/GalleryOverlays.vue'
 import GalleryMisc from './sections/GalleryMisc.vue'
+import GalleryOtp from './sections/GalleryOtp.vue'
 import GalleryDocs from './sections/GalleryDocs.vue'
 import GalleryData from './sections/GalleryData.vue'
 
@@ -127,6 +128,7 @@ async function copiar () {
       <GalleryFeedback />
       <GalleryOverlays />
       <GalleryMisc />
+      <GalleryOtp />
       <GalleryDocs />
       <GalleryData :key="recargaTabla" />
     </main>
