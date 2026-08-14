@@ -39,8 +39,28 @@ export const TOKENS = [
   { key: '--x-duration', label: 'Duracion', control: 'ms', def: 300, min: 0, max: 800, group: 'Movimiento' },
 ]
 
-export const CATALOGO = catalogo
-export const COMPONENTES = Object.keys(catalogo).sort()
+// Componentes que la galeria muestra pero que NO exponen variables --x-*
+// propias: heredan de los tokens globales. Se listan igual para que no
+// "desaparezcan" del selector, con el aviso correspondiente.
+const SIN_VARIABLES = {
+  XReportView: { selector: '.x-report-view', variantes: [], vars: {} },
+  XPdfViewer: { selector: '.x-pdf-viewer', variantes: [], vars: {} },
+  XPdfPreview: { selector: '.x-pdf-preview', variantes: [], vars: {} },
+  XBanner: { selector: '.x-banner', variantes: [], vars: {} },
+  XButtonToggle: { selector: '.x-button-toggle', variantes: [], vars: {} },
+  XOptionCard: { selector: '.x-option-card', variantes: [], vars: {} },
+  XTokenDisplay: { selector: '.x-token-display', variantes: [], vars: {} },
+  XVerifiedBadge: { selector: '.x-verified-badge', variantes: [], vars: {} },
+  XFormatPrice: { selector: '.x-format-price', variantes: [], vars: {} },
+  XHelpTip: { selector: '.x-help-tip', variantes: [], vars: {} },
+  XSettingToggle: { selector: '.x-setting-toggle', variantes: [], vars: {} },
+  XTableCard: { selector: '.x-table-card', variantes: [], vars: {} },
+  XImageUpload: { selector: '.x-image-upload', variantes: [], vars: {} },
+  XInputNumeric: { selector: '.x-input-numeric', variantes: [], vars: {} },
+}
+
+export const CATALOGO = { ...SIN_VARIABLES, ...catalogo }
+export const COMPONENTES = Object.keys(CATALOGO).sort()
 
 const fmt = {
   color: (v) => v,

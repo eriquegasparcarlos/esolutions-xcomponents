@@ -547,6 +547,85 @@
       }
     }
   },
+  "XTableServer": {
+    "selector": ".x-table-server",
+    "variantes": [
+      ".x-table-empty-state",
+      ".x-table-error-state",
+      ".x-table-mobile-header",
+      ".x-table-row--selected"
+    ],
+    "vars": {
+      "--x-table-header-height": {
+        "control": "px",
+        "def": 60
+      },
+      "--x-table-header-height-subtitle": {
+        "control": "px",
+        "def": 80
+      },
+      "--x-table-row-height": {
+        "control": "px",
+        "def": 36
+      },
+      "--x-table-th-color": {
+        "control": "derivado",
+        "def": "var(--x-text-muted, #{$table-th-font-color})"
+      },
+      "--x-table-th-bg": {
+        "control": "derivado",
+        "def": "var(--x-surface, #{$table-thead-bg-color})"
+      },
+      "--x-table-th-padding-x": {
+        "control": "px",
+        "def": 16
+      },
+      "--x-table-td-color": {
+        "control": "derivado",
+        "def": "var(--x-text, #{$table-tbody-td-font-color})"
+      },
+      "--x-table-td-padding": {
+        "control": "texto",
+        "def": "8px 16px"
+      },
+      "--x-table-actions-height": {
+        "control": "px",
+        "def": 60
+      },
+      "--x-table-empty-icon": {
+        "control": "derivado",
+        "def": "var(--x-gray-300, #d0d5dd)"
+      },
+      "--x-table-empty-title": {
+        "control": "derivado",
+        "def": "var(--x-text, #1d2939)"
+      },
+      "--x-table-empty-subtitle": {
+        "control": "derivado",
+        "def": "var(--x-text-muted, #667085)"
+      },
+      "--x-table-error-icon": {
+        "control": "derivado",
+        "def": "var(--x-danger, #f04438)"
+      },
+      "--x-table-error-title": {
+        "control": "derivado",
+        "def": "var(--x-text, #1d2939)"
+      },
+      "--x-table-error-subtitle": {
+        "control": "derivado",
+        "def": "var(--x-text-muted, #667085)"
+      },
+      "--x-table-row-selected-bg": {
+        "control": "color",
+        "def": "#f5f8ff"
+      },
+      "--x-table-row-selected-hover-bg": {
+        "control": "color",
+        "def": "#ecf3ff"
+      }
+    }
+  },
   "XToggle": {
     "selector": ".x-toggle",
     "variantes": [

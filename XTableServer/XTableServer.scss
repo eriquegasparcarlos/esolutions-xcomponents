@@ -4,14 +4,33 @@
 // XTableServer. Con el import es auto-suficiente, como el resto.
 @import '../variables';
 
+// --------------------------------------------------------------------------
+// Variables CSS personalizables
+//
+// Antes este componente leia las variables Sass ($table-*) directamente, asi
+// que NO se podia tematizar en runtime ni aparecia en el generador de temas
+// (era el unico de la libreria en esa situacion). Ahora expone su propia capa
+// --x-table-*, derivada de los roles de _tokens.scss con fallback al valor
+// historico: mismo render, pero customizable.
+// --------------------------------------------------------------------------
 .x-table-server {
+  --x-table-header-height: 60px;
+  --x-table-header-height-subtitle: 80px;
+  --x-table-row-height: 36px;
+  --x-table-th-color: var(--x-text-muted, #{$table-th-font-color});
+  --x-table-th-bg: var(--x-surface, #{$table-thead-bg-color});
+  --x-table-th-padding-x: 16px;
+  --x-table-td-color: var(--x-text, #{$table-tbody-td-font-color});
+  --x-table-td-padding: #{$table-td-padding};
+  --x-table-actions-height: 60px;
+
   // Min-height durante la carga inicial para que el overlay XLoading
   // tenga superficie visible antes de que llegue el contenido.
   min-height: 200px;
   position: relative;
 
   .x-table-server-title {
-    height: 60px;
+    height: var(--x-table-header-height);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -19,25 +38,25 @@
     // Cuando hay subtitulo el header crece para acomodar el texto extra
     // sin recortar (60px no alcanza para titulo + caption).
     &.has-subtitle {
-      height: 80px;
+      height: var(--x-table-header-height-subtitle);
     }
   }
 
   .q-table thead {
-    color: $table-th-font-color;
+    color: var(--x-table-th-color);
     tr {
-      height: 36px;
+      height: var(--x-table-row-height);
     }
     th {
-      background-color: $table-thead-bg-color;
-      padding-left: 16px;
-      padding-right: 16px;
+      background-color: var(--x-table-th-bg);
+      padding-left: var(--x-table-th-padding-x);
+      padding-right: var(--x-table-th-padding-x);
     }
   }
 
   .q-table tbody td {
-    color: $table-tbody-td-font-color;
-    padding: $table-td-padding;
+    color: var(--x-table-td-color);
+    padding: var(--x-table-td-padding);
   }
 
   // Dense: reducir padding vertical de celdas
@@ -47,14 +66,16 @@
   }
 
   .q-card__actions {
-    height: 60px;
+    height: var(--x-table-actions-height);
   }
 }
 
 // Mobile header (mismo estilo que thead)
 .x-table-mobile-header {
-  background-color: $table-thead-bg-color;
-  color: $table-th-font-color;
+  --x-table-th-bg: var(--x-surface, #{$table-thead-bg-color});
+  --x-table-th-color: var(--x-text-muted, #{$table-th-font-color});
+  background-color: var(--x-table-th-bg);
+  color: var(--x-table-th-color);
   padding: 8px 16px;
   height: 36px;
   display: flex;
@@ -118,6 +139,9 @@
 // Empty state (cuando la tabla no tiene registros)
 // --------------------------------------------------------------------------
 .x-table-empty-state {
+  --x-table-empty-icon: var(--x-gray-300, #d0d5dd);
+  --x-table-empty-title: var(--x-text, #1d2939);
+  --x-table-empty-subtitle: var(--x-text-muted, #667085);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -127,20 +151,20 @@
   text-align: center;
 
   &__icon {
-    color: #d0d5dd;
+    color: var(--x-table-empty-icon);
     margin-bottom: 12px;
   }
 
   &__title {
     font-size: 16px;
     font-weight: 600;
-    color: #1d2939;
+    color: var(--x-table-empty-title);
     margin-bottom: 4px;
   }
 
   &__subtitle {
     font-size: 13px;
-    color: #667085;
+    color: var(--x-table-empty-subtitle);
     max-width: 320px;
     line-height: 1.5;
   }
@@ -150,6 +174,9 @@
 // Error state (cuando falla el fetch de la tabla)
 // --------------------------------------------------------------------------
 .x-table-error-state {
+  --x-table-error-icon: var(--x-danger, #f04438);
+  --x-table-error-title: var(--x-text, #1d2939);
+  --x-table-error-subtitle: var(--x-text-muted, #667085);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -159,20 +186,20 @@
   text-align: center;
 
   &__icon {
-    color: #f04438; // TailAdmin red-500
+    color: var(--x-table-error-icon);
     margin-bottom: 12px;
   }
 
   &__title {
     font-size: 16px;
     font-weight: 600;
-    color: #1d2939;
+    color: var(--x-table-error-title);
     margin-bottom: 4px;
   }
 
   &__subtitle {
     font-size: 13px;
-    color: #667085;
+    color: var(--x-table-error-subtitle);
     max-width: 420px;
     line-height: 1.5;
     word-break: break-word;
@@ -206,10 +233,12 @@
 // Filas seleccionadas
 // --------------------------------------------------------------------------
 .x-table-row--selected {
-  background-color: #f5f8ff !important; // brand-50 mas claro
+  --x-table-row-selected-bg: #f5f8ff; // brand-50 mas claro
+  --x-table-row-selected-hover-bg: #ecf3ff; // brand-50
+  background-color: var(--x-table-row-selected-bg) !important;
 
   &:hover {
-    background-color: #ecf3ff !important; // brand-50
+    background-color: var(--x-table-row-selected-hover-bg) !important;
   }
 }
 

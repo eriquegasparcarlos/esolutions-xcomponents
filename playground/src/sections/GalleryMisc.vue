@@ -1,4 +1,5 @@
 <script setup>
+import Seccion from '../components/Seccion.vue'
 import { ref } from 'vue'
 import XFile from '@x/XFile/XFile.vue'
 import XInputOtp from '@x/XInputOtp/XInputOtp.vue'
@@ -30,8 +31,7 @@ const historial = [
 </script>
 
 <template>
-  <section class="pg-section">
-    <h3>Entrada de datos <code>.x-file · .x-input-otp</code></h3>
+  <Seccion titulo="Entrada de datos" nota=".x-file · .x-input-otp" :cubre="['XFile','XInputOtp','XImageUpload']">
     <div class="pg-demo">
       <div style="min-width:280px">
         <XFile v-model="archivo" label="Adjuntar XML" />
@@ -44,10 +44,9 @@ const historial = [
         <XImageUpload v-model="logo" label="Logo" />
       </div>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Seleccion <code>XButtonToggle · XOptionCard</code></h3>
+  <Seccion titulo="Seleccion" nota="XButtonToggle · XOptionCard" :cubre="['XButtonToggle','XOptionCard','XSettingToggle']">
     <div class="pg-demo">
       <XButtonToggle v-model="vista" :options="[
         { label: 'Lista', value: 'lista' },
@@ -67,10 +66,9 @@ const historial = [
                       description="Apagalo para vender sin controlar stock."
                       feedback-off="No se validara stock al vender." boxed />
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Presentacion de datos <code>XTokenDisplay · XVerifiedBadge · XFormatPrice · XHelpTip</code></h3>
+  <Seccion titulo="Presentacion de datos" nota="XTokenDisplay · XVerifiedBadge · XFormatPrice · XHelpTip" :cubre="['XTokenDisplay','XVerifiedBadge','XFormatPrice','XHelpTip']">
     <div class="pg-demo">
       <div style="min-width:300px">
         <XTokenDisplay token="xmp_live_4f8a92bd7c1e5036af2b" label="Token de firma" />
@@ -84,19 +82,17 @@ const historial = [
         Precio con IGV <XHelpTip text="El precio ya trae el IGV incluido." />
       </div>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Historial <code>.x-tracking · 9 variables</code></h3>
+  <Seccion titulo="Historial" nota=".x-tracking · 9 variables" :cubre="['XTracking']">
     <div style="max-width:460px">
       <XTracking :records="historial" />
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Tarjeta de tabla <code>XTableCard</code></h3>
+  <Seccion titulo="Tarjeta de tabla" nota="XTableCard" :cubre="['XTableCard']">
     <XTableCard title="Resumen del dia" subtitle="14 de agosto">
       <div style="font-size:13px">Contenido libre dentro de la tarjeta.</div>
     </XTableCard>
-  </section>
+  </Seccion>
 </template>

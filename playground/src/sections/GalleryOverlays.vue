@@ -1,4 +1,5 @@
 <script setup>
+import Seccion from '../components/Seccion.vue'
 import { ref } from 'vue'
 import XDialog from '@x/XDialog/XDialog.vue'
 import XButton from '@x/XButton/XButton.vue'
@@ -14,8 +15,7 @@ const cargando = ref(true)
 </script>
 
 <template>
-  <section class="pg-section">
-    <h3>Dialogos <code>.x-dialog · --x-radius-md</code></h3>
+  <Seccion titulo="Dialogos" nota=".x-dialog · --x-radius-md" :cubre="['XDialog']">
     <div class="pg-demo">
       <XButton label="Dialogo estandar" variant="primary" @click="abierto = true" />
       <XButton label="Dialogo lateral" variant="secondary" @click="lateral = true" />
@@ -41,10 +41,9 @@ const cargando = ref(true)
         <p style="margin:0; font-size:13px">Variante <code>position="right"</code> + <code>is-full-height</code>.</p>
       </template>
     </XDialog>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Menu desplegable <code>.x-dropdown-menu · 16 variables</code></h3>
+  <Seccion titulo="Menu desplegable" nota=".x-dropdown-menu · 16 variables" :cubre="['XDropdownMenu']">
     <div class="pg-demo">
       <!-- El slot #trigger expone `open`: hay que invocarlo en el @click -->
       <XDropdownMenu>
@@ -64,10 +63,9 @@ const cargando = ref(true)
         </template>
       </XConfirmAction>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Loading <code>.x-loading · variantes sm / md / lg / xl</code></h3>
+  <Seccion titulo="Loading" nota=".x-loading · variantes sm / md / lg / xl" :cubre="['XLoading']">
     <div class="pg-demo">
       <div v-for="s in ['sm', 'md', 'lg', 'xl']" :key="s" class="pg-tile">
         <div style="position:relative; height:90px">
@@ -79,5 +77,5 @@ const cargando = ref(true)
     <div class="pg-demo" style="margin-top:8px">
       <XButton :label="cargando ? 'Detener' : 'Reanudar'" variant="secondary" @click="cargando = !cargando" />
     </div>
-  </section>
+  </Seccion>
 </template>

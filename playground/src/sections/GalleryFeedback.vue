@@ -1,4 +1,5 @@
 <script setup>
+import Seccion from '../components/Seccion.vue'
 import { ref } from 'vue'
 import XCard from '@x/XCard/XCard.vue'
 import XBadge from '@x/XBadge/XBadge.vue'
@@ -9,8 +10,7 @@ const t = ref(true)
 </script>
 
 <template>
-  <section class="pg-section">
-    <h3>Superficies <code>.x-card · --x-surface · --x-radius</code></h3>
+  <Seccion titulo="Superficies" nota=".x-card · --x-surface · --x-radius" :cubre="['XCard']">
     <div class="pg-demo">
       <XCard title="Comprobante" subtitle="F001-000123" bordered style="width:250px">
         <div style="font-size:13px">Emitido y aceptado por SUNAT.</div>
@@ -19,10 +19,9 @@ const t = ref(true)
         <div style="font-size:13px">Variante <code>flat</code>.</div>
       </XCard>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Badges <code>.x-badge · variantes sm / md / lg / pill</code></h3>
+  <Seccion titulo="Badges" nota=".x-badge · variantes sm / md / lg / pill" :cubre="['XBadge']">
     <div class="pg-demo">
       <div v-for="tipo in ['success', 'warning', 'danger', 'info']" :key="tipo" class="pg-tile">
         <XBadge :label="tipo" :type="tipo" />
@@ -35,10 +34,9 @@ const t = ref(true)
         <code>.{{ v }}</code>
       </div>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Toggle <code>.x-toggle · 6 colores + 3 tamaños</code></h3>
+  <Seccion titulo="Toggle" nota=".x-toggle · 6 colores + 3 tamaños" :cubre="['XToggle']">
     <div class="pg-demo">
       <div v-for="c in ['primary', 'secondary', 'success', 'error', 'warning', 'info']" :key="c" class="pg-tile">
         <XToggle v-model="t" :class="`x-toggle-${c}`" />
@@ -51,15 +49,14 @@ const t = ref(true)
         <code>.x-toggle-{{ s }}</code>
       </div>
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Banner <code>success / warning / error / information</code></h3>
+  <Seccion titulo="Banner" nota="success / warning / error / information" :cubre="['XBanner']">
     <div style="display:flex; flex-direction:column; gap:10px">
       <XBanner type="success" label="Comprobante aceptado por SUNAT." />
       <XBanner type="warning" label="El certificado vence en 15 dias." />
       <XBanner type="error" label="Rechazado: el RUC del receptor no existe." />
       <XBanner type="information" label="Los tokens se aplican en runtime, sin recompilar Sass." />
     </div>
-  </section>
+  </Seccion>
 </template>

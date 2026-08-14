@@ -10,12 +10,15 @@
     "catalog": "node scripts/build-catalog.mjs"
   },
   "dependencies": {
+    "@embedpdf/vue-pdf-viewer": "^2.15.0",
     "@esolutions/js-utils": "github:eriquegasparcarlos/esolutions-jsutils",
+    "pdfjs-dist": "^6.2.108",
     "pinia": "^3.0.0",
     "quasar": "^2.24.0",
     "vue": "^3.5.0",
+    "vue-draggable-plus": "^0.6.0",
     "vue-i18n": "^11.0.0",
-    "vue-draggable-plus": "^0.6.0"
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@quasar/extras": "^1.18.0",

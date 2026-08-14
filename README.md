@@ -134,6 +134,8 @@ Estos son los tropiezos más frecuentes:
 | `XBanner` | `message` + `type="info"`. | `label` + `type="information"` (válidos: `success`, `error`, `warning`, `information`). |
 | `XTableServer` | Esperar que funcione suelto. | Requiere `$api` global, el alias `stores/data.js` del consumidor y un backend que cumpla el contrato (ver `playground/src/mock/api.js`). |
 | `XTableServer` (filtros) | Que el backend mande `filter.options` como `{label, value}`: el filtro sale **con las opciones en blanco**. Los pasa a un `XSelect` **sin** `option-value`/`option-label`, así que valen los defaults. | El backend debe mandarlas como `{id, name}`. |
+| `XReportView` | Montarlo suelto: usa `<q-page>` incondicionalmente y avisa *"QPage needs to be a deep child of QLayout"*. Además importa `vue-router` (peer **opcional** desde v2.9.2). | Dentro de un `q-layout` > `q-page-container`, y con un router instalado. |
+| `XPdfViewer` / `XPdfPreview` | Usarlos sin las peer opcionales `@embedpdf/vue-pdf-viewer` y `pdfjs-dist`. | Instalarlas. Con pnpm hace falta además excluirlas de `optimizeDeps` o aliasarlas, si no el stub de peer opcional gana en dev. |
 
 > El `playground/` monta todo junto y es la referencia viva de uso correcto.
 

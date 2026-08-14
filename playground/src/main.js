@@ -1,5 +1,6 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import { createRouter, createWebHashHistory } from 'vue-router'
 import { createI18n } from 'vue-i18n'
 import { Quasar, Notify, Dialog, Loading } from 'quasar'
 import quasarLangEs from 'quasar/lang/es'
@@ -17,6 +18,13 @@ import App from './App.vue'
 const app = createApp(App)
 
 app.use(createPinia())
+
+// XReportView usa useRouter(): sin una instancia de router montada, revienta.
+// (El paquete no lo declaraba como peer dependency; se agrego como opcional.)
+app.use(createRouter({
+  history: createWebHashHistory(),
+  routes: [{ path: '/:resto(.*)*', component: { render: () => null } }],
+}))
 app.use(createI18n({ legacy: false, locale: 'es', fallbackLocale: 'es', messages }))
 app.use(Quasar, {
   plugins: { Notify, Dialog, Loading },

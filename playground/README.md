@@ -69,6 +69,19 @@ Los chips del panel cambian entre:
 | `slow` | respuesta de 2,5 s — para ver los loaders |
 | `huge` | 10.000 filas |
 
+## Enfocar un solo componente
+
+Al elegir un componente en la pestaña **Por componente**, la galería muestra
+**solo las secciones que lo contienen** — se trabaja sobre lo que se está
+editando, sin scrollear entre 17 secciones. "Ver todos" (o volver a **Global**)
+restaura la vista completa.
+
+Cada sección declara qué componentes cubre:
+
+```vue
+<Seccion titulo="Badges" :cubre="['XBadge']"> … </Seccion>
+```
+
 ## Acoplamientos del paquete que este playground expone
 
 Cosas que un consumidor **debe** proveer y que hoy no están documentadas fuera de aquí:
@@ -82,3 +95,17 @@ Cosas que un consumidor **debe** proveer y que hoy no están documentadas fuera 
 - **`src/css/quasar.variables.scss`** — su sola presencia activa la inyección de
   `quasar/src/css/variables.sass`; sin él no existe `$primary` ni ninguna variable
   de Quasar.
+- **`vue-router`** — `XReportView` hace `useRouter()`. No estaba declarado en
+  `peerDependencies`: se agregó como opcional en v2.9.2.
+- **`q-layout`** — `XReportView` usa `<q-page>`, que exige estar dentro de un
+  layout de Quasar. Por eso la sección lo envuelve.
+
+## Componentes sin variables propias
+
+14 de los 32 del selector no exponen variables `--x-*`: su aspecto sale de los
+tokens globales y de los componentes que usan por dentro. Se listan igual, con el
+aviso correspondiente, para que no parezca que faltan.
+
+`XTableServer` **sí** las tiene desde v2.9.2: antes leía las variables Sass
+`$table-*` directamente, así que era el único componente de la librería
+imposible de tematizar en runtime.

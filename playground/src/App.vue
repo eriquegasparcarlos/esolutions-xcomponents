@@ -2,18 +2,25 @@
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useTheme, TOKENS } from './composables/useTheme.js'
+import { useFoco } from './composables/useFoco.js'
 import { scenario } from './mock/api.js'
 import PanelComponente from './components/PanelComponente.vue'
 import GalleryForms from './sections/GalleryForms.vue'
 import GalleryFeedback from './sections/GalleryFeedback.vue'
 import GalleryOverlays from './sections/GalleryOverlays.vue'
 import GalleryMisc from './sections/GalleryMisc.vue'
+import GalleryDocs from './sections/GalleryDocs.vue'
 import GalleryData from './sections/GalleryData.vue'
 
 const $q = useQuasar()
 const { global, setVar, getVar, reset, scss, totalCambios } = useTheme()
+const { activo: foco, limpiar: verTodo } = useFoco()
 
 const nivel = ref('global') // global | componente
+function setNivel (n) {
+  nivel.value = n
+  if (n === 'global') verTodo() // al volver a Global se ve la galeria entera
+}
 const grupos = computed(() => [...new Set(TOKENS.map((t) => t.group))])
 const porGrupo = (g) => TOKENS.filter((t) => t.group === g)
 
@@ -51,8 +58,8 @@ async function copiar () {
       <div class="pg-sub">Galeria + generador de temas</div>
 
       <div class="pg-tabs">
-        <button class="pg-tab" :class="{ on: nivel === 'global' }" @click="nivel = 'global'">Global</button>
-        <button class="pg-tab" :class="{ on: nivel === 'componente' }" @click="nivel = 'componente'">Por componente</button>
+        <button class="pg-tab" :class="{ on: nivel === 'global' }" @click="setNivel('global')">Global</button>
+        <button class="pg-tab" :class="{ on: nivel === 'componente' }" @click="setNivel('componente')">Por componente</button>
       </div>
 
       <!-- Nivel 1: tokens raiz -->
@@ -98,12 +105,18 @@ async function copiar () {
 
     <!-- ============ Galeria ============ -->
     <main class="pg-main">
-      <h2>Galeria de componentes</h2>
-      <p class="lead">
-        Todo reacciona a los controles del panel, en runtime y sin recompilar.
-        <strong>Global</strong> cambia los tokens que comparten todos;
-        <strong>Por componente</strong> ajusta uno solo, variante por variante.
-      </p>
+      <div class="pg-head">
+        <div>
+          <h2>{{ foco || 'Galeria de componentes' }}</h2>
+          <p class="lead" v-if="!foco">
+            Todo reacciona a los controles del panel, en runtime y sin recompilar.
+            <strong>Global</strong> cambia los tokens que comparten todos;
+            <strong>Por componente</strong> ajusta uno solo, variante por variante.
+          </p>
+          <p class="lead" v-else>Mostrando solo este componente.</p>
+        </div>
+        <button v-if="foco" class="pg-btn pg-btn--inline" @click="verTodo">Ver todos</button>
+      </div>
 
       <section v-if="verScss" class="pg-section">
         <h3>SCSS generado <code>para el app.scss del consumidor</code></h3>
@@ -114,6 +127,7 @@ async function copiar () {
       <GalleryFeedback />
       <GalleryOverlays />
       <GalleryMisc />
+      <GalleryDocs />
       <GalleryData :key="recargaTabla" />
     </main>
   </div>

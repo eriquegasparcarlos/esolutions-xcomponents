@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import Seccion from '../components/Seccion.vue'
 import XInput from '@x/XInput/XInput.vue'
 import XSelect from '@x/XSelect/XSelect.vue'
 import XToggle from '@x/XToggle/XToggle.vue'
@@ -35,8 +36,8 @@ const moneda = ref('PEN')
 </script>
 
 <template>
-  <section class="pg-section">
-    <h3>Formularios <code>--x-radius · --x-brand</code></h3>
+  <Seccion titulo="Formularios" nota="--x-radius · --x-brand"
+           :cubre="['XInput','XSelect','XInputNumeric','XDatepicker','XInputColor','XToggle','XCheckbox']">
     <div class="pg-demo">
       <XInput v-model="texto" label="Razon social" />
       <XSelect v-model="seleccion" label="Estado" :options="opciones" />
@@ -50,10 +51,9 @@ const moneda = ref('PEN')
       <XToggle v-model="activo" label="Controlar inventario" />
       <XCheckbox v-model="marcado" label="Acepto los terminos" />
     </div>
-  </section>
+  </Seccion>
 
-  <section class="pg-section">
-    <h3>Botones <code>--x-radius · --x-brand · --x-duration</code></h3>
+  <Seccion titulo="Botones" nota="--x-radius · --x-brand · --x-duration" :cubre="['XButton']">
     <div class="pg-demo">
       <XButton label="Primario" variant="primary" />
       <XButton label="Secundario" variant="secondary" />
@@ -63,5 +63,5 @@ const moneda = ref('PEN')
       <XButton label="Info" variant="info" />
       <XButton label="Con icono" variant="primary" icon="fa-light fa-floppy-disk" />
     </div>
-  </section>
+  </Seccion>
 </template>

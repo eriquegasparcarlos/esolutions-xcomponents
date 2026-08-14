@@ -2,13 +2,18 @@
 // Nivel 2 del generador: edita las variables de UN componente y de cada una de
 // sus variantes por separado. El catalogo se genera solo (pnpm catalog), asi
 // que un componente o variable nueva aparece aca sin tocar este archivo.
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { CATALOGO, COMPONENTES, varsDe } from '../composables/useTheme.js'
+import { useFoco } from '../composables/useFoco.js'
 
 const props = defineProps({ getVar: Function, setVar: Function })
+const { enfocar } = useFoco()
 
 const comp = ref(COMPONENTES[0])
 const selector = ref(CATALOGO[COMPONENTES[0]].selector)
+
+// Al entrar a esta pestaña la galeria se reduce al componente elegido.
+onMounted(() => enfocar(comp.value))
 
 const selectores = computed(() => {
   const c = CATALOGO[comp.value]
@@ -18,6 +23,7 @@ const selectores = computed(() => {
 function cambiarComp (n) {
   comp.value = n
   selector.value = CATALOGO[n].selector
+  enfocar(n) // la galeria muestra solo este componente
 }
 
 const vars = computed(() => varsDe(comp.value, selector.value))
@@ -69,7 +75,9 @@ const derivadas = computed(() =>
     </div>
 
     <p v-if="!vars.length" class="pg-nota">
-      Este selector no tiene variables editables propias.
+      Este componente no expone variables <code>--x-*</code> propias: su aspecto
+      sale de los <strong>tokens globales</strong> y de los componentes que usa
+      por dentro. Ajustalo desde la pestaña <strong>Global</strong>.
     </p>
   </div>
 

@@ -1,6 +1,6 @@
 {
   "name": "@esolutions/x-components",
-  "version": "2.9.0",
+  "version": "2.9.2",
   "description": "Componentes compartidos ESolutions - Vue 3 + Quasar v2",
   "main": "index.js",
   "exports": {
@@ -20,7 +20,8 @@
     "@embedpdf/vue-pdf-viewer": "^2.0.0",
     "pdfjs-dist": "^4.0.0 || ^5.0.0",
     "@vue-flow/core": "^1.0.0",
-    "@dagrejs/dagre": "^1.0.0"
+    "@dagrejs/dagre": "^1.0.0",
+    "vue-router": "^4.0.0"
   },
   "peerDependenciesMeta": {
     "vue3-apexcharts": {
@@ -36,6 +37,9 @@
       "optional": true
     },
     "@dagrejs/dagre": {
+      "optional": true
+    },
+    "vue-router": {
       "optional": true
     }
   }

@@ -31,9 +31,21 @@ export default defineConfig({
       vue: r('./node_modules/vue'),
       pinia: r('./node_modules/pinia'),
       'vue-i18n': r('./node_modules/vue-i18n'),
+      'vue-router': r('./node_modules/vue-router'),
       'vue-draggable-plus': r('./node_modules/vue-draggable-plus'),
       '@esolutions/js-utils': r('./node_modules/@esolutions/js-utils'),
+      // Peers OPCIONALES: sin alias, pnpm las resuelve desde el paquete padre
+      // como un stub vacio ("__vite-optional-peer-dep") y el build falla con
+      // "X is not exported by ...".
+      '@embedpdf/vue-pdf-viewer': r('./node_modules/@embedpdf/vue-pdf-viewer'),
+      'pdfjs-dist': r('./node_modules/pdfjs-dist'),
     },
+  },
+  optimizeDeps: {
+    // En DEV, Vite pre-resuelve el import del paquete padre y le gana al alias,
+    // devolviendo el stub de peer opcional de pnpm ("does not provide an export
+    // named PDFViewer"). Excluirlas fuerza a que pasen por resolve.alias.
+    exclude: ['@embedpdf/vue-pdf-viewer', 'pdfjs-dist'],
   },
   css: {
     preprocessorOptions: {

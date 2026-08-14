@@ -91,8 +91,17 @@ body {
 
 // ---- Galeria ----
 .pg-main { flex: 1; padding: 26px 30px; min-width: 0; }
-.pg-main > h2 { font-size: 19px; margin: 0 0 3px; color: #0f172a; }
-.pg-main > p.lead { margin: 0 0 22px; color: #64748b; font-size: 13px; }
+.pg-head {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  gap: 16px; margin-bottom: 22px;
+  h2 { font-size: 19px; margin: 0 0 3px; color: #0f172a; }
+  p.lead { margin: 0; color: #64748b; font-size: 13px; }
+}
+.pg-btn--inline {
+  width: auto !important; flex: 0 0 auto; white-space: nowrap;
+  background: #fff; color: #0f172a; border-color: #cbd5e1;
+  &:hover { border-color: #0f172a; color: #0f172a; }
+}
 
 .pg-section {
   background: #fff; border: 1px solid #e2e8f0; border-radius: 10px;
