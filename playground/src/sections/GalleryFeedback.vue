@@ -39,14 +39,18 @@ const abierto = ref(false)
     <div class="pg-demo">
       <XButton label="Abrir dialogo" variant="primary" @click="abierto = true" />
 
+      <!-- El slot #trigger expone `open`: hay que invocarlo en el @click del
+           disparador, si no el menu nunca se abre. Y el item destructivo usa
+           la prop `variant="danger"`, no una clase suelta. -->
       <XDropdownMenu>
-        <template #trigger>
-          <XButton label="Menu desplegable" variant="secondary" icon-right="fa-light fa-chevron-down" />
+        <template #trigger="{ open }">
+          <XButton label="Menu desplegable" variant="secondary"
+                   icon-right="fa-light fa-chevron-down" @click="open" />
         </template>
         <XDropdownItem label="Ver detalle" icon="fa-light fa-eye" />
         <XDropdownItem label="Descargar XML" icon="fa-light fa-file-code" />
         <XDropdownDivider />
-        <XDropdownItem label="Anular" icon="fa-light fa-trash" class="x-dropdown-item--danger" />
+        <XDropdownItem label="Anular" icon="fa-light fa-trash" variant="danger" />
       </XDropdownMenu>
     </div>
 

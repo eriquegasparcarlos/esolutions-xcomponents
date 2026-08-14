@@ -121,6 +121,21 @@ las variables del consumidor siguen mandando cuando existen.
 > existencia de ese archivo es lo que activa el plugin de Quasar que inyecta
 > `quasar/src/css/variables.sass`; sin él, ninguna variable `$primary` existe.
 
+## Gotchas de API (leer el README del componente antes de usarlo)
+
+Cada componente tiene su `README.md` con props, eventos, slots y ejemplos.
+Estos son los tropiezos más frecuentes:
+
+| Componente | Trampa | Correcto |
+|---|---|---|
+| `XSelect` | Pasarle un array de **strings**: el desplegable abre con las filas **en blanco**, sin ningún error en consola. Internamente mapea `opt[optionValue]` / `opt[optionLabel]`, que sobre un string dan `undefined`. | Objetos. Por defecto lee `id` como valor y `name` como label; para otra forma, `option-value` / `option-label`. |
+| `XDropdownMenu` | Poner el disparador en `#trigger` sin más: el menú **nunca abre**. | El slot expone `open`: `<template #trigger="{ open }">` y `@click="open"` en el disparador. |
+| `XDropdownItem` | Marcar el ítem destructivo con una clase. | Prop `variant="danger"`. |
+| `XBanner` | `message` + `type="info"`. | `label` + `type="information"` (válidos: `success`, `error`, `warning`, `information`). |
+| `XTableServer` | Esperar que funcione suelto. | Requiere `$api` global, el alias `stores/data.js` del consumidor y un backend que cumpla el contrato (ver `playground/src/mock/api.js`). |
+
+> El `playground/` monta todo junto y es la referencia viva de uso correcto.
+
 ## Actualizar de versión en un consumidor
 
 1. Cambiar el tag en `package.json` (`#v2.4.53` → `#v2.4.54`).

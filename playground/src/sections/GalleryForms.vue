@@ -10,13 +10,28 @@ import XInputNumeric from '@x/XInputNumeric/XInputNumeric.vue'
 import XDatepicker from '@x/XDatepicker/XDatepicker.vue'
 
 const texto = ref('Comercial Andina SAC')
-const seleccion = ref('Aceptado')
 const activo = ref(true)
 const marcado = ref(true)
 const color = ref('#0e8f5e')
 const numero = ref(1250.5)
 const fecha = ref('2026-08-14')
-const opciones = ['Aceptado', 'Pendiente', 'Rechazado']
+
+// XSelect espera OBJETOS: por defecto lee `id` como valor y `name` como label
+// (props option-value / option-label). Pasarle un array de strings deja el
+// desplegable con las filas en blanco.
+const opciones = [
+  { id: 'aceptado', name: 'Aceptado' },
+  { id: 'pendiente', name: 'Pendiente' },
+  { id: 'rechazado', name: 'Rechazado' },
+]
+const seleccion = ref('aceptado')
+
+// Con option-value/option-label se puede usar cualquier forma de objeto.
+const monedas = [
+  { codigo: 'PEN', nombre: 'Soles (PEN)' },
+  { codigo: 'USD', nombre: 'Dolares (USD)' },
+]
+const moneda = ref('PEN')
 </script>
 
 <template>
@@ -25,7 +40,9 @@ const opciones = ['Aceptado', 'Pendiente', 'Rechazado']
     <div class="pg-demo">
       <XInput v-model="texto" label="Razon social" />
       <XSelect v-model="seleccion" label="Estado" :options="opciones" />
-      <XInputNumeric v-model="numero" label="Total" />
+      <XSelect v-model="moneda" label="Moneda" :options="monedas"
+               option-value="codigo" option-label="nombre" filter-local />
+      <XInputNumeric v-model="numero" label="Total" prefix="S/" />
       <XDatepicker v-model="fecha" label="Fecha de emision" />
       <XInputColor v-model="color" label="Color" />
     </div>
