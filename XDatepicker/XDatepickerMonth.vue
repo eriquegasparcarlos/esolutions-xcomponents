@@ -118,7 +118,7 @@ function clear() {
       @clear="clear"
     >
       <template #append>
-        <q-icon name="event" class="cursor-pointer">
+        <q-icon name="fa-light fa-calendar" class="cursor-pointer">
           <q-popup-proxy ref="popupRef" cover transition-show="scale" transition-hide="scale">
             <q-date
               :model-value="qDateValue"

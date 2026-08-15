@@ -26,7 +26,7 @@ function onRequest (req) {
   >
     <template #no-data>
       <div class="full-width text-center q-pa-xl text-grey-6">
-        <q-icon name="inbox" size="2.5em" color="grey-4" />
+        <q-icon name="fa-light fa-inbox" size="2.5em" color="grey-4" />
         <div class="q-mt-sm">{{ ctx.config.noDataLabel }}</div>
       </div>
     </template>

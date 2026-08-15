@@ -27,8 +27,25 @@ import XInputNumeric from '@esolutions/x-components/XInputNumeric/XInputNumeric.
 | `min` | `Number \| String` | `null` | Mínimo. Con `controls`, deshabilita el botón − en el límite y corrige en blur |
 | `max` | `Number \| String` | `null` | Máximo. Con `controls`, deshabilita el botón + en el límite y corrige en blur |
 | `step` | `Number \| String` | `1` | Incremento de los botones −/+ |
+| `help` | `String` | `''` | Texto de ayuda: ícono "?" con tooltip (v2.12.0) |
+| `helpPosition` | `String` | `'append'` | Dónde va el "?": `append` (dentro del campo) o `label` (v2.12.0) |
 
 Ademas, soporta los atributos de `QInput` como `label`, `placeholder`, `disable`, `readonly`, etc. (el `type` está fijado a `number`).
+
+### Ayuda contextual (v2.12.0)
+
+Los campos numéricos son justo donde más falta hace una aclaración —el precio,
+el factor de una presentación, una cantidad mínima—, así que `help` funciona
+igual que en [XInput](../XInput/README.md):
+
+```vue
+<XInputNumeric v-model="form.precio" label="Precio" prefix="S/"
+               help="El precio ya incluye IGV." />
+<XInputNumeric v-model="pr.factor" label="Factor" controls min="1"
+               help="Cuántas unidades de stock descuenta cada paquete vendido." />
+```
+
+Con `controls`, el "?" se coloca después del botón +.
 
 ## Eventos
 

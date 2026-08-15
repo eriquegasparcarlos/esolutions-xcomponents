@@ -13,11 +13,25 @@ const props = defineProps({
   autofocus: { type: Boolean, default: false },
   /** Solo muestra asterisco/aria, no activa validación nativa */
   isRequired: { type: Boolean, default: false },
-  /** Texto de ayuda: muestra un ícono "?" con tooltip junto al label. */
+  /** Texto de ayuda: muestra un ícono "?" con tooltip informativo. */
   help: { type: String, default: '' },
+  /**
+   * Dónde va ese "?": 'append' (dentro del campo, a la derecha) o 'label'.
+   * Por defecto en el append, que es donde el usuario ya busca los adornos del
+   * campo; junto al label compite con el texto y, con `isClassic`, se desplaza
+   * con la animación del label flotante.
+   */
+  helpPosition: {
+    type: String,
+    default: 'append',
+    validator: (v) => ['append', 'label'].includes(v),
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'input', 'change'])
+
+const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label')
+const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append')
 
 const attrs = useAttrs()
 const fallbackId = `app-q-input-${Math.random().toString(36).substring(2, 9)}`
@@ -58,7 +72,7 @@ const filteredAttrs = computed(() => {
     <label v-if="label" :for="elementId" class="q-input__label q-mb-xs" style="line-height: 22px;"
            :aria-required="props.isRequired ? 'true' : 'false'">
       {{ label }} <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
-      <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
+      <XHelpTip v-if="helpInLabel" :text="help" class="q-ml-xs" />
     </label>
 
     <q-input
@@ -84,21 +98,22 @@ const filteredAttrs = computed(() => {
       @change="e => emit('change', e)"
     >
 
-      <template v-if="isPwdType || $slots.append" #append>
+      <template v-if="isPwdType || helpInAppend || $slots.append" #append>
         <q-icon
           v-if="isPwdType"
-          :name="showPwd ? 'visibility' : 'visibility_off'"
+          :name="showPwd ? 'fa-light fa-eye' : 'fa-light fa-eye-slash'"
           class="cursor-pointer"
           @click="togglePwd"
         />
         <slot name="append" />
+        <XHelpTip v-if="helpInAppend" :text="help" />
       </template>
 
       <!-- Label slot (classic) -->
       <template v-if="elementLabel" #label>
         <span>{{ elementLabel }}</span>
         <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
-        <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
+        <XHelpTip v-if="helpInLabel" :text="help" class="q-ml-xs" />
       </template>
 
       <!-- Proxy de slots de QField/QInput -->

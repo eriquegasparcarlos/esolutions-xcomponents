@@ -1444,14 +1444,14 @@ defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clear
           <x-button flat dense label="Solo visibles" @click="exportOnlyVisible" />
         </div>
         <div class="text-caption text-grey-6 q-mb-xs">
-          Arrastra <q-icon name="drag_indicator" size="14px" /> para ordenar cómo salen en el archivo.
+          Arrastra <q-icon name="fa-light fa-grip-dots-vertical" size="14px" /> para ordenar cómo salen en el archivo.
         </div>
         <q-separator class="q-mb-sm" />
         <div style="max-height: 320px; overflow-y: auto;">
           <x-dnd v-model="exportColumnItems" item-key="value" handle=".x-export-drag">
             <template #item="{ element }">
               <div class="row items-center no-wrap q-py-xs">
-                <q-icon name="drag_indicator" size="18px"
+                <q-icon name="fa-light fa-grip-dots-vertical" size="18px"
                         class="x-export-drag text-grey-5 q-mr-xs" style="cursor: move;" />
                 <q-checkbox v-model="element.checked" dense />
                 <span class="q-ml-sm">{{ element.label }}</span>

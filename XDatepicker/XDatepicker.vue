@@ -105,7 +105,7 @@ function clear() {
       @clear="clear"
     >
       <template #append>
-        <q-icon name="event" :class="props.readonly ? 'cursor-not-allowed' : 'cursor-pointer'">
+        <q-icon name="fa-light fa-calendar" :class="props.readonly ? 'cursor-not-allowed' : 'cursor-pointer'">
           <q-popup-proxy
             v-if="!props.readonly"
             ref="popupRef"

@@ -115,7 +115,7 @@ function clear() {
       <template #prepend>
         <!-- Si está locked: ícono desactivado y sin popup -->
         <q-icon
-          name="event"
+          name="fa-light fa-calendar"
           :class="isLocked ? 'text-grey-5' : 'cursor-pointer'"
           :style="isLocked ? 'cursor: not-allowed;' : ''"
         >
@@ -142,7 +142,7 @@ function clear() {
       <!-- HORA -->
       <template #append>
         <q-icon
-          name="access_time"
+          name="fa-light fa-clock"
           :class="isLocked ? 'text-grey-5' : 'cursor-pointer'"
           :style="isLocked ? 'cursor: not-allowed;' : ''"
         >

@@ -207,8 +207,31 @@ Cuando `is-required="true"`, se muestra un asterisco rojo junto al label. Esto e
 
 ## Prop `help` (v2.4.40)
 
-Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip](../XHelpTip/README.md)).
+Muestra un ícono **"?"** con tooltip informativo (usa [XHelpTip](../XHelpTip/README.md)).
 
 ```vue
 <XInput label="Incluye IGV" help="El precio ya trae el IGV incluido." />
 ```
+
+### `help-position` (v2.12.0)
+
+Desde v2.12.0 el "?" va **dentro del campo, a la derecha** (`append`): es donde
+el usuario ya busca los adornos del campo (ojo de password, botón limpiar,
+unidades). Junto al label competía con el texto y, con `is-classic`, se
+desplazaba con la animación del label flotante.
+
+| Valor | Dónde aparece |
+|---|---|
+| `append` *(default)* | dentro del campo, a la derecha |
+| `label` | junto al texto del label (comportamiento anterior) |
+
+```vue
+<!-- dentro del campo (default) -->
+<XInput label="Código (SKU)" help="Solo letras y números, máx. 30." />
+
+<!-- comportamiento anterior -->
+<XInput label="Código (SKU)" help="…" help-position="label" />
+```
+
+> **Cambia el aspecto, no la API**: quien dependa de la posición anterior solo
+> tiene que pasar `help-position="label"`.

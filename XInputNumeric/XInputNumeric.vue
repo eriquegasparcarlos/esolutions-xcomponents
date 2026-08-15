@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, useAttrs } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
+import XHelpTip from '../XHelpTip/XHelpTip.vue'
 
 defineOptions({ name: 'XInputNumeric', inheritAttrs: false })
 
@@ -24,8 +25,19 @@ const props = defineProps({
   min: { type: [Number, String], default: null },
   max: { type: [Number, String], default: null },
   step: { type: [Number, String], default: 1 },
+  /** Texto de ayuda: muestra un ícono "?" con tooltip informativo. */
+  help: { type: String, default: '' },
+  /** Dónde va el "?": 'append' (dentro del campo) o 'label'. Ver XInput. */
+  helpPosition: {
+    type: String,
+    default: 'append',
+    validator: (v) => ['append', 'label'].includes(v),
+  },
 })
 const emit = defineEmits(['update:modelValue', 'input', 'change'])
+
+const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label')
+const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append')
 
 const attrs = useAttrs()
 const fallbackId = `app-q-input-${Math.random().toString(36).slice(2, 11)}`
@@ -130,6 +142,7 @@ defineExpose({ focus, select, focusAndSelect })
       <template v-if="elementLabel" #label>
         <span>{{ elementLabel }}</span>
         <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
+        <XHelpTip v-if="helpInLabel" :text="help" class="q-ml-xs" />
       </template>
 
       <!-- El slot del padre se ANTEPONE a lo propio (controls/prefix), para que
@@ -148,7 +161,7 @@ defineExpose({ focus, select, focusAndSelect })
         <span v-if="prefixValue" class="x-input-numeric__affix">{{ prefixValue }}</span>
       </template>
 
-      <template v-if="$slots.append || suffixValue || props.controls" #append>
+      <template v-if="$slots.append || suffixValue || props.controls || helpInAppend" #append>
         <span v-if="suffixValue" class="x-input-numeric__affix">{{ suffixValue }}</span>
         <q-btn
           v-if="props.controls"
@@ -159,6 +172,7 @@ defineExpose({ focus, select, focusAndSelect })
           @click="changeBy(1)"
         />
         <slot name="append" />
+        <XHelpTip v-if="helpInAppend" :text="help" />
       </template>
     </q-input>
   </div>

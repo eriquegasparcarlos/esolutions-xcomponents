@@ -96,7 +96,7 @@ const textColor = computed(() => {
       </template>
 
       <template #append>
-        <q-icon name="colorize" class="cursor-pointer">
+        <q-icon name="fa-light fa-eye-dropper" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-color v-model="modelValueComputed" v-bind="colorAttrs" />
           </q-popup-proxy>

@@ -79,9 +79,18 @@ const props = defineProps({
   closeOnBlur: { type: Boolean, default: true },
   truncateLabel: { type: Boolean, default: false },
   truncateWidth: { type: [String, Number], default: null },
-  /** Texto de ayuda: muestra un ícono "?" con tooltip junto al label. */
+  /** Texto de ayuda: muestra un ícono "?" con tooltip informativo. */
   help: { type: String, default: '' },
+  /** Dónde va el "?": 'append' (dentro del campo) o 'label'. Ver XInput. */
+  helpPosition: {
+    type: String,
+    default: 'append',
+    validator: (v) => ['append', 'label'].includes(v),
+  },
 });
+
+const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label');
+const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append');
 
 const fallbackId = `app-select-${Math.random().toString(36).substring(2, 9)}`;
 const elementId = computed(() => (attrs.id ? `app-select-${attrs.id}` : fallbackId));
@@ -321,7 +330,7 @@ function onSelect(val) {
        @keyup.enter.stop>
     <label v-if="label" :for="elementId" class="x-select-label q-mb-xs" style="line-height: 22px">
       {{ label }}
-      <XHelpTip v-if="help" :text="help" class="q-ml-xs" />
+      <XHelpTip v-if="helpInLabel" :text="help" class="q-ml-xs" />
     </label>
 
     <q-select ref="selectRef"
@@ -378,6 +387,10 @@ function onSelect(val) {
           color="primary"
           @click.stop="emit('click-new')"
         />
+      </template>
+
+      <template v-if="helpInAppend" #append>
+        <XHelpTip :text="help" />
       </template>
     </q-select>
   </div>

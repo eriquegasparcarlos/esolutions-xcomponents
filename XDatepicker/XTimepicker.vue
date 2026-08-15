@@ -51,7 +51,7 @@ const externalLabel = computed(() => {
       v-bind="{ ...attrs, class: null, label: elementLabel }"
     >
       <template #append>
-        <q-icon name="access_time" class="cursor-pointer">
+        <q-icon name="fa-light fa-clock" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-time
               :model-value="modelValue"

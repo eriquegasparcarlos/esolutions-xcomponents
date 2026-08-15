@@ -225,11 +225,14 @@ La opcion "Agregar nuevo" aparece al final de la lista y emite el evento `click-
 
 ## Prop `help` (v2.4.40)
 
-Muestra un ícono **"?"** con tooltip informativo junto al label (usa [XHelpTip](../XHelpTip/README.md)).
+Muestra un ícono **"?"** con tooltip informativo (usa [XHelpTip](../XHelpTip/README.md)).
 
 ```vue
 <XSelect label="Incluye IGV" help="El precio ya trae el IGV incluido." />
 ```
+
+Desde **v2.12.0** el "?" va dentro del campo (`append`); con
+`help-position="label"` vuelve junto al label — ver [XInput](../XInput/README.md).
 
 ## Evento `select` robusto (v2.5.4)
 

@@ -349,7 +349,7 @@ function onFieldBlur () {
 
       <template #append>
         <q-icon
-          name="arrow_drop_down"
+          name="fa-light fa-chevron-down"
           class="cursor-pointer"
           @click.stop="toggleMenu"
         />
