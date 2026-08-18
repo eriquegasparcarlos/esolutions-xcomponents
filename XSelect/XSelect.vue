@@ -367,7 +367,14 @@ function onSelect(val) {
         <slot :name="name" v-bind="slotProps || {}"/>
       </template>
 
-      <template #option="scope">
+      <!--
+        Render por defecto de la opción. Va condicionado a que el padre NO haya pasado
+        el suyo: este template se declara DESPUÉS del reenvío genérico de slots, y en
+        Vue 3 la última declaración del mismo nombre gana — así que sin el v-if pisaba
+        el #option del padre en silencio. Como acá se pinta `opt.label`, un consumidor
+        con otra forma de opción (por ejemplo `name`) veía la lista en blanco.
+      -->
+      <template v-if="!$slots.option" #option="scope">
         <q-item v-bind="scope.itemProps" :class="scope.opt.class || ''">
           <q-item-section avatar v-if="scope.opt.icon">
             <q-icon :name="scope.opt.icon" :color="scope.opt.class?.replace('text-', '') || 'primary'"/>
