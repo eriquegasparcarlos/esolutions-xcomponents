@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 /**
  * XSettingToggle — fila de ajuste: [ícono] título + descripción a la izquierda,
  * switch a la derecha. Renderiza su propia descripción con color legible (el
@@ -45,7 +46,7 @@ const currentIcon = computed(() => {
     <div class="row items-center no-wrap">
       <q-icon
         v-if="currentIcon"
-        :name="currentIcon"
+        :name="ic(currentIcon)"
         size="22px"
         class="x-setting-toggle__icon q-mr-sm"
         :class="{ 'x-setting-toggle__icon--on': modelValue }"
@@ -62,7 +63,7 @@ const currentIcon = computed(() => {
       class="x-setting-toggle__feedback text-caption q-mt-xs"
       :style="currentIcon ? 'padding-left: 30px' : ''"
     >
-      <q-icon name="fa-solid fa-circle-info" size="12px" class="q-mr-xs" />{{ feedbackOff }}
+      <q-icon :name="ic('info')" size="12px" class="q-mr-xs" />{{ feedbackOff }}
     </div>
   </div>
 </template>

@@ -1,5 +1,6 @@
 <script setup>
 import { computed, useAttrs } from 'vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XButton',
@@ -133,8 +134,8 @@ const finalTextColor = computed(() => {
 })
 
 // Iconos: solo usamos props / attrs y se los pasamos directo a QBtn
-const finalIcon = computed(() => attrs.icon ?? props.icon ?? null)
-const finalIconRight = computed(() => attrs['icon-right'] ?? props.iconRight ?? null)
+const finalIcon = computed(() => ic(attrs.icon ?? props.icon) || null)
+const finalIconRight = computed(() => ic(attrs['icon-right'] ?? props.iconRight) || null)
 
 // Tooltip
 const hasTooltip = computed(() => !!props.tooltipText)

@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 /**
  * Bloque de tabla del compound XTable. Solo renderiza la grilla (q-table server-side)
  * a partir del estado del provider. La paginación/orden se delega al backend vía @request.
@@ -39,7 +40,7 @@ function onRequest (req) {
 
     <template #no-data>
       <div class="full-width text-center q-pa-xl text-grey-6">
-        <q-icon name="fa-light fa-inbox" size="2.5em" color="grey-4" />
+        <q-icon :name="ic('empty')" size="2.5em" color="grey-4" />
         <div class="q-mt-sm">{{ ctx.config.noDataLabel }}</div>
       </div>
     </template>

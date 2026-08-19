@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { ic } from '../icons/index.js'
 const props = defineProps({
   modelValue: { type: String, default: null },
   label: { type: String, default: 'Hora' },
@@ -11,7 +12,7 @@ const value = computed({ get: () => props.modelValue, set: (v) => emit('update:m
 <template>
   <q-input v-model="value" :label="label" outlined dense mask="time" :error="!!error" :error-message="error">
     <template v-slot:append>
-      <q-icon name="fa-light fa-clock" class="cursor-pointer">
+      <q-icon :name="ic('clock')" class="cursor-pointer">
         <q-popup-proxy transition-show="scale" transition-hide="scale">
           <q-time v-model="value" format24h />
         </q-popup-proxy>

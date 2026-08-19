@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { copyToClipboard, useQuasar } from 'quasar'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XTokenDisplay',
@@ -100,7 +101,7 @@ const hasHeader = computed(() => props.label || props.copyButton || props.showTo
       <div class="x-token-display__actions">
         <q-icon
           v-if="showToggle"
-          :name="visible ? 'fa-light fa-eye-slash' : 'fa-light fa-eye'"
+          :name="visible ? ic('hide') : ic('view')"
           size="16px"
           class="x-token-display__btn cursor-pointer"
           @click="toggleVisibility"
@@ -109,7 +110,7 @@ const hasHeader = computed(() => props.label || props.copyButton || props.showTo
         </q-icon>
         <q-icon
           v-if="copyButton"
-          name="fa-light fa-copy"
+          :name="ic('copy')"
           size="16px"
           class="x-token-display__btn cursor-pointer"
           @click="copy"

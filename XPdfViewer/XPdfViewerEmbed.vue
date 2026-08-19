@@ -3,6 +3,7 @@ import { ref, watch, onBeforeUnmount } from 'vue'
 import { api } from 'src/services/api'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 import XDialog from '../XDialog/XDialog.vue'
+import { ic } from '../icons/index.js'
 
 const props = defineProps({
   src: { type: String, default: '' },
@@ -113,7 +114,7 @@ defineExpose({ openDialog })
       />
 
       <div v-else-if="hasError" class="x-pdf-viewer__empty">
-        <q-icon name="fal fa-file-pdf" size="48px" color="grey-5" />
+        <q-icon :name="ic('file-pdf')" size="48px" color="grey-5" />
         <div class="text-grey-6 q-mt-sm">{{ $t('components.pdfLoadError') }}</div>
       </div>
     </template>

@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useAttrs } from 'vue'
 import { resolveColor, lightenColor } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XBadge',
@@ -81,9 +82,9 @@ const inlineStyle = computed(() => {
   >
     <!-- Con icono: render manual para controlar posicion -->
     <template v-if="icon">
-      <q-icon v-if="iconPosition === 'left'" :name="icon" class="q-mr-xs" />
+      <q-icon v-if="iconPosition === 'left'" :name="ic(icon)" class="q-mr-xs" />
       <span>{{ label }}</span>
-      <q-icon v-if="iconPosition === 'right'" :name="icon" class="q-ml-xs" />
+      <q-icon v-if="iconPosition === 'right'" :name="ic(icon)" class="q-ml-xs" />
     </template>
     <!-- Sin icono: solo label -->
     <template v-else>

@@ -1,3 +1,4 @@
+import { ic } from '../icons/index.js'
 import { useQuasar } from 'quasar'
 
 /**
@@ -31,9 +32,9 @@ export function useNotify() {
   }
 
   return {
-    success: base('x-toast x-toast--success', 'fa-light fa-check',                3000),
-    error:   base('x-toast x-toast--error',   'fa-light fa-xmark',                5000),
-    warning: base('x-toast x-toast--warning', 'fa-light fa-triangle-exclamation', 4000),
-    info:    base('x-toast x-toast--info',    'fa-light fa-circle-info',          3000),
+    success: base('x-toast x-toast--success', ic('success'), 3000),
+    error:   base('x-toast x-toast--error',   ic('error'),   5000),
+    warning: base('x-toast x-toast--warning', ic('warning'), 4000),
+    info:    base('x-toast x-toast--info',    ic('info'),    3000),
   }
 }

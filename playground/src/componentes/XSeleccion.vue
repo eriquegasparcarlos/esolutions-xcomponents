@@ -27,9 +27,9 @@ const VISTAS = [
   { label: 'Tabla', value: 'tabla' },
 ]
 const VISTAS_ICONO = [
-  { icon: 'fa-light fa-list', value: 'lista' },
-  { icon: 'fa-light fa-grid-2', value: 'grid' },
-  { icon: 'fa-light fa-table', value: 'tabla' },
+  { icon: 'list', value: 'lista' },
+  { icon: 'grid', value: 'grid' },
+  { icon: 'table', value: 'tabla' },
 ]
 const PERIODOS = [
   { label: 'Hoy', value: 'hoy' },
@@ -129,7 +129,7 @@ const PERIODOS = [
       <div style="width:100%; max-width:520px">
         <XSettingToggle v-model="auto" label="Envio automatico a SUNAT"
                         description="Se envia apenas se emite el comprobante."
-                        icon-on="fa-solid fa-paper-plane" icon-off="fa-light fa-paper-plane"
+                        icon-on="send" icon-off="blocked"
                         feedback-off="Vas a tener que enviarlos a mano." boxed />
       </div>
     </Demo>

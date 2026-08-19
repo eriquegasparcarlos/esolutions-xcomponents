@@ -20,14 +20,14 @@ const ESTILOS = ['solid', 'outlined', 'pill', 'dot']
       </XCard>
     </Demo>
     <Demo code="icon" nota="icono junto al titulo" fila>
-      <XCard title="Con icono" subtitle="XCard" icon="fa-light fa-file-invoice" style="width:260px">
+      <XCard title="Con icono" subtitle="XCard" icon="file-invoice" style="width:260px">
         <div style="font-size:13px">Contenido libre.</div>
       </XCard>
     </Demo>
     <Demo code="#header-buttons" nota="acciones a la derecha del titulo" fila>
       <XCard title="Resumen" subtitle="Agosto" style="width:300px">
         <template #header-buttons>
-          <XButton icon="fa-light fa-ellipsis-vertical" flat round size="sm" />
+          <XButton icon="menu" flat round size="sm" />
         </template>
         <div style="font-size:13px">Con acciones en la cabecera.</div>
       </XCard>
@@ -97,11 +97,11 @@ const ESTILOS = ['solid', 'outlined', 'pill', 'dot']
   <Seccion titulo="XBadge · iconos y color" nota="icon · icon-position · is-lighten-color" :cubre="['XBadge']">
     <Demo code="icon · icon-position">
       <div class="pg-tile">
-        <XBadge label="Aceptado" type="success" icon="fa-solid fa-check" />
+        <XBadge label="Aceptado" type="success" icon="success" />
         <code>izquierda (default)</code>
       </div>
       <div class="pg-tile">
-        <XBadge label="Pendiente" type="warning" icon="fa-light fa-clock" icon-position="right" />
+        <XBadge label="Pendiente" type="warning" icon="clock" icon-position="right" />
         <code>icon-position=right</code>
       </div>
     </Demo>

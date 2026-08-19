@@ -5,6 +5,7 @@ import { api } from 'src/services/api'
 import XDialog from '../XDialog/XDialog.vue'
 import XInput from '../XInput/XInput.vue'
 import XButton from '../XButton/XButton.vue'
+import { ic } from '../icons/index.js'
 
 const props = defineProps({
   modelValue: { type: Boolean, default: false },
@@ -115,7 +116,7 @@ const closeDialog = () => {
         :loading="loadingSubmit"
         :disable="loadingSubmit"
         label="Enviar"
-        icon="fal fa-paper-plane"
+        :icon="ic('send')"
       />
     </template>
   </x-dialog>

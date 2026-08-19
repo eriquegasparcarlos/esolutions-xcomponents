@@ -1,6 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import XDnd from '../XDnd/XDnd.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XNested' })
 
@@ -31,9 +32,9 @@ const props = defineProps({
   showActionEdit: { type: Boolean, default: true },
   showActionDelete: { type: Boolean, default: true },
 
-  actionIconNew: { type: String, default: 'fal fa-plus' },
-  actionIconEdit: { type: String, default: 'fal fa-pencil' },
-  actionIconDelete: { type: String, default: 'fal fa-trash' }
+  actionIconNew: { type: String, default: 'add' },
+  actionIconEdit: { type: String, default: 'edit' },
+  actionIconDelete: { type: String, default: 'delete' }
 })
 
 const emit = defineEmits([
@@ -105,21 +106,21 @@ const onStart = (evt) => emit('dnd-start', evt)
                 <!-- fallback de acciones -->
                 <q-icon
                   v-if="showActionNew"
-                  :name="actionIconNew"
+                  :name="ic(actionIconNew)"
                   size="xs"
                   class="x-nested__action-icon cursor-pointer q-ml-sm"
                   @click="emit('click-new', element)"
                 />
                 <q-icon
                   v-if="showActionEdit"
-                  :name="actionIconEdit"
+                  :name="ic(actionIconEdit)"
                   size="xs"
                   class="x-nested__action-icon cursor-pointer q-ml-sm"
                   @click="emit('click-edit', element)"
                 />
                 <q-icon
                   v-if="showActionDelete"
-                  :name="actionIconDelete"
+                  :name="ic(actionIconDelete)"
                   size="xs"
                   class="x-nested__action-icon cursor-pointer q-ml-sm"
                   color="red"

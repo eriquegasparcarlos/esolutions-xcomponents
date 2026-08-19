@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'XChartFooter',
 })
@@ -31,7 +32,7 @@ defineProps({
           class="x-chart-footer-link text-primary text-weight-medium"
         >
           {{ linkLabel }}
-          <q-icon name="fal fa-chevron-right" size="12px" class="q-ml-xs" />
+          <q-icon :name="ic('next')" size="12px" class="q-ml-xs" />
         </router-link>
       </slot>
     </div>

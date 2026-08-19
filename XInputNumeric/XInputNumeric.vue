@@ -2,6 +2,7 @@
 import { computed, ref, useAttrs } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XInputNumeric', inheritAttrs: false })
 
@@ -160,7 +161,7 @@ defineExpose({ focus, select, focusAndSelect })
         <q-btn
           v-if="props.controls"
           dense flat round size="sm"
-          icon="fal fa-minus"
+          :icon="ic('decrease')"
           color="grey-7"
           :disable="!canDecrement"
           @click="changeBy(-1)"
@@ -173,7 +174,7 @@ defineExpose({ focus, select, focusAndSelect })
         <q-btn
           v-if="props.controls"
           dense flat round size="sm"
-          icon="fal fa-plus"
+          :icon="ic('increase')"
           color="primary"
           :disable="!canIncrement"
           @click="changeBy(1)"

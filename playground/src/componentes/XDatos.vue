@@ -83,7 +83,7 @@ const TAMANIOS = ['sm', 'md', 'lg', 'xl']
     </Demo>
     <Demo code="icon · size · color" fila>
       <span style="font-size:13px">Con otro icono
-        <XHelpTip text="Usa cualquier icono." icon="fa-light fa-lightbulb" size="18px" color="warning" />
+        <XHelpTip text="Usa cualquier icono." icon="tip" size="18px" color="warning" />
       </span>
     </Demo>
     <Demo code="slot por defecto" nota="permite contenido enriquecido, no solo texto" fila>
@@ -163,7 +163,7 @@ const TAMANIOS = ['sm', 'md', 'lg', 'xl']
       </XTableCard>
     </Demo>
     <Demo code="icon · padding">
-      <XTableCard title="Con icono" subtitle="y sin padding" icon="fa-light fa-table" padding="0" style="width:100%">
+      <XTableCard title="Con icono" subtitle="y sin padding" icon="table" padding="0" style="width:100%">
         <div style="font-size:13px; background:#f8fafc; padding:12px">Bloque al ras.</div>
       </XTableCard>
     </Demo>

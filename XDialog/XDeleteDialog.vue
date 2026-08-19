@@ -4,13 +4,14 @@ import { api } from 'src/services/api'
 import { Notify } from 'quasar'
 import XDialog from './XDialog.vue'
 import XButton from '../XButton/XButton.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XDeleteDialog' })
 
 const props = defineProps({
   message: { type: String, default: '¿Estás seguro de eliminar este registro?' },
   description: { type: String, default: '' },
-  icon: { type: String, default: 'fal fa-trash-can' },
+  icon: { type: String, default: 'delete' },
   confirmLabel: { type: String, default: 'Sí, eliminar' },
   cancelLabel: { type: String, default: 'No, cancelar' },
   successMessage: { type: String, default: 'Registro eliminado.' },
@@ -49,7 +50,7 @@ defineExpose({ open })
   <x-dialog v-model="visible" :width="width">
     <template #content>
       <div class="text-center q-py-md">
-        <q-icon :name="icon" size="48px" color="grey-6" />
+        <q-icon :name="ic(icon)" size="48px" color="grey-6" />
         <div class="text-subtitle1 q-mt-md">{{ message }}</div>
         <div v-if="description" class="text-caption text-grey-7 q-mt-xs">{{ description }}</div>
       </div>

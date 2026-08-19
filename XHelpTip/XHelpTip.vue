@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 /**
  * XHelpTip — ícono "?" de ayuda con tooltip informativo. Reemplaza descripciones
  * inline largas por un ícono discreto junto al label de un campo.
@@ -14,7 +15,7 @@ defineOptions({ name: 'XHelpTip' })
 
 defineProps({
   text: { type: String, default: '' },
-  icon: { type: String, default: 'fa-regular fa-circle-question' },
+  icon: { type: String, default: 'help' },
   size: { type: String, default: '15px' },
   maxWidth: { type: String, default: '260px' },
 })
@@ -22,7 +23,7 @@ defineProps({
 
 <template>
   <q-icon
-    :name="icon"
+    :name="ic(icon)"
     :size="size"
     class="x-help-tip cursor-pointer"
     tabindex="0"

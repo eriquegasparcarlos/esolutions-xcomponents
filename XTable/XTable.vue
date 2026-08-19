@@ -5,6 +5,7 @@ import XLoading from '../XLoading/XLoading.vue'
 import XInput from '../XInput/XInput.vue'
 import XMobileMenuAction from '../XTableServer/XMobileMenuAction.vue'
 import MobileLinkTitle from '../Mobile/MobileLinkTitle.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XTable',
@@ -80,7 +81,7 @@ const props = defineProps({
   /** Icono del empty-state */
   noDataIcon: {
     type: String,
-    default: 'fa-light fa-inbox',
+    default: 'empty',
   },
   /** row-key para q-table (default 'id') */
   rowKey: {
@@ -393,7 +394,7 @@ defineExpose({ clearSearch, closeMobileActions })
               </div>
               <!-- Icono action: kebab si hay menu, chevron si solo click -->
               <div v-if="hasMobileActionsSlot" class="x-table-mobile-row__action">
-                <q-icon size="1.25em" name="fa-light fa-ellipsis-vertical" color="grey-7" />
+                <q-icon size="1.25em" :name="ic('menu')" color="grey-7" />
               </div>
             </div>
           </q-td>
@@ -404,7 +405,7 @@ defineExpose({ clearSearch, closeMobileActions })
       <template v-slot:no-data>
         <div class="x-table-empty-state">
           <slot name="no-data">
-            <q-icon :name="noDataIcon" size="48px" class="x-table-empty-state__icon" />
+            <q-icon :name="ic(noDataIcon)" size="48px" class="x-table-empty-state__icon" />
             <div class="x-table-empty-state__title">{{ noDataLabel }}</div>
             <div v-if="noDataSubtitle" class="x-table-empty-state__subtitle">{{ noDataSubtitle }}</div>
           </slot>

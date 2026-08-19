@@ -20,6 +20,7 @@ import XDnd from '../XDnd/XDnd.vue'
 import XButton from '../XButton/XButton.vue'
 import XLoading from '../XLoading/XLoading.vue'
 import { useDataStore } from 'stores/data.js'
+import { ic } from '../icons/index.js'
 
 const dataStore = useDataStore()
 
@@ -234,7 +235,7 @@ const headerButtons = ref([])
 const selectionLabel = ref('seleccionado')
 const noDataLabel = ref('No hay registros')
 const noDataSubtitle = ref('Aún no se han creado elementos en esta sección.')
-const noDataIcon = ref('fa-light fa-inbox')
+const noDataIcon = ref('empty')
 
 const filters = ref([])
 const appliedFilters = ref({})
@@ -893,7 +894,7 @@ defineExpose({
             round
             no-caps
             :size="button.size"
-            :icon="button.icon"
+            :icon="ic(button.icon)"
           >
             <q-menu auto-close>
               <q-list>
@@ -904,7 +905,7 @@ defineExpose({
                   @click="performHeaderAction(subBtn)"
                 >
                   <q-item-section avatar style="min-width: 36px !important">
-                    <q-icon :name="subBtn.icon" size="20px" />
+                    <q-icon :name="ic(subBtn.icon)" size="20px" />
                   </q-item-section>
                   <q-item-section>
                     <span>{{ subBtn.label }}</span>
@@ -924,14 +925,14 @@ defineExpose({
               class="q-mr-xs"
               @click="performHeaderAction(button)"
             >
-              <q-icon :name="button.icon" size="16px" class="q-mr-sm" />
+              <q-icon :name="ic(button.icon)" size="16px" class="q-mr-sm" />
               {{ button.label }}
               <q-tooltip v-if="button.tooltip">{{ button.tooltip }}</q-tooltip>
             </q-btn>
 
             <q-btn
               v-else
-              :icon="button.icon"
+              :icon="ic(button.icon)"
               :color="button.color"
               :disable="button.disable"
               round
@@ -955,7 +956,7 @@ defineExpose({
               <span class="q-ml-xs">
                 {{ selectedCount === 1 ? selectionLabel : selectionLabel + 's' }}
               </span>
-              <q-icon name="fa-light fa-chevron-down"
+              <q-icon :name="ic('expand')"
                       size="12px"
                       class="q-ml-sm chevron-icon"
                       :class="{ 'chevron-icon--open': isOpen }" />
@@ -965,7 +966,7 @@ defineExpose({
           <template v-for="(bulkAction, idx) in bulkActions" :key="bulkAction.action || idx">
             <x-dropdown-divider v-if="bulkAction.divider" />
             <x-dropdown-item
-              :icon="bulkAction.icon"
+              :icon="ic(bulkAction.icon)"
               :label="bulkAction.label"
               :variant="bulkAction.color === 'negative' ? 'danger' :
                        (bulkAction.color === 'positive' ? 'success' :
@@ -981,7 +982,7 @@ defineExpose({
              header lo perdió y rompió silenciosamente a quienes lo usaban). -->
         <slot name="header-buttons" />
 
-        <q-btn flat round no-caps icon="fa-light fa-columns-3">
+        <q-btn flat round no-caps :icon="ic('columns')">
           <q-menu class="column-visibility-menu">
             <q-list dense style="min-width: 180px; max-height: 320px; overflow-y: auto;">
               <q-item-label header class="text-caption text-weight-medium q-pb-xs">{{ $t('common.columns') }}</q-item-label>
@@ -995,7 +996,7 @@ defineExpose({
               >
                 <q-item-section side style="min-width: 24px; padding-right: 0;">
                   <q-icon
-                    :name="visibleColumns.includes(col.value) ? 'fa-solid fa-check' : ''"
+                    :name="visibleColumns.includes(col.value) ? ic('selected') : ''"
                     size="14px"
                     color="primary"
                   />
@@ -1165,7 +1166,7 @@ defineExpose({
                 <template v-for="(action, idx) in (Array.isArray(props.row.actions) ? props.row.actions.filter(Boolean) : [])" :key="idx">
                   <q-btn
                     v-if="action.type === 'group' && Array.isArray(action.buttons) && action.buttons.length > 0"
-                    flat round dense no-caps :size="action.size" :icon="action.icon"
+                    flat round dense no-caps :size="action.size" :icon="ic(action.icon)"
                   >
                     <q-menu auto-close>
                       <q-list>
@@ -1173,7 +1174,7 @@ defineExpose({
                           <q-separator v-if="subBtn.type === 'separator'" />
                           <q-item v-else clickable @click="performAction(subBtn, props.row)">
                             <q-item-section avatar style="min-width: 32px !important">
-                              <q-icon :name="subBtn.icon" size="20px" :color="subBtn.color" />
+                              <q-icon :name="ic(subBtn.icon)" size="20px" :color="subBtn.color" />
                             </q-item-section>
                             <q-item-section>
                               <div class="x-menu-item-label" :title="subBtn.label">{{ subBtn.label }}</div>
@@ -1183,7 +1184,7 @@ defineExpose({
                       </q-list>
                     </q-menu>
                   </q-btn>
-                  <q-btn v-else :icon="action.icon" :color="action.color" :disable="action.disable"
+                  <q-btn v-else :icon="ic(action.icon)" :color="action.color" :disable="action.disable"
                     :size="action.size" flat round dense @click="performAction(action, props.row)" />
                 </template>
               </div>
@@ -1227,7 +1228,7 @@ defineExpose({
               </div>
               <!-- Icono de menu -->
               <div class="x-table-mobile-row__action">
-                <q-icon class="cursor-pointer" size="1.25em" name="fa-light fa-ellipsis-vertical" color="grey-7" />
+                <q-icon class="cursor-pointer" size="1.25em" :name="ic('menu')" color="grey-7" />
               </div>
             </div>
           </q-td>
@@ -1254,7 +1255,7 @@ defineExpose({
               round
               no-caps
               :size="action.size"
-              :icon="action.icon"
+              :icon="ic(action.icon)"
             >
               <q-menu auto-close>
                 <q-list>
@@ -1262,7 +1263,7 @@ defineExpose({
                     <q-separator v-if="subBtn.type === 'separator'" />
                     <q-item v-else clickable @click="performAction(subBtn, props.row)">
                       <q-item-section avatar style="min-width: 32px !important">
-                        <q-icon :name="subBtn.icon" size="20px" :color="subBtn.color" />
+                        <q-icon :name="ic(subBtn.icon)" size="20px" :color="subBtn.color" />
                       </q-item-section>
                       <q-item-section>
                         <div class="x-menu-item-label" :title="subBtn.label">
@@ -1277,7 +1278,7 @@ defineExpose({
 
             <q-btn
               v-else
-              :icon="action.icon"
+              :icon="ic(action.icon)"
               :label="action.label"
               :color="action.color"
               :disable="action.disable"
@@ -1300,13 +1301,13 @@ defineExpose({
         <div v-if="!loading" class="x-table-empty-state">
           <template v-if="!isSourceEmpty">
             <slot name="no-results" :clear-filters="clearFilters">
-              <q-icon name="fa-light fa-magnifying-glass" size="48px" class="x-table-empty-state__icon" />
+              <q-icon :name="ic('search')" size="48px" class="x-table-empty-state__icon" />
               <div class="x-table-empty-state__title">No se encontraron resultados</div>
               <div class="x-table-empty-state__subtitle">
                 Intenta ajustar los filtros aplicados o limpiarlos para ver todos los registros.
               </div>
               <x-button label="Limpiar filtros"
-                        icon="fa-light fa-filter-slash"
+                        :icon="ic('filter-clear')"
                         color="primary"
                         outline
                         class="q-mt-md"
@@ -1315,7 +1316,7 @@ defineExpose({
           </template>
           <template v-else>
             <slot name="no-data" :new-action="newActionButton" :perform-action="performHeaderAction">
-              <q-icon :name="noDataIcon" size="48px" class="x-table-empty-state__icon" />
+              <q-icon :name="ic(noDataIcon)" size="48px" class="x-table-empty-state__icon" />
               <div class="x-table-empty-state__title">{{ noDataLabel }}</div>
               <div class="x-table-empty-state__subtitle">{{ noDataSubtitle }}</div>
 
@@ -1334,7 +1335,7 @@ defineExpose({
                 class="q-mt-md"
                 @click="performHeaderAction(newActionButton)"
               >
-                <q-icon :name="newActionButton.icon" size="16px" class="q-mr-sm" />
+                <q-icon :name="ic(newActionButton.icon)" size="16px" class="q-mr-sm" />
                 {{ newActionButton.label }}
               </q-btn>
             </slot>
@@ -1356,7 +1357,7 @@ defineExpose({
             <q-btn
               v-for="(action, idx) in getDirectActions(selectedRow)"
               :key="'direct-' + idx"
-              :icon="action.icon"
+              :icon="ic(action.icon)"
               :color="action.color || 'grey-8'"
               :title="action.label"
               flat
@@ -1380,20 +1381,20 @@ defineExpose({
         @click="performMobileAction(action)"
       >
         <q-item-section avatar style="min-width: 40px">
-          <q-icon :name="action.icon" :color="action.color || 'grey-8'" />
+          <q-icon :name="ic(action.icon)" :color="action.color || 'grey-8'" />
         </q-item-section>
         <q-item-section>{{ action.label }}</q-item-section>
       </q-item>
     </x-mobile-menu-action>
 
     <q-card-section v-if="error" class="x-table-error-state">
-      <q-icon name="fa-light fa-circle-exclamation"
+      <q-icon :name="ic('danger')"
               size="48px"
               class="x-table-error-state__icon" />
       <div class="x-table-error-state__title">No se pudieron cargar los datos</div>
       <div class="x-table-error-state__subtitle">{{ error }}</div>
       <x-button label="Reintentar"
-                icon="fa-light fa-rotate-right"
+                :icon="ic('refresh')"
                 color="primary"
                 unelevated
                 class="q-mt-md"
@@ -1460,14 +1461,14 @@ defineExpose({
           <x-button flat dense label="Solo visibles" @click="exportOnlyVisible" />
         </div>
         <div class="text-caption text-grey-6 q-mb-xs">
-          Arrastra <q-icon name="fa-light fa-grip-dots-vertical" size="14px" /> para ordenar cómo salen en el archivo.
+          Arrastra <q-icon :name="ic('drag')" size="14px" /> para ordenar cómo salen en el archivo.
         </div>
         <q-separator class="q-mb-sm" />
         <div style="max-height: 320px; overflow-y: auto;">
           <x-dnd v-model="exportColumnItems" item-key="value" handle=".x-export-drag">
             <template #item="{ element }">
               <div class="row items-center no-wrap q-py-xs">
-                <q-icon name="fa-light fa-grip-dots-vertical" size="18px"
+                <q-icon :name="ic('drag')" size="18px"
                         class="x-export-drag text-grey-5 q-mr-xs" style="cursor: move;" />
                 <q-checkbox v-model="element.checked" dense />
                 <span class="q-ml-sm">{{ element.label }}</span>

@@ -6,6 +6,7 @@ import XDialog from '../XDialog/XDialog.vue';
 import XButton from '../XButton/XButton.vue';
 
 // Define las opciones del componente
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'XDialogAction',
   inheritAttrs: false,
@@ -149,7 +150,7 @@ defineExpose({openDialog});
       <div class="x-dialog-action">
         <!-- Icono dentro de circulo de color suave -->
         <div class="x-dialog-action__icon-wrap" :class="`x-dialog-action__icon-wrap--${iconVariant}`">
-          <q-icon :name="`fa-light fa-${form.icon}`" size="28px" />
+          <q-icon :name="ic(form.icon)" size="28px" />
         </div>
 
         <!-- Title -->

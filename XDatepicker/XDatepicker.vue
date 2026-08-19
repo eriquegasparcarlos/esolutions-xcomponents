@@ -3,6 +3,7 @@
 import { computed, ref, useAttrs } from 'vue'
 import { date as DateUtils } from 'quasar'
 import { formDefaults } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XDatepicker', inheritAttrs: false })
 
@@ -105,7 +106,7 @@ function clear() {
       @clear="clear"
     >
       <template #append>
-        <q-icon name="fa-light fa-calendar" :class="props.readonly ? 'cursor-not-allowed' : 'cursor-pointer'">
+        <q-icon :name="ic('calendar')" :class="props.readonly ? 'cursor-not-allowed' : 'cursor-pointer'">
           <q-popup-proxy
             v-if="!props.readonly"
             ref="popupRef"

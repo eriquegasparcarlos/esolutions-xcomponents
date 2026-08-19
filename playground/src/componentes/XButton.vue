@@ -75,21 +75,21 @@ const ESTILOS = [
     </div>
   </Seccion>
 
-  <Seccion titulo="XButton · iconos" nota="requiere FontAwesome Pro (fa-light)" :cubre="['XButton']">
+  <Seccion titulo="XButton · iconos" nota="los iconos son SVG que viajan en el paquete" :cubre="['XButton']">
     <div class="pg-demo">
-      <div class="pg-tile"><XButton label="Guardar" variant="primary" icon="fa-light fa-floppy-disk" /><code>icon</code></div>
-      <div class="pg-tile"><XButton label="Siguiente" variant="secondary" icon-right="fa-light fa-arrow-right" /><code>icon-right</code></div>
-      <div class="pg-tile"><XButton icon="fa-light fa-trash" variant="danger" round /><code>round + icon</code></div>
-      <div class="pg-tile"><XButton icon="fa-light fa-pen" variant="secondary" flat round /><code>flat round</code></div>
-      <div class="pg-tile"><XButton icon="fa-solid fa-check" variant="success" circle /><code>circle</code></div>
-      <div class="pg-tile"><XButton label="Con tooltip" variant="info" icon="fa-light fa-circle-info" tooltip="Texto de ayuda" /><code>tooltip</code></div>
-      <div class="pg-tile"><XButton label="Notificaciones" variant="secondary" icon="fa-light fa-bell" badge="9" /><code>badge</code></div>
+      <div class="pg-tile"><XButton label="Guardar" variant="primary" icon="save" /><code>icon</code></div>
+      <div class="pg-tile"><XButton label="Siguiente" variant="secondary" icon-right="forward" /><code>icon-right</code></div>
+      <div class="pg-tile"><XButton icon="delete" variant="danger" round /><code>round + icon</code></div>
+      <div class="pg-tile"><XButton icon="edit" variant="secondary" flat round /><code>flat round</code></div>
+      <div class="pg-tile"><XButton icon="success" variant="success" circle /><code>circle</code></div>
+      <div class="pg-tile"><XButton label="Con tooltip" variant="info" icon="info" tooltip="Texto de ayuda" /><code>tooltip</code></div>
+      <div class="pg-tile"><XButton label="Notificaciones" variant="secondary" icon="notification" badge="9" /><code>badge</code></div>
     </div>
     <p style="margin:12px 0 0; font-size:12px; color:#64748b">
-      Los propios componentes traen <strong>29 iconos <code>fa-*</code> hardcodeados</strong>
-      (24 son <code>fa-light</code>, exclusivo del plan <strong>Pro</strong>). Sin FontAwesome
-      cargado se ven cuadros vacios: el X de cerrar de los dialogos, el + de XSelect,
-      XFile, XTracking…
+      El icono se pide por <strong>rol</strong> (<code>save</code>, <code>delete</code>,
+      <code>forward</code>), no por el nombre del dibujo. Los defaults son SVG que viajan
+      dentro del paquete: no hay que instalar ninguna fuente. Un proyecto que quiera otro
+      set lo cambia con <code>setXIcons()</code> — ver <code>icons/README.md</code>.
     </p>
   </Seccion>
 </template>

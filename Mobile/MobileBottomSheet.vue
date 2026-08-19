@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'MobileBottomSheet',
 })
@@ -66,7 +67,7 @@ function performAction(action) {
                     v-ripple
                     @click="performAction(action)">
               <q-item-section avatar style="min-width: 40px">
-                <q-icon :name="action.icon" :color="action.color || 'grey-8'"/>
+                <q-icon :name="ic(action.icon)" :color="action.color || 'grey-8'"/>
               </q-item-section>
               <q-item-section :class="action.color === 'red' ? 'text-red' : ''">
                 {{ action.label }}

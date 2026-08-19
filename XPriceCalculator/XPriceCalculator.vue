@@ -1,5 +1,6 @@
 <script setup>
 import {computed} from 'vue'
+import { ic } from '../icons/index.js'
 
 const props = defineProps({
   modelValue: {
@@ -145,7 +146,7 @@ function normalizeDisplay() {
         @click="pressKey(key)"
         :class="['key', { action: isAction(key) }]"
         :disabled="key === null">
-        <i v-if="key === '←'" class="fa-solid fa-backspace"></i>
+        <q-icon v-if="key === '←'" :name="ic('backspace')" />
         <span v-else>{{ key }}</span>
       </button>
     </div>

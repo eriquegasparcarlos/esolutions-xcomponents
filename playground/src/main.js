@@ -8,14 +8,8 @@ import { setFormDefaults } from '@esolutions/js-utils'
 
 import 'quasar/src/css/index.sass'
 import '@quasar/extras/material-icons/material-icons.css'
-// FontAwesome PRO: no es opcional para ver la libreria como es. 24 de los 29
-// iconos que los componentes traen hardcodeados son `fa-light`, que solo existe
-// en el plan Pro (XDialog cerrar, XSelect +, XFile, XTracking...).
-//
-// Copia LOCAL, gitignoreada (el repo es publico desde v2.16.0 y la licencia Pro
-// no permite redistribuir los archivos) — extraerla a mano antes de levantar el
-// playground, ver vendor/fontawesome-pro/README.md.
-import '@x/vendor/fontawesome-pro/css/all.min.css'
+// Los iconos de los componentes son SVG que viajan dentro del paquete: no hay
+// nada que instalar ni que cargar aca. Ver icons/README.md.
 import '@x/index.scss' // <- CSS de los componentes + el :root de tokens
 import './css/app.scss'
 

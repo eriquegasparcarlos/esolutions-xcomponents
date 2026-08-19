@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, useAttrs, watch } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XTreeSelect',
@@ -349,7 +350,7 @@ function onFieldBlur () {
 
       <template #append>
         <q-icon
-          name="fa-light fa-chevron-down"
+          :name="ic('expand')"
           class="cursor-pointer"
           @click.stop="toggleMenu"
         />

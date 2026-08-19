@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import XDialog from '../XDialog/XDialog.vue'
 import XInput from '../XInput/XInput.vue'
 import XButton from '../XButton/XButton.vue'
+import { ic } from '../icons/index.js'
 
 /**
  * Diálogo de confirmación con el diseño de XDialogAction, pero SIN acoplarse al
@@ -97,7 +98,7 @@ defineExpose({ open, close })
     <template #content>
       <div class="x-dialog-action">
         <div class="x-dialog-action__icon-wrap" :class="`x-dialog-action__icon-wrap--${variant}`">
-          <q-icon :name="`fa-light fa-${icon}`" size="28px" />
+          <q-icon :name="ic(icon)" size="28px" />
         </div>
 
         <div class="x-dialog-action__title">{{ cfg.title }}</div>

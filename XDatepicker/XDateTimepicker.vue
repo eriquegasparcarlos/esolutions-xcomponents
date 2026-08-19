@@ -3,6 +3,7 @@
 import { computed, useAttrs } from 'vue'
 import { date as DateUtils } from 'quasar'
 import { formDefaults } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XDateTimepicker', inheritAttrs: false })
 
@@ -115,7 +116,7 @@ function clear() {
       <template #prepend>
         <!-- Si está locked: ícono desactivado y sin popup -->
         <q-icon
-          name="fa-light fa-calendar"
+          :name="ic('calendar')"
           :class="isLocked ? 'text-grey-5' : 'cursor-pointer'"
           :style="isLocked ? 'cursor: not-allowed;' : ''"
         >
@@ -142,7 +143,7 @@ function clear() {
       <!-- HORA -->
       <template #append>
         <q-icon
-          name="fa-light fa-clock"
+          :name="ic('clock')"
           :class="isLocked ? 'text-grey-5' : 'cursor-pointer'"
           :style="isLocked ? 'cursor: not-allowed;' : ''"
         >

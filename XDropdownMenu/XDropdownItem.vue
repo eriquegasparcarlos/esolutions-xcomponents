@@ -1,5 +1,6 @@
 <script setup>
 import { computed, useSlots } from 'vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XDropdownItem',
@@ -73,7 +74,7 @@ const variantClass = computed(() => `x-dropdown-item--${props.variant}`)
     <!-- Icono (opcional) -->
     <q-item-section v-if="icon || slots.icon" avatar class="x-dropdown-item__icon">
       <slot name="icon">
-        <q-icon :name="icon" size="18px" />
+        <q-icon :name="ic(icon)" size="18px" />
       </slot>
     </q-item-section>
 

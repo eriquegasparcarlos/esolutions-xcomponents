@@ -2,6 +2,7 @@
 <script setup>
 import { computed, useAttrs, ref } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XDatepickerMonth', inheritAttrs: false })
 
@@ -118,7 +119,7 @@ function clear() {
       @clear="clear"
     >
       <template #append>
-        <q-icon name="fa-light fa-calendar" class="cursor-pointer">
+        <q-icon :name="ic('calendar')" class="cursor-pointer">
           <q-popup-proxy ref="popupRef" cover transition-show="scale" transition-hide="scale">
             <q-date
               :model-value="qDateValue"

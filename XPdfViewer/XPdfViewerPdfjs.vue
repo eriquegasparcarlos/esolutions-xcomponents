@@ -5,6 +5,7 @@ import * as pdfjsLib from 'pdfjs-dist/build/pdf.mjs'
 import XDialog from '../XDialog/XDialog.vue'
 
 // Configurar worker
+import { ic } from '../icons/index.js'
 pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
   'pdfjs-dist/build/pdf.worker.mjs',
   import.meta.url,
@@ -234,21 +235,21 @@ defineExpose({ openDialog })
     <template #content-header>
       <div class="x-pdf-toolbar">
         <div class="x-pdf-toolbar__nav">
-          <q-btn flat dense round icon="fal fa-chevron-left" size="sm" :disable="currentPage <= 1 || showOverlay" @click="prevPage" />
+          <q-btn flat dense round :icon="ic('prev')" size="sm" :disable="currentPage <= 1 || showOverlay" @click="prevPage" />
           <span class="x-pdf-toolbar__page-info">{{ currentPage }} / {{ totalPages || '...' }}</span>
-          <q-btn flat dense round icon="fal fa-chevron-right" size="sm" :disable="currentPage >= totalPages || showOverlay" @click="nextPage" />
+          <q-btn flat dense round :icon="ic('next')" size="sm" :disable="currentPage >= totalPages || showOverlay" @click="nextPage" />
         </div>
         <q-separator vertical class="q-mx-sm" />
         <div class="x-pdf-toolbar__zoom">
-          <q-btn flat dense round icon="fal fa-minus" size="sm" :disable="zoom <= 0.5" @click="zoomOut" />
+          <q-btn flat dense round :icon="ic('decrease')" size="sm" :disable="zoom <= 0.5" @click="zoomOut" />
           <span class="x-pdf-toolbar__zoom-info">{{ zoomPercent() }}%</span>
-          <q-btn flat dense round icon="fal fa-plus" size="sm" :disable="zoom >= 2" @click="zoomIn" />
+          <q-btn flat dense round :icon="ic('increase')" size="sm" :disable="zoom >= 2" @click="zoomIn" />
         </div>
         <q-space />
-        <q-btn flat dense round icon="fal fa-print" size="sm" @click="printPdf">
+        <q-btn flat dense round :icon="ic('print')" size="sm" @click="printPdf">
           <q-tooltip>{{ $t('common.print') }}</q-tooltip>
         </q-btn>
-        <q-btn flat dense round icon="fal fa-download" size="sm" @click="downloadPdf">
+        <q-btn flat dense round :icon="ic('download')" size="sm" @click="downloadPdf">
           <q-tooltip>{{ $t('common.download') }}</q-tooltip>
         </q-btn>
       </div>
@@ -263,7 +264,7 @@ defineExpose({ openDialog })
 
         <!-- Sin PDF -->
         <div v-else class="x-pdf-viewer__empty">
-          <q-icon name="fal fa-file-pdf" size="48px" color="grey-5" />
+          <q-icon :name="ic('file-pdf')" size="48px" color="grey-5" />
           <div class="text-grey-6 q-mt-sm">{{ $t('components.pdfLoadError') }}</div>
         </div>
       </div>

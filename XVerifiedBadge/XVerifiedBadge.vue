@@ -1,5 +1,6 @@
 <script setup>
 import { computed } from 'vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XVerifiedBadge',
@@ -25,12 +26,12 @@ const props = defineProps({
   /** Icono cuando verificado */
   iconVerified: {
     type: String,
-    default: 'fa-solid fa-check',
+    default: 'success',
   },
   /** Icono cuando NO verificado */
   iconNotVerified: {
     type: String,
-    default: 'fa-solid fa-triangle-exclamation',
+    default: 'warning',
   },
   /** Tamaño del icono interno */
   iconSize: {
@@ -51,7 +52,7 @@ const label = computed(() => props.verified ? props.labelVerified : props.labelN
 
 <template>
   <q-badge :color="color" v-bind="$attrs">
-    <q-icon :name="icon" :size="iconSize" :class="{ 'q-mr-xs': !iconOnly }" />
+    <q-icon :name="ic(icon)" :size="iconSize" :class="{ 'q-mr-xs': !iconOnly }" />
     <span v-if="!iconOnly">{{ label }}</span>
   </q-badge>
 </template>

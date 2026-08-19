@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useSlots } from 'vue'
 import XLoading from '../XLoading/XLoading.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XCard',
@@ -83,7 +84,7 @@ const paddingClass = computed(() => {
   <q-card :flat="flat" :bordered="bordered" class="x-card" :class="{ 'full-height': fullHeight, 'x-card--bordered': bordered }">
     <q-card-section v-if="hasHeader" class="q-py-none x-card-section-title" :class="{ 'x-card-section-title--with-subtitle': subtitle }">
       <div class="row items-center no-wrap col">
-        <q-icon v-if="icon" :name="icon" size="20px" class="q-mr-md flex-shrink-0"/>
+        <q-icon v-if="icon" :name="ic(icon)" size="20px" class="q-mr-md flex-shrink-0"/>
         <div>
           <div class="text-h6" style="margin-bottom: 0; line-height: 1.2">{{ title }}</div>
           <div v-if="subtitle" class="text-caption text-grey-5">{{ subtitle }}</div>

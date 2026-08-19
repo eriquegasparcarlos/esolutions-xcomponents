@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XImageUpload' })
 
@@ -73,7 +74,7 @@ function clear(e) {
       <!-- Thumbnail -->
       <div class="x-image-upload__thumb">
         <img v-if="displayUrl" :src="displayUrl" class="x-image-upload__img" />
-        <q-icon v-else name="fa-light fa-image" size="28px" color="grey-5" />
+        <q-icon v-else :name="ic('image')" size="28px" color="grey-5" />
       </div>
 
       <!-- Texto -->
@@ -86,7 +87,7 @@ function clear(e) {
       <q-btn
         v-if="modelValue"
         flat round dense
-        icon="fa-light fa-xmark"
+        :icon="ic('remove')"
         size="sm"
         color="grey-6"
         @click="clear"

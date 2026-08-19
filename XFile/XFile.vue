@@ -3,6 +3,7 @@ import { computed, ref, useAttrs } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
 
 // Define las opciones del componente
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'XFile',
   inheritAttrs: false,
@@ -87,7 +88,7 @@ function onInput(val) {
     <!-- Icono adjunto personalizado -->
     <template #append>
       <q-icon
-        name="fal fa-paperclip"
+        :name="ic('attach')"
         color="primary"
         size="md"
         class="q-mr-xs"

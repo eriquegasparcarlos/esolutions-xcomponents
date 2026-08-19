@@ -6,6 +6,7 @@ import 'cropperjs/dist/cropper.min.css'
 import XDialog from '../XDialog/XDialog.vue'
 import XButton from '../XButton/XButton.vue'
 import XLoading from '../XLoading/XLoading.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XImageCropperUpload' })
 
@@ -162,7 +163,7 @@ defineExpose({ blob: localBlob, triggerFileInput })
         <!-- Thumbnail -->
         <div class="x-image-cropper-upload__thumb">
           <img v-if="displayUrl" :src="displayUrl" class="x-image-cropper-upload__img" />
-          <q-icon v-else name="fa-light fa-image" size="28px" color="grey-5" />
+          <q-icon v-else :name="ic('image')" size="28px" color="grey-5" />
         </div>
 
         <!-- Texto -->
@@ -175,7 +176,7 @@ defineExpose({ blob: localBlob, triggerFileInput })
         <q-btn
           v-if="displayUrl"
           flat round dense
-          icon="fa-light fa-xmark"
+          :icon="ic('remove')"
           size="sm"
           color="grey-6"
           @click="onRemove"
@@ -193,11 +194,11 @@ defineExpose({ blob: localBlob, triggerFileInput })
         <div class="x-icu-card__overlay">
           <div class="x-icu-card__actions">
             <div class="x-icu-card__action" @click="triggerFileInput">
-              <q-icon name="fal fa-pen" size="18px" color="white" />
+              <q-icon :name="ic('edit')" size="18px" color="white" />
               <span>Cambiar</span>
             </div>
             <div class="x-icu-card__action x-icu-card__action--delete" @click="onRemove">
-              <q-icon name="fal fa-trash" size="18px" color="white" />
+              <q-icon :name="ic('delete')" size="18px" color="white" />
               <span>Eliminar</span>
             </div>
           </div>
@@ -207,7 +208,7 @@ defineExpose({ blob: localBlob, triggerFileInput })
 
       <!-- Sin imagen: zona de upload centrada -->
       <div v-else class="x-icu-card x-icu-card--empty" :style="{ height }" @click="triggerFileInput">
-        <q-icon name="fa-light fa-image" size="36px" color="grey-5" />
+        <q-icon :name="ic('image')" size="36px" color="grey-5" />
         <div class="x-icu-card__empty-label">{{ label }}</div>
         <div class="x-icu-card__empty-hint">{{ hintText }}</div>
       </div>

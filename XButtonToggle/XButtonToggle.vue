@@ -26,6 +26,7 @@
 
 <script setup>
 import { computed, useAttrs } from 'vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XButtonToggle',
@@ -87,8 +88,10 @@ const normalizedOptions = computed(() => {
     return {
       ...o,
       label: props.iconOnly ? '' : label,
-      value
-      // icon: si viene en o.icon, Quasar lo usa automáticamente
+      value,
+      // el icono de la opcion pasa por el resolvedor: la opcion la arma el
+      // consumidor y puede venir con un nombre viejo de FontAwesome
+      ...(o.icon ? { icon: ic(o.icon) } : {})
     }
   })
 })

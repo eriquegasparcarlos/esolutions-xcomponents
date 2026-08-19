@@ -2,6 +2,7 @@
 import { computed, useAttrs } from 'vue'
 import { QInput, QPopupProxy, QTime, QBtn, QIcon } from 'quasar'
 import { formDefaults } from '@esolutions/js-utils'
+import { ic } from '../icons/index.js'
 
 const props = defineProps({
   modelValue: {
@@ -51,7 +52,7 @@ const externalLabel = computed(() => {
       v-bind="{ ...attrs, class: null, label: elementLabel }"
     >
       <template #append>
-        <q-icon name="fa-light fa-clock" class="cursor-pointer">
+        <q-icon :name="ic('clock')" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-time
               :model-value="modelValue"

@@ -4,6 +4,7 @@ import {useQuasar} from 'quasar';
 import XLoading from '../XLoading/XLoading.vue';
 
 // Define las opciones del componente
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'XDialog',
   inheritAttrs: false,
@@ -268,7 +269,7 @@ const onCloseButtonClick = () => {
            :style="{ height: TITLE_HEIGHT + 'px' }">
         <div class="x-dialog-title__text">{{ title }}</div>
         <q-btn v-if="showButtonClose"
-               icon="fa-light fa-xmark"
+               :icon="ic('close')"
                flat
                round
                dense

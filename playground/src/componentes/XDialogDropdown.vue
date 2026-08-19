@@ -98,19 +98,19 @@ const POSICIONES = ['right', 'left', 'top', 'bottom']
     <Demo code="#trigger" nota="el slot expone open; hay que invocarlo en el click" fila>
       <XDropdownMenu>
         <template #trigger="{ open }">
-          <XButton label="Acciones" variant="secondary" icon-right="fa-light fa-chevron-down" @click="open" />
+          <XButton label="Acciones" variant="secondary" icon-right="expand" @click="open" />
         </template>
-        <XDropdownItem label="Ver detalle" icon="fa-light fa-eye" />
-        <XDropdownItem label="Descargar XML" icon="fa-light fa-file-code" />
+        <XDropdownItem label="Ver detalle" icon="view" />
+        <XDropdownItem label="Descargar XML" icon="file-code" />
         <XDropdownDivider />
-        <XDropdownItem label="Anular" icon="fa-light fa-trash" variant="danger" />
+        <XDropdownItem label="Anular" icon="delete" variant="danger" />
       </XDropdownMenu>
     </Demo>
 
     <Demo code="#header · #footer" nota="tipico menu de usuario" fila>
       <XDropdownMenu width="260px">
         <template #trigger="{ open }">
-          <XButton label="Mi cuenta" variant="primary" icon="fa-light fa-user" @click="open" />
+          <XButton label="Mi cuenta" variant="primary" icon="user" @click="open" />
         </template>
         <template #header>
           <div style="padding:4px 2px">
@@ -118,10 +118,10 @@ const POSICIONES = ['right', 'left', 'top', 'bottom']
             <div style="font-size:11px; color:#667085">carlos@ejemplo.com</div>
           </div>
         </template>
-        <XDropdownItem label="Perfil" icon="fa-light fa-id-card" />
-        <XDropdownItem label="Preferencias" icon="fa-light fa-gear" />
+        <XDropdownItem label="Perfil" icon="id-card" />
+        <XDropdownItem label="Preferencias" icon="settings" />
         <XDropdownDivider />
-        <XDropdownItem label="Cerrar sesion" icon="fa-light fa-arrow-right-from-bracket" variant="danger" />
+        <XDropdownItem label="Cerrar sesion" icon="logout" variant="danger" />
       </XDropdownMenu>
     </Demo>
 
@@ -140,10 +140,10 @@ const POSICIONES = ['right', 'left', 'top', 'bottom']
         <template #trigger="{ open }">
           <XButton label="Con estados" variant="secondary" @click="open" />
         </template>
-        <XDropdownItem label="Disponible" icon="fa-light fa-check" />
-        <XDropdownItem label="No disponible" icon="fa-light fa-ban" disable />
+        <XDropdownItem label="Disponible" icon="success" />
+        <XDropdownItem label="No disponible" icon="blocked" disable />
         <XDropdownDivider />
-        <XDropdownItem label="Abrir docs" icon="fa-light fa-book" href="#" target="_blank" />
+        <XDropdownItem label="Abrir docs" icon="book" href="#" target="_blank" />
       </XDropdownMenu>
     </Demo>
   </Seccion>

@@ -1,5 +1,6 @@
 <script setup>
 import { inject, computed } from 'vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XOptionCard',
@@ -47,7 +48,7 @@ const select = () => {
   >
     <div class="x-option-card__header">
       <q-icon
-        :name="isSelected ? 'fal fa-circle-check' : 'fal fa-circle'"
+        :name="isSelected ? ic('radio-on') : ic('radio-off')"
         :color="isSelected ? 'primary' : 'grey-5'"
         size="18px"
       />

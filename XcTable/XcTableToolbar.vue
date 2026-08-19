@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 /**
  * Bloque de acciones del compound XcTable (va en #actions del ReportView).
  * Reutiliza tal cual el control de columnas y el DIÁLOGO de exportación con
@@ -82,14 +83,14 @@ function onHeaderAction (button) {
     <template v-for="button in ctx.headerButtons.value" :key="button.action">
       <q-btn
         v-if="button.type === 'group' && Array.isArray(button.buttons) && button.buttons.length > 0"
-        flat round no-caps :size="button.size" :icon="button.icon"
+        flat round no-caps :size="button.size" :icon="ic(button.icon)"
       >
         <q-menu auto-close>
           <q-list>
             <q-item v-for="(subBtn, j) in button.buttons" :key="j" clickable
                     @click="onHeaderAction(subBtn)">
               <q-item-section avatar style="min-width: 36px !important">
-                <q-icon :name="subBtn.icon" size="20px" />
+                <q-icon :name="ic(subBtn.icon)" size="20px" />
               </q-item-section>
               <q-item-section><span>{{ subBtn.label }}</span></q-item-section>
             </q-item>
@@ -103,14 +104,14 @@ function onHeaderAction (button) {
         unelevated no-caps
         @click="onHeaderAction(button)"
       >
-        <q-icon :name="button.icon" size="16px" class="q-mr-sm" />
+        <q-icon :name="ic(button.icon)" size="16px" class="q-mr-sm" />
         {{ button.label }}
         <q-tooltip v-if="button.tooltip">{{ button.tooltip }}</q-tooltip>
       </q-btn>
 
       <q-btn
         v-else
-        :icon="button.icon" :color="button.color" :disable="button.disable"
+        :icon="ic(button.icon)" :color="button.color" :disable="button.disable"
         round flat no-caps
         @click="onHeaderAction(button)"
       >
@@ -119,7 +120,7 @@ function onHeaderAction (button) {
     </template>
 
     <!-- Único control fijo (igual que XTableServer): selector de columnas -->
-    <q-btn flat round no-caps icon="fa-light fa-columns-3">
+    <q-btn flat round no-caps :icon="ic('columns')">
       <q-tooltip>Columnas</q-tooltip>
       <q-menu class="column-visibility-menu">
         <q-list dense style="min-width: 180px; max-height: 320px; overflow-y: auto;">
@@ -136,7 +137,7 @@ function onHeaderAction (button) {
           >
             <q-item-section side style="min-width: 24px; padding-right: 0;">
               <q-icon
-                :name="ctx.visibleColumns.value.includes(col.value) ? 'fa-solid fa-check' : ''"
+                :name="ctx.visibleColumns.value.includes(col.value) ? ic('selected') : ''"
                 size="14px"
                 color="primary"
               />
@@ -169,14 +170,14 @@ function onHeaderAction (button) {
           <x-button flat dense label="Solo visibles" @click="exportOnlyVisible" />
         </div>
         <div class="text-caption text-grey-6 q-mb-xs">
-          Arrastra <q-icon name="fa-light fa-grip-dots-vertical" size="14px" /> para ordenar cómo salen en el archivo.
+          Arrastra <q-icon :name="ic('drag')" size="14px" /> para ordenar cómo salen en el archivo.
         </div>
         <q-separator class="q-mb-sm" />
         <div style="max-height: 320px; overflow-y: auto;">
           <x-dnd v-model="exportColumnItems" item-key="value" handle=".x-export-drag">
             <template #item="{ element }">
               <div class="row items-center no-wrap q-py-xs">
-                <q-icon name="fa-light fa-grip-dots-vertical" size="18px"
+                <q-icon :name="ic('drag')" size="18px"
                         class="x-export-drag text-grey-5 q-mr-xs" style="cursor: move;" />
                 <q-checkbox v-model="element.checked" dense />
                 <span class="q-ml-sm">{{ element.label }}</span>

@@ -2,6 +2,7 @@
 import { computed, useAttrs, ref, toValue } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({ name: 'XInput', inheritAttrs: false })
 
@@ -101,7 +102,7 @@ const filteredAttrs = computed(() => {
       <template v-if="isPwdType || helpInAppend || $slots.append" #append>
         <q-icon
           v-if="isPwdType"
-          :name="showPwd ? 'fa-light fa-eye' : 'fa-light fa-eye-slash'"
+          :name="showPwd ? ic('view') : ic('hide')"
           class="cursor-pointer"
           @click="togglePwd"
         />

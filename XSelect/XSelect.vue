@@ -2,6 +2,7 @@
 import { computed, getCurrentInstance, ref, useAttrs, nextTick, toValue } from 'vue';
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XSelect',
@@ -384,7 +385,7 @@ function onSelect(val) {
       <template v-if="!$slots.option" #option="scope">
         <q-item v-bind="scope.itemProps" :class="scope.opt.class || ''">
           <q-item-section avatar v-if="scope.opt.icon">
-            <q-icon :name="scope.opt.icon" :color="scope.opt.class?.replace('text-', '') || 'primary'"/>
+            <q-icon :name="ic(scope.opt.icon)" :color="scope.opt.class?.replace('text-', '') || 'primary'"/>
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ scope.opt.label }}</q-item-label>
@@ -397,7 +398,7 @@ function onSelect(val) {
           flat
           round
           dense
-          icon="fal fa-plus"
+          :icon="ic('add')"
           color="primary"
           @click.stop="emit('click-new')"
         />

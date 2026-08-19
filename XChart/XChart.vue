@@ -3,6 +3,7 @@ import { computed, useAttrs } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 import XChartHeader from './XChartHeader.vue'
 import XChartFooter from './XChartFooter.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XChart',
@@ -265,7 +266,7 @@ function deepMerge(target, source) {
         :style="{ height: height + 'px' }"
       >
         <div class="text-center">
-          <q-icon name="fal fa-chart-line" size="32px" class="q-mb-sm" />
+          <q-icon :name="ic('chart')" size="32px" class="q-mb-sm" />
           <div class="text-caption">Sin datos disponibles</div>
         </div>
       </div>

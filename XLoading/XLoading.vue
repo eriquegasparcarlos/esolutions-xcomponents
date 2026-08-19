@@ -1,6 +1,7 @@
 <script setup>
 import { computed, useAttrs } from 'vue'
 import { QSpinnerDots, QSpinnerBars, QSpinnerCube, QSpinnerGears, QSpinnerHourglass, QSpinnerPuff, QSpinnerTail } from 'quasar'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XLoading',
@@ -55,7 +56,7 @@ const spinnerComponent = computed(() => spinnerMap[props.spinner] ?? QSpinnerDot
 <template>
   <q-inner-loading v-bind="{ ...attrs }" :showing="loading" :dark="dark" class="x-loading">
     <template v-if="icon">
-      <q-icon :name="icon" :color="color" :style="{ fontSize: size }" class="x-loading-icon" />
+      <q-icon :name="ic(icon)" :color="color" :style="{ fontSize: size }" class="x-loading-icon" />
     </template>
     <template v-else>
       <component :is="spinnerComponent" :color="color" :size="size" />

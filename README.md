@@ -121,6 +121,37 @@ las variables del consumidor siguen mandando cuando existen.
 > existencia de ese archivo es lo que activa el plugin de Quasar que inyecta
 > `quasar/src/css/variables.sass`; sin él, ninguna variable `$primary` existe.
 
+### 5. Iconos (desde v2.17.0) — no hay nada que instalar
+
+Los componentes ya no nombran un icono concreto: piden un **rol** y el paquete
+lo dibuja con SVG propios que viajan adentro (~8 KB). No hace falta FontAwesome,
+ni token, ni webfonts.
+
+```vue
+<XButton label="Guardar" icon="save" />
+<XDeleteDialog icon="delete" />
+```
+
+Los nombres viejos de FontAwesome (`fal fa-floppy-disk`) **siguen funcionando**:
+el resolvedor los reconoce, asi que un proyecto que actualice no tiene que
+cambiar nada, ni en el codigo ni en lo que tenga guardado en base de datos.
+
+Un proyecto que quiera usar otro set lo cambia en un boot file:
+
+```js
+import { setXIcons } from '@esolutions/x-components/icons'
+
+setXIcons({ delete: 'fal fa-trash-can' })   // el que si tiene FontAwesome Pro
+setXIcons({ delete: 'sym_o_delete' })       // Material Symbols, que Quasar trae
+```
+
+Ver [`icons/README.md`](icons/README.md) para la lista de roles y como agregar
+uno nuevo.
+
+Hasta v2.16.0 el paquete traia 50 iconos `fa-*` hardcodeados, 43 de ellos
+`fa-light` — exclusivos del plan **Pro**: un consumidor sin la suscripcion veia
+cuadros vacios.
+
 ## Gotchas de API (leer el README del componente antes de usarlo)
 
 Cada componente tiene su `README.md` con props, eventos, slots y ejemplos.

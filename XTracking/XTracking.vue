@@ -1,4 +1,5 @@
 <script setup>
+import { ic } from '../icons/index.js'
 defineOptions({
   name: 'XTracking',
 })
@@ -37,7 +38,7 @@ defineProps({
     </div>
 
     <div v-else-if="records.length === 0" class="column flex-center q-pa-lg text-grey-6">
-      <q-icon name="fa-light fa-timeline" size="36px" class="q-mb-sm" />
+      <q-icon :name="ic('timeline')" size="36px" class="q-mb-sm" />
       <div class="text-body2">Sin eventos registrados.</div>
     </div>
 

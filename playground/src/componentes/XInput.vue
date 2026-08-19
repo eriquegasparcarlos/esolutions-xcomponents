@@ -51,7 +51,7 @@ const ancho = 'min-width:260px'
     </Demo>
     <Demo code="#prepend / #append" nota="8 slots: before, prepend, append, after, hint, error, counter, loading">
       <XInput v-model="vacio" label="Buscar" :style="ancho">
-        <template #prepend><q-icon name="fa-light fa-magnifying-glass" size="16px" /></template>
+        <template #prepend><q-icon name="search" size="16px" /></template>
       </XInput>
       <XInput v-model="num" label="Total" :style="ancho">
         <template #append><span style="font-size:12px;color:#64748b">PEN</span></template>

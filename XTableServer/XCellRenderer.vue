@@ -1,5 +1,6 @@
 <script setup>
 import XBadge from '../XBadge/XBadge.vue';
+import { ic } from '../icons/index.js'
 
 defineProps({
   cell: {type: [Object, String, Number, Boolean], default: null}
@@ -53,7 +54,7 @@ const emit = defineEmits(['cell-action']);
              :title="cell.value"
              :is-lighten-color="cell.is_lighten_color"
              :variant="cell.variant || 'light'"
-             :icon="cell.icon || null"
+             :icon="ic(cell.icon || null)"
              :icon-position="cell.icon_position || 'left'"
              :class="['q-mx-xs x-badge', { 'cursor-pointer': cell.action }]"
              @click="cell.action && emit('cell-action', cell.action)"></x-badge>
@@ -61,7 +62,7 @@ const emit = defineEmits(['cell-action']);
     <!-- CHIP -->
     <q-chip v-else-if="cell.type_input === 'chip'"
             :color="cell.color || 'primary'"
-            :icon="cell.icon || undefined"
+            :icon="ic(cell.icon || undefined)"
             text-color="white"
             dense
             class="q-mx-xs">
@@ -70,7 +71,7 @@ const emit = defineEmits(['cell-action']);
 
     <!-- ÍCONO (clickeable si trae `action`) -->
     <q-icon v-else-if="cell.type_input === 'icon'"
-            :name="cell.icon"
+            :name="ic(cell.icon)"
             :color="cell.color || undefined"
             :title="cell.tooltip || undefined"
             :size="cell.size || undefined"
@@ -104,7 +105,7 @@ const emit = defineEmits(['cell-action']);
        :target="cell.target || '_self'"
        class="q-mx-xs"
        style="text-decoration: underline; display: inline-flex; align-items: center">
-      <q-icon v-if="cell.icon" :name="cell.icon" class="q-mr-xs"/>
+      <q-icon v-if="cell.icon" :name="ic(cell.icon)" class="q-mr-xs"/>
       {{ cell.label }}
     </a>
 

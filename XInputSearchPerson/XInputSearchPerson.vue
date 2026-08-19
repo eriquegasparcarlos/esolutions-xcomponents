@@ -4,6 +4,7 @@ import {useQuasar} from 'quasar'
 import {formDefaults} from '@esolutions/js-utils'
 import XInput from '../XInput/XInput.vue'
 import XButton from '../XButton/XButton.vue'
+import { ic } from '../icons/index.js'
 
 defineOptions({
   name: 'XInputSearchPerson',
@@ -83,7 +84,7 @@ const handleButtonClick = async () => {
     if (data.success) {
       emit('success', data.data)
     } else {
-      $q.notify({type: 'negative', icon: 'fa-light fa-xmark', message: data?.message || 'No se encontro resultado'})
+      $q.notify({type: 'negative', icon: ic('error'), message: data?.message || 'No se encontro resultado'})
     }
   } catch (e) {
     $q.notify({type: 'negative', message: e.message})

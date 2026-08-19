@@ -11,8 +11,8 @@ export const COLUMNS = [
 ]
 
 export const ROW_ACTIONS = [
-  { name: 'ver', label: 'Ver detalle', icon: 'fa-light fa-eye' },
-  { name: 'descargar', label: 'Descargar XML', icon: 'fa-light fa-file-code' },
+  { name: 'ver', label: 'Ver detalle', icon: 'view' },
+  { name: 'descargar', label: 'Descargar XML', icon: 'file-code' },
 ]
 
 const NOMBRES = [
