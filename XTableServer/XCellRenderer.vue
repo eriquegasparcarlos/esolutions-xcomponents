@@ -39,7 +39,8 @@ const emit = defineEmits(['cell-action']);
           :style="{
           color: cell.color || undefined,
           fontSize: cell.size || undefined,
-          fontWeight: cell.bold ? 'bold' : undefined
+          fontWeight: cell.bold ? 'bold' : undefined,
+          textDecoration: cell.strike ? 'line-through' : undefined
         }">
     {{ cell.value }}
   </span>
