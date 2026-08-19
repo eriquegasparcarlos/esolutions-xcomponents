@@ -19,6 +19,12 @@ const props = defineProps({
   action: {type: String, required: true}
 });
 
+// El consumidor puede pasar `resource` con o sin barra inicial/final ("/api/x" o "api/x").
+// Sin normalizar, "/" + "/api/x" arma "//api/x": el navegador interpreta esa URL como
+// protocol-relative (host="api") en vez de una ruta relativa, y el request se va a
+// http://api/... (ERR_NAME_NOT_RESOLVED) en lugar de pegarle al backend real.
+const cleanResource = computed(() => props.resource.replace(/^\/+|\/+$/g, ''));
+
 // Normaliza los colores que llegan del backend a tokens semanticos del theme.
 // Mapeo: 'red' -> danger, 'green' -> success, 'primary' -> primary, etc.
 const iconVariant = computed(() => {
@@ -68,7 +74,7 @@ const handleOpen = async () => {
   loading.value = true;
   initForm();
 
-  let url = `/${props.resource}/record-${props.action}`;
+  let url = `/${cleanResource.value}/record-${props.action}`;
   if (props.recordId) url += `/${props.recordId}`;
 
   try {
@@ -105,7 +111,7 @@ const onSubmit = async () => {
   loadingSubmit.value = true;
 
   try {
-    const {data} = await proxy.$api.post(`/${props.resource}/${props.action}`, form.value);
+    const {data} = await proxy.$api.post(`/${cleanResource.value}/${props.action}`, form.value);
     if (data.success) {
       $q.notify({type: 'success', message: data.message});
       emit('success', data.data);

@@ -9,6 +9,9 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'success'])
 const $q = useQuasar()
 const isOpen = computed({ get: () => props.modelValue, set: (v) => emit('update:modelValue', v) })
+// Ver XDialogAction.vue: sin normalizar, "/" + "/api/x" arma "//api/x" y el navegador lo
+// resuelve como protocol-relative (host="api") en vez de una ruta relativa.
+const cleanResource = computed(() => props.resource.replace(/^\/+|\/+$/g, ''))
 const file = ref(null)
 const loading = ref(false)
 const onSubmit = async () => {
@@ -17,7 +20,7 @@ const onSubmit = async () => {
   const formData = new FormData()
   formData.append('file', file.value)
   try {
-    const res = await api.post(`/${props.resource}/import`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
+    const res = await api.post(`/${cleanResource.value}/import`, formData, { headers: { 'Content-Type': 'multipart/form-data' } })
     if (res.data.success) { $q.notify({ type: 'positive', message: res.data.message || 'Importado' }); emit('success'); isOpen.value = false }
     else $q.notify({ type: 'negative', message: res.data.message || 'Error' })
   } catch { $q.notify({ type: 'negative', message: 'Error al importar' }) }

@@ -26,12 +26,16 @@ const isOpen = computed({
   set: (val) => emit('update:modelValue', val),
 })
 
+// Ver XDialogAction.vue: sin normalizar, "/" + "/api/x" arma "//api/x" y el navegador lo
+// resuelve como protocol-relative (host="api") en vez de una ruta relativa.
+const cleanResource = computed(() => props.resource.replace(/^\/+|\/+$/g, ''))
+
 const handleOpen = async () => {
   email.value = ''
   errors.value = {}
   loading.value = true
   try {
-    const response = await api.get(`/${props.resource}/info_mail/${props.recordId}`)
+    const response = await api.get(`/${cleanResource.value}/info_mail/${props.recordId}`)
     if (response.data?.data?.email) {
       email.value = response.data.data.email
     }
@@ -49,7 +53,7 @@ const onSubmit = async () => {
   }
   loadingSubmit.value = true
   try {
-    const response = await api.post(`/${props.resource}/send_mail`, {
+    const response = await api.post(`/${cleanResource.value}/send_mail`, {
       id: props.recordId,
       email: email.value,
       table: props.table,
