@@ -136,6 +136,12 @@ Los nombres viejos de FontAwesome (`fal fa-floppy-disk`) **siguen funcionando**:
 el resolvedor los reconoce, asi que un proyecto que actualice no tiene que
 cambiar nada, ni en el codigo ni en lo que tenga guardado en base de datos.
 
+Los iconos que **no** son de la libreria —los de dominio del proyecto, como
+`fa-light fa-user-hoodie` o `money-bill`— pasan de largo y los dibuja el
+FontAwesome Pro self-hosted del proyecto. El paquete no los toca. Si el proyecto
+no carga FontAwesome, `configureXIcons({ unknownAs: 'fallback' })` los reemplaza
+por un icono generico en vez de dejarlos invisibles.
+
 Un proyecto que quiera usar otro set lo cambia en un boot file:
 
 ```js

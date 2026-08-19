@@ -24,10 +24,19 @@ import { aliases } from './aliases.js'
 const STROKE = 'fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round'
 const VIEW_BOX = '0 0 24 24'
 
-// Rol que se dibuja cuando el nombre pedido no existe. Pasa cuando el icono lo
-// elige el backend (XDialogAction, los botones del datatable): un nombre nuevo
-// alla no debe romper una pantalla aca.
+// Familia con la que se intenta dibujar un nombre pelado que no tiene rol. Los
+// proyectos cargan FontAwesome Pro self-hosted para sus iconos de dominio, y el
+// backend manda esos nombres sin prefijo (`user-hoodie`, `money-bill`) desde que
+// esolutions/datatable v2.2.0 dejo de prefijar. Devolverlos como clase FA hace
+// que el proyecto los dibuje, igual que antes de que existiera este modulo.
+const UNKNOWN_FAMILY = 'fa-light fa-'
+
+// Se dibuja solo si ni siquiera eso aplica. Ver `unknownAs` en configureXIcons.
 const FALLBACK = 'help'
+
+// Que hacer con un nombre pelado sin rol: 'fontawesome' (default) lo entrega
+// como clase FA; 'fallback' dibuja el icono generico.
+let unknownAs = 'fontawesome'
 
 // Prefijos de otros icon sets. Si el consumidor pide uno de estos, el nombre
 // se deja pasar sin tocar: es Quasar el que sabe dibujarlo, no nosotros.
@@ -73,14 +82,22 @@ export function resolveIcon (name) {
     : aliases[ bare ]
 
   if (role === void 0) {
-    // Un nombre de FontAwesome que no esta en el mapa no se puede dejar pasar:
-    // el consumidor ya no tiene la fuente cargada y no se dibujaria nada. Un
-    // nombre pelado desconocido viene del backend y como ligadura de Material
-    // Icons se veria como texto crudo. Los dos van al fallback.
-    if (name !== bare || bare.includes(' ') === false) return resolveIcon(FALLBACK)
-    // Queda el caso de una clase de un set que el proyecto cargo por su
-    // cuenta: eso se deja pasar tal cual.
-    return name
+    // Una clase de FontAwesome que no tiene rol se deja pasar TAL CUAL. Los
+    // roles cubren el vocabulario de UI del paquete; los proyectos tienen ademas
+    // sus iconos de dominio (`fa-light fa-user-hoodie`, `fa-money-bill`) y los
+    // dibujan con su propio FontAwesome self-hosted. Devolver el fallback aca
+    // los reemplazaba a todos por un "?" — el paquete pisaba iconos que no le
+    // correspondian. Si el proyecto no tiene FontAwesome cargado se vera vacio,
+    // que es exactamente lo que pasaba antes de que existiera este modulo.
+    if (name !== bare || name.includes(' ') === true) return name
+
+    // Queda el nombre pelado sin rol. Tal cual no puede volver: Quasar lo tomaria
+    // como ligadura de Material Icons y saldria texto crudo. Se entrega como
+    // clase de FontAwesome, que es lo que el proyecto tiene cargado para sus
+    // iconos de dominio; si no lo tiene, ahi si el icono generico.
+    return unknownAs === 'fontawesome'
+      ? UNKNOWN_FAMILY + bare
+      : resolveIcon(FALLBACK)
   }
 
   const custom = overrides[ role ]
@@ -103,6 +120,19 @@ export const ic = resolveIcon
  */
 export function setXIcons (map) {
   Object.assign(overrides, map)
+}
+
+/**
+ * Opciones del resolvedor.
+ *
+ * `unknownAs`: que hacer con un nombre pelado que no tiene rol —el caso de los
+ * iconos de dominio que manda el backend—. `'fontawesome'` (default) lo entrega
+ * como `fa-light fa-<nombre>`, para que lo dibuje el FontAwesome del proyecto.
+ * `'fallback'` dibuja el icono generico: usarlo solo en proyectos que NO cargan
+ * FontAwesome, donde la clase quedaria invisible.
+ */
+export function configureXIcons (opts) {
+  if (opts.unknownAs !== void 0) unknownAs = opts.unknownAs
 }
 
 /** Deja los roles indicados en su default (sin argumentos, limpia todos). */

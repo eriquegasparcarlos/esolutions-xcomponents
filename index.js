@@ -52,7 +52,7 @@ export { default as XDialogMail } from './dialog/XDialogMail.vue'
 export { useNotify } from './XNotify/useNotify'
 
 // Iconos: roles + resolvedor. Ver icons/README.md
-export { ic, resolveIcon, setXIcons, resetXIcons, xIconRoles } from './icons/index.js'
+export { ic, resolveIcon, setXIcons, resetXIcons, configureXIcons, xIconRoles } from './icons/index.js'
 
 // i18n
 export { default as xComponentsMessages } from './i18n/index.js'

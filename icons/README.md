@@ -44,10 +44,41 @@ Lo que no reconoce lo deja pasar tal cual (`sym_o_delete`, `mdi-delete`,
 `img:/x.svg`, un path SVG ya armado), asi que se puede mezclar con cualquier
 otro set.
 
-Y un nombre que no existe en ningun idioma cae en un icono generico en vez de
-romper la pantalla: el icono lo elige a veces el backend
-(`XDialogAction`, los botones de `esolutions/datatable`), y un nombre nuevo
-alla no debe dejar un hueco aca.
+## Los iconos que NO son de la libreria
+
+Los roles cubren el vocabulario de **UI** (`save`, `delete`, `next`). Cada
+proyecto tiene ademas sus iconos de **dominio** —`user-hoodie`, `money-bill`,
+`truck`, `cash-register`— que no tienen ni deben tener un rol aca: son de ese
+proyecto, no del design system.
+
+Esos se dibujan con el FontAwesome Pro self-hosted del proyecto, y el resolvedor
+esta hecho para no estorbarlos:
+
+| Entrada | Devuelve | Quien lo dibuja |
+|---|---|---|
+| `fa-light fa-user-hoodie` | la clase, intacta | el FontAwesome del proyecto |
+| `user-hoodie` (pelado, del backend) | `fa-light fa-user-hoodie` | idem |
+| `delete` / `fal fa-trash` | el SVG del rol | el paquete |
+
+El nombre pelado se convierte a clase porque desde `esolutions/datatable` v2.2.0
+el backend manda el icono **sin prefijo**. Devolverlo tal cual no sirve: Quasar
+lo tomaria como ligadura de Material Icons y saldria el texto crudo.
+
+> Esto es un arreglo de v2.17.2. Antes, un nombre de FontAwesome sin rol caia en
+> el icono generico, asi que el paquete **pisaba con un "?" todos los iconos de
+> dominio del proyecto**. La premisa de esa regla —"si no tengo el rol, el
+> proyecto no tiene FontAwesome"— era falsa: el estandar del stack es
+> justamente que cada proyecto sirva el suyo desde `public/fontawesome/`.
+
+### Proyectos que no cargan FontAwesome
+
+Ahi la clase queda invisible, y conviene el icono generico:
+
+```js
+import { configureXIcons } from '@esolutions/x-components/icons'
+
+configureXIcons({ unknownAs: 'fallback' })
+```
 
 ## Cambiar los iconos en un proyecto
 
