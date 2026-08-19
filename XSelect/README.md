@@ -17,6 +17,7 @@ import XSelect from '@/components/XSelect/XSelect.vue'
 | `includeAllOption` | `Boolean` | `false` | Agrega opcion "Todos" al inicio |
 | `isClassic` | `Boolean` | `false` | Usa label flotante dentro del select |
 | `dense` | `Boolean` | `true` | Modo compacto |
+| `error` | `String \| Array` | `null` | Mensaje de error de validacion. Acepta array (formato Laravel 422) y toma el primer mensaje |
 | `optionValue` | `String` | `'id'` | Propiedad para el valor de cada opcion |
 | `optionLabel` | `String` | `'name'` | Propiedad para el label de cada opcion |
 | `remoteUrl` | `String` | `null` | URL para busqueda remota |

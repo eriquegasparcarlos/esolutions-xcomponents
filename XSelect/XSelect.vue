@@ -1,5 +1,5 @@
 <script setup>
-import { computed, getCurrentInstance, ref, useAttrs, nextTick } from 'vue';
+import { computed, getCurrentInstance, ref, useAttrs, nextTick, toValue } from 'vue';
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
 
@@ -56,7 +56,7 @@ const props = defineProps({
   includeAllOption: Boolean,
   isClassic: { type: Boolean, default: formDefaults.isClassic },
   dense: { type: Boolean, default: formDefaults.dense },
-  error: { type: String, default: null },
+  error: { type: [String, Array], default: null },
   optionValue: { type: String, default: 'id' },
   optionLabel: { type: String, default: 'name' },
   remoteUrl: { type: String, default: null },
@@ -91,6 +91,13 @@ const props = defineProps({
 
 const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label');
 const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append');
+
+// Normaliza error: acepta String o Array (formato Laravel 422)
+const errorMessage = computed(() => {
+  const e = toValue(props.error);
+  if (!e) return null;
+  return Array.isArray(e) ? e[0] : e;
+});
 
 const fallbackId = `app-select-${Math.random().toString(36).substring(2, 9)}`;
 const elementId = computed(() => (attrs.id ? `app-select-${attrs.id}` : fallbackId));
@@ -343,10 +350,10 @@ function onSelect(val) {
                 for: elementId,
                 'popup-content-class': popupContentClass,
                 'aria-labelledby': label ? `${elementId}-label` : null,
-                error: !!props.error,
-                'error-message': props.error,
+                error: !!errorMessage,
+                'error-message': errorMessage,
                 'no-error-icon': true,
-                'hide-bottom-space': !props.error,
+                'hide-bottom-space': !errorMessage,
               }"
               :hide-selected="isFilterable"
               :fill-input="isFilterable"
