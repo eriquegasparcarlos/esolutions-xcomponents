@@ -113,11 +113,16 @@ const onSubmit = async () => {
   try {
     const {data} = await proxy.$api.post(`/${cleanResource.value}/${props.action}`, form.value);
     if (data.success) {
-      $q.notify({type: 'success', message: data.message});
+      // El backend de "eliminar"/"activar" normalmente solo responde {success:true}, sin
+      // message: sin este fallback el notify salia con el mensaje vacio.
+      const defaultSuccess = props.action === 'delete'
+        ? proxy.$t('components.deleteSuccess')
+        : proxy.$t('components.actionSuccess');
+      $q.notify({type: 'success', message: data.message || defaultSuccess});
       emit('success', data.data);
       closeDialog();
     } else {
-      $q.notify({type: 'error', message: data.message});
+      $q.notify({type: 'error', message: data.message || proxy.$t('components.actionError')});
     }
   } catch (err) {
     errors.value = err.response?.data?.errors || {};
