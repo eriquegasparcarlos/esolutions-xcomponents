@@ -13,15 +13,10 @@ No es una preferencia: los componentes traen **29 iconos `fa-*` hardcodeados** y
 cerrar de los diálogos, el + de `XSelect`, `XFile`, `XTracking`… Sin FontAwesome
 cargado se ven cuadros vacíos.
 
-El `pnpm install` necesita el token en el `~/.npmrc` **global**:
-
-```
-@fortawesome:registry=https://npm.fontawesome.com/
-//npm.fontawesome.com/:_authToken=<TOKEN>
-```
-
-El `.npmrc` del playground declara **solo el registro**, nunca el token, para que
-sea versionable.
+No se instala por npm (el repo es público desde v2.16.0 y la licencia Pro no
+permite redistribuirlo, ni siquiera detrás de un registry privado que otro
+podría inspeccionar) — se extrae a mano en `../vendor/fontawesome-pro/`
+(gitignoreada). Ver `vendor/fontawesome-pro/README.md` para el paso a paso.
 
 ## Para qué sirve
 

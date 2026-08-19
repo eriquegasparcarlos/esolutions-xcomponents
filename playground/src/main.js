@@ -12,10 +12,9 @@ import '@quasar/extras/material-icons/material-icons.css'
 // iconos que los componentes traen hardcodeados son `fa-light`, que solo existe
 // en el plan Pro (XDialog cerrar, XSelect +, XFile, XTracking...).
 //
-// Se usa la copia VENDORIZADA del repo, no el paquete npm: asi ni el playground
-// ni ningun consumidor necesitan el token en su ~/.npmrc, y deja de importar que
-// la suscripcion venza en 2027. Valido porque este repo es privado — ver
-// vendor/fontawesome-pro/README.md.
+// Copia LOCAL, gitignoreada (el repo es publico desde v2.16.0 y la licencia Pro
+// no permite redistribuir los archivos) — extraerla a mano antes de levantar el
+// playground, ver vendor/fontawesome-pro/README.md.
 import '@x/vendor/fontawesome-pro/css/all.min.css'
 import '@x/index.scss' // <- CSS de los componentes + el :root de tokens
 import './css/app.scss'

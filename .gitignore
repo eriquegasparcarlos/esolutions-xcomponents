@@ -1,0 +1,9 @@
+node_modules/
+dist/
+playground/dist/
+playground/node_modules/
+
+# FontAwesome Pro: licencia de pago, no se redistribuye en este repo (público
+# desde v2.16.0). Ver vendor/fontawesome-pro/README.md — se extrae localmente
+# para desarrollar el playground.
+vendor/fontawesome-pro/
