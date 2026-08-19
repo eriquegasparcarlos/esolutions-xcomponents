@@ -17,7 +17,7 @@ import XInputNumeric from '@esolutions/x-components/XInputNumeric/XInputNumeric.
 | `modelValue` | `Number \| String \| null` | — | Valor del input (v-model). Siempre emite `Number` o `null` (vacío/no numérico → `null`) |
 | `isClassic` | `Boolean` | `false` | Usa label flotante dentro del input |
 | `dense` | `Boolean` | `true` | Modo compacto |
-| `error` | `String` | `null` | Mensaje de error a mostrar |
+| `error` | `String \| Array` | `null` | Mensaje de error a mostrar. Acepta array (formato Laravel 422) y toma el primer mensaje |
 | `inputDebounce` | `Number \| String` | `0` | Debounce del `update:modelValue` |
 | `autofocus` | `Boolean` | `false` | Auto-focus al montar |
 | `isRequired` | `Boolean` | `false` | Muestra asterisco de requerido |

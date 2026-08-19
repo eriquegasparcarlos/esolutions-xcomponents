@@ -9,7 +9,7 @@ const props = defineProps({
   modelValue: [Number, String, null],
   isClassic: { type: Boolean, default: formDefaults.isClassic },
   dense: { type: Boolean, default: formDefaults.dense },
-  error: { type: String, default: null },
+  error: { type: [String, Array], default: null },
   inputDebounce: { type: [Number, String], default: 0 },
   autofocus: { type: Boolean, default: false },
   isRequired: { type: Boolean, default: false },
@@ -38,6 +38,13 @@ const emit = defineEmits(['update:modelValue', 'input', 'change'])
 
 const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label')
 const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append')
+
+// Normaliza error: acepta String o Array (formato Laravel 422)
+const errorMessage = computed(() => {
+  const e = props.error
+  if (!e) return null
+  return Array.isArray(e) ? e[0] : e
+})
 
 const attrs = useAttrs()
 const fallbackId = `app-q-input-${Math.random().toString(36).slice(2, 11)}`
@@ -129,10 +136,10 @@ defineExpose({ focus, select, focusAndSelect })
       :model-value="modelValue"
       :min="minNum"
       :max="maxNum"
-      :error="!!error"
-      :error-message="error"
+      :error="!!errorMessage"
+      :error-message="errorMessage"
       no-error-icon
-      :hide-bottom-space="!error"
+      :hide-bottom-space="!errorMessage"
       :label-slot="!!elementLabel"
       @update:model-value="val => emit('update:modelValue', toNum(val))"
       @input="e => emit('input', e)"
