@@ -25,20 +25,25 @@ Tambien deshace ambiguedades que traia FontAwesome: `xmark` era a la vez cerrar
 un dialogo, quitar una imagen y el toast de error. Hoy son `close`, `remove` y
 `error`, y se pueden separar visualmente sin tocar ningun componente.
 
-## Los tres idiomas que entiende
+## Que entiende
 
-`resolveIcon()` (alias: `ic`) acepta las tres formas, y todas dan el mismo
-resultado:
+`resolveIcon()` (alias: `ic`) resuelve por rol y por nombre del dibujo:
 
-| Entrada | Que es |
+| Entrada | Devuelve |
 |---|---|
-| `delete` | el rol — la API publica |
-| `trash-can` | el nombre del dibujo (ver `aliases.js`) |
-| `fal fa-trash-can` | FontAwesome, en cualquiera de sus dos sintaxis |
+| `delete` | el SVG del rol — la API publica |
+| `trash-can` | el SVG de `delete` (ver `aliases.js`) |
+| `fal fa-trash-can` | **la clase, intacta** — la dibuja FontAwesome |
 
-Esto es lo que permite que un proyecto actualice el paquete **sin cambiar
-nada**: los strings de FontAwesome que ya tiene escritos en el codigo, y los
-que tiene guardados en base de datos, siguen resolviendo.
+Una clase de FontAwesome escrita con su familia es una **instruccion
+explicita** y se respeta. El paquete no la traduce, aunque conozca el rol
+equivalente: hacerlo mezclaba dos estilos en la misma pantalla —los nombres que
+el paquete conoce salian con el trazo de Lucide y el resto con el de
+FontAwesome— y obligaba a mirar `aliases.js` para saber cual ibas a ver.
+
+Por eso un proyecto puede actualizar **sin cambiar nada**: los strings de
+FontAwesome que ya tiene escritos, y los que tiene guardados en base de datos,
+los sigue dibujando su propio FontAwesome.
 
 Lo que no reconoce lo deja pasar tal cual (`sym_o_delete`, `mdi-delete`,
 `img:/x.svg`, un path SVG ya armado), asi que se puede mezclar con cualquier
@@ -58,7 +63,7 @@ esta hecho para no estorbarlos:
 |---|---|---|
 | `fa-light fa-user-hoodie` | la clase, intacta | el FontAwesome del proyecto |
 | `user-hoodie` (pelado, del backend) | `fa-light fa-user-hoodie` | idem |
-| `delete` / `fal fa-trash` | el SVG del rol | el paquete |
+| `delete`, `trash-can` | el SVG del rol | el paquete |
 
 El nombre pelado se convierte a clase porque desde `esolutions/datatable` v2.2.0
 el backend manda el icono **sin prefijo**. Devolverlo tal cual no sirve: Quasar
@@ -72,13 +77,21 @@ lo tomaria como ligadura de Material Icons y saldria el texto crudo.
 
 ### Proyectos que no cargan FontAwesome
 
-Ahi la clase queda invisible, y conviene el icono generico:
+Ahi las clases quedan invisibles. Ese proyecto quiere lo contrario: que el
+paquete traduzca al rol lo que pueda, y dibuje el icono generico con el resto.
 
 ```js
 import { configureXIcons } from '@esolutions/x-components/icons'
 
-configureXIcons({ unknownAs: 'fallback' })
+configureXIcons({ faClasses: 'resolve', unknownAs: 'fallback' })
 ```
+
+| Entrada | Default (con FontAwesome) | Con esa config |
+|---|---|---|
+| `fa-light fa-trash` | la clase, intacta | el SVG de `delete` |
+| `fa-light fa-user-hoodie` | la clase, intacta | icono generico |
+| `user-hoodie` | `fa-light fa-user-hoodie` | icono generico |
+| `delete` | el SVG | el SVG |
 
 ## Cambiar los iconos en un proyecto
 

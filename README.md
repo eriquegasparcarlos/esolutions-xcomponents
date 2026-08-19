@@ -132,15 +132,17 @@ ni token, ni webfonts.
 <XDeleteDialog icon="delete" />
 ```
 
-Los nombres viejos de FontAwesome (`fal fa-floppy-disk`) **siguen funcionando**:
-el resolvedor los reconoce, asi que un proyecto que actualice no tiene que
+Los nombres de FontAwesome (`fal fa-floppy-disk`) **pasan intactos**: una clase
+escrita con su familia es una instruccion explicita y el paquete la respeta, asi
+que la dibuja el FontAwesome del proyecto. Un proyecto que actualice no tiene que
 cambiar nada, ni en el codigo ni en lo que tenga guardado en base de datos.
 
 Los iconos que **no** son de la libreria —los de dominio del proyecto, como
 `fa-light fa-user-hoodie` o `money-bill`— pasan de largo y los dibuja el
 FontAwesome Pro self-hosted del proyecto. El paquete no los toca. Si el proyecto
-no carga FontAwesome, `configureXIcons({ unknownAs: 'fallback' })` los reemplaza
-por un icono generico en vez de dejarlos invisibles.
+no carga FontAwesome, `configureXIcons({ faClasses: 'resolve', unknownAs: 'fallback' })`
+traduce al rol lo que pueda y dibuja un icono generico con el resto, en vez de
+dejarlos invisibles.
 
 Un proyecto que quiera usar otro set lo cambia en un boot file:
 
