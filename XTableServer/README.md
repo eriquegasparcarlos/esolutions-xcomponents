@@ -29,6 +29,12 @@ const tableRef = ref(null)
 
 // Recargar datos con filtros actuales
 tableRef.value.filterData()
+
+// Reconsultar init-data-table completo (titulo, columnas, filtros y headerButtons
+// incluidos) ademas de las filas. Usar cuando una accion fuera de la tabla cambia la
+// condicion de negocio de un boton del header (ej. activar/desactivar una fila cambia
+// cuantas filas activas hay, y eso decide si un boton debe mostrarse).
+tableRef.value.fetchColumnsAndData()
 ```
 
 ## Uso Basico

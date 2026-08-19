@@ -843,7 +843,20 @@ function clearFilters() {
   filterData()
 }
 
-defineExpose({ filterData, getFilterValues, setFilterValues, clearFilters, clearSelection, selectedRows, rows })
+// fetchColumnsAndData reconsulta init-data-table completo (headerButtons incluidos) y
+// no solo las filas: lo necesita un consumidor cuya condicion de negocio para mostrar/
+// ocultar un boton del header cambio por una accion fuera de la tabla misma (ej. activar/
+// desactivar una fila cambia cuantos botones son validos).
+defineExpose({
+  filterData,
+  fetchColumnsAndData,
+  getFilterValues,
+  setFilterValues,
+  clearFilters,
+  clearSelection,
+  selectedRows,
+  rows,
+})
 </script>
 
 <template>
