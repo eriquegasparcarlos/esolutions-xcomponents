@@ -794,8 +794,11 @@ const performHeaderAction = (button) => {
   })
 }
 
-const successDelete = () => fetchData()
-const successActive = () => fetchData()
+// fetchColumnsAndData (no fetchData): borrar o activar/desactivar una fila puede cambiar
+// la condicion de negocio de un boton del header (ej. un boton que solo aparece con N+
+// filas activas) — fetchData solo reconsulta filas, dejaria el header desactualizado.
+const successDelete = () => fetchColumnsAndData()
+const successActive = () => fetchColumnsAndData()
 
 const onRequest = (propsReq) => {
   pagination.value = {
