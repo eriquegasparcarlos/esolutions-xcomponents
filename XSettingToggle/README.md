@@ -9,8 +9,8 @@ Fila de ajuste tipo "settings": **[ícono] título + descripción** a la izquier
 | `modelValue` | Boolean | `false` | v-model del switch. |
 | `label` | String | `''` | Título. |
 | `description` | String | `''` | Texto de ayuda bajo el título (color legible). |
-| `icon` | String | `''` | Ícono estático. |
-| `iconOn` / `iconOff` | String | `''` | Íconos que alternan según el estado (tienen prioridad sobre `icon`). |
+| `icon` | String | `''` | Rol del ícono estático. |
+| `iconOn` / `iconOff` | String | `''` | Roles que alternan según el estado (tienen prioridad sobre `icon`). |
 | `feedbackOff` | String | `''` | Aviso inline mostrado SOLO cuando el switch está apagado. |
 | `disable` | Boolean | `false` | Deshabilita el switch. |
 | `boxed` | Boolean | `false` | Contenedor sutil para destacar un switch "maestro". |
@@ -22,8 +22,8 @@ Fila de ajuste tipo "settings": **[ícono] título + descripción** a la izquier
   v-model="form.is_inventoriable"
   label="Inventariable"
   description="Apágalo para vender sin controlar stock."
-  icon-on="fa-solid fa-boxes-stacked"
-  icon-off="fa-solid fa-box-open"
+  icon-on="success"
+  icon-off="blocked"
   feedback-off="No se validará stock al vender."
   :disable="locked"
   boxed

@@ -7,7 +7,7 @@
 | Prop | Tipo | Default | Descripción |
 |------|------|---------|-------------|
 | `text` | String | `''` | Texto del tooltip (o usar el slot por defecto). |
-| `icon` | String | `fa-regular fa-circle-question` | Ícono a mostrar. |
+| `icon` | String | `help` | Rol del ícono a mostrar. |
 | `size` | String | `15px` | Tamaño del ícono. |
 | `maxWidth` | String | `260px` | Ancho máximo del globo. |
 

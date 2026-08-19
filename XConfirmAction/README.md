@@ -39,7 +39,7 @@ function confirmDelete(id) {
 | Campo | Tipo | Descripción |
 |---|---|---|
 | `variant` | `'danger'\|'warning'\|'success'\|'info'\|'primary'` | Color + ícono por defecto. |
-| `icon` | `string` | Nombre FontAwesome (sin `fa-light fa-`). Opcional; deriva del variant. |
+| `icon` | `string` | Rol del icono (`delete`, `warning`, `info`…). Opcional; deriva del variant. Ver [icons/README.md](../icons/README.md). |
 | `title` | `string` | Título. |
 | `message` | `string` | Descripción (acepta HTML). |
 | `confirmLabel` / `cancelLabel` | `string` | Textos de los botones. |

@@ -15,8 +15,8 @@ Componente de botón personalizado basado en `q-btn` de Quasar.
 | Prop | Tipo | Default | Descripción |
 |------|------|---------|-------------|
 | `label` | String | - | Texto del botón |
-| `icon` | String | - | Icono izquierdo |
-| `iconRight` | String | - | Icono derecho |
+| `icon` | String | - | Rol del icono izquierdo (`save`, `delete`…) — ver [icons/README.md](../icons/README.md) |
+| `iconRight` | String | - | Rol del icono derecho |
 | `color` | String | `'primary'` | Color del botón (colores de Quasar) |
 | `textColor` | String | - | Color del texto |
 | `variant` | String | - | Variante: `primary`, `secondary`, `success`, `danger`, `warning`, `info` |

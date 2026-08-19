@@ -268,16 +268,16 @@ Las acciones se definen por fila en el backend:
     [
         'action' => 'edit',
         'label' => 'Editar',
-        'icon' => 'fal fa-edit',
+        'icon' => 'edit',
         'color' => 'primary',
     ],
     [
         'type' => 'group',
-        'icon' => 'fal fa-ellipsis-v',
+        'icon' => 'menu',
         'buttons' => [
-            ['action' => 'view', 'label' => 'Ver', 'icon' => 'fal fa-eye'],
+            ['action' => 'view', 'label' => 'Ver', 'icon' => 'view'],
             ['type' => 'separator'],
-            ['action' => 'delete', 'label' => 'Eliminar', 'icon' => 'fal fa-trash', 'color' => 'negative'],
+            ['action' => 'delete', 'label' => 'Eliminar', 'icon' => 'delete', 'color' => 'negative'],
         ],
     ],
 ]
@@ -290,16 +290,16 @@ Las acciones se definen por fila en el backend:
     [
         'action' => 'create',
         'label' => 'Nuevo',
-        'icon' => 'fal fa-plus',
+        'icon' => 'add',
         'color' => 'primary',
     ],
     [
         'action' => 'export',
-        'icon' => 'fal fa-file-excel',
+        'icon' => 'download',
     ],
     [
         'action' => 'refresh',
-        'icon' => 'fal fa-sync',
+        'icon' => 'refresh',
     ],
 ]
 ```
@@ -314,13 +314,19 @@ Las acciones se definen por fila en el backend:
 Ejemplo — botón de volver a la izquierda del título:
 
 ```vue
+<script setup>
+import { ic } from '@esolutions/x-components/icons'
+</script>
+
+<template>
 <x-table-server :resource="`servers/${id}/cron-jobs-table`" @actions="handleAction">
   <template #header-left>
-    <q-btn flat round dense icon="fa-light fa-arrow-left" color="primary" @click="goBack">
+    <q-btn flat round dense :icon="ic('prev')" color="primary" @click="goBack">
       <q-tooltip>Volver</q-tooltip>
     </q-btn>
   </template>
 </x-table-server>
+</template>
 ```
 
 En vista móvil (sin header de tabla) el slot `#header-left` no se muestra.

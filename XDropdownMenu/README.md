@@ -89,7 +89,7 @@ Menu dropdown estilo TailAdmin con composición flexible.
 | Prop | Tipo | Default | Descripción |
 |---|---|---|---|
 | `label` | String | `''` | Texto del item |
-| `icon` | String | `''` | Nombre del icono (Quasar/FontAwesome) |
+| `icon` | String | `''` | Rol del icono (`edit`, `delete`…); tambien acepta cualquier set que el proyecto cargue |
 | `variant` | String | `'default'` | `default` / `danger` / `success` / `warning` / `info` |
 | `to` | String/Object | `null` | Ruta vue-router |
 | `href` | String | `''` | URL externa |

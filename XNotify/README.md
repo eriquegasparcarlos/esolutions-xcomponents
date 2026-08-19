@@ -36,7 +36,7 @@ Cualquier opción de [QNotify](https://quasar.dev/quasar-plugins/notify) puede p
 
 | Método     | Icono FA                        | Clase CSS             | Timeout |
 |------------|---------------------------------|-----------------------|---------|
-| `success`  | `fa-light fa-check`             | `x-toast--success`    | 3000ms  |
-| `error`    | `fa-light fa-xmark`             | `x-toast--error`      | 5000ms  |
-| `warning`  | `fa-light fa-triangle-exclamation` | `x-toast--warning` | 4000ms  |
-| `info`     | `fa-light fa-circle-info`       | `x-toast--info`       | 3000ms  |
+| `success`  | `success`  | `x-toast--success` | 3000ms  |
+| `error`    | `error`    | `x-toast--error`   | 5000ms  |
+| `warning`  | `warning`  | `x-toast--warning` | 4000ms  |
+| `info`     | `info`     | `x-toast--info`    | 3000ms  |
