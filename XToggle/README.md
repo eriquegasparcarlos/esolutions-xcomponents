@@ -23,6 +23,7 @@ import XToggle from '@/components/XToggle/XToggle.vue'
 | `hint` | `String` | `''` | Texto de ayuda debajo del toggle |
 | `tooltipText` | `String` | `''` | Texto del tooltip |
 | `tooltipColor` | `String` | `''` | Color del tooltip |
+| `layout` | `'inline' \| 'left' \| 'right'` | `'inline'` | Posición del switch respecto al bloque label+hint. `inline` (default) mantiene el comportamiento clásico: switch y label en una fila, hint debajo de todo. `left`/`right` arman una fila de "settings row": el switch queda centrado verticalmente contra TODO el bloque label+hint, a la izquierda o a la derecha |
 
 ## Eventos
 
@@ -104,6 +105,25 @@ const notificaciones = ref(true)
   label="Modo avanzado"
   tooltip-text="Habilita opciones adicionales para usuarios expertos"
   tooltip-color="bg-dark"
+/>
+```
+
+### Layout row (settings row): switch a la izquierda o derecha
+
+```vue
+<!-- El switch queda centrado contra el bloque label+hint completo, no solo contra el label -->
+<XToggle
+  v-model="variantesActivas"
+  label="Variantes"
+  hint="Un producto con hijos: talla, color, sabor. Cada uno con su código y precio."
+  layout="left"
+/>
+
+<XToggle
+  v-model="presentacionesActivas"
+  label="Presentaciones"
+  hint="Otras unidades de venta del mismo producto: caja de 12, docena, six-pack."
+  layout="right"
 />
 ```
 

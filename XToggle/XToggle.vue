@@ -61,6 +61,16 @@ const props = defineProps({
   tooltipColor: {
     type: String,
     default: ''
+  },
+
+  // Posición del switch respecto al bloque label+hint.
+  // 'inline' (default, retrocompatible): switch y label en una fila, hint debajo de todo.
+  // 'left'/'right': fila con el switch centrado verticalmente contra TODO el bloque
+  // label+hint — el patrón de settings row (label ya no va dentro del q-toggle).
+  layout: {
+    type: String,
+    default: 'inline',
+    validator: (value) => ['inline', 'left', 'right'].includes(value)
   }
 })
 
@@ -80,6 +90,10 @@ const elementId = computed(() =>
 const showTopLabel = computed(() => !props.isClassic && props.label)
 const checkboxLabel = computed(() => props.isClassic ? props.label : undefined)
 
+// --- Layout row (left/right): el label va como texto aparte, no dentro del q-toggle ---
+const isRowLayout = computed(() => props.layout !== 'inline')
+const toggleOrder = computed(() => (props.layout === 'right' ? 1 : 0))
+
 // --- Mostrar el tooltip solo si hay texto definido ---
 const hasTooltip = computed(() => !!props.tooltipText)
 
@@ -91,10 +105,14 @@ const internalValue = computed({
 </script>
 
 <template>
-  <div class="x-toggle column flex-grow-1" :class="attrs.class">
-    <!-- Etiqueta superior (solo si no es clásico) -->
+  <div
+    class="x-toggle flex-grow-1"
+    :class="[attrs.class, isRowLayout ? 'row items-center no-wrap' : 'column']"
+    :style="isRowLayout ? 'gap: 12px' : null"
+  >
+    <!-- Etiqueta superior (solo layout inline, no clásico) -->
     <label
-      v-if="showTopLabel"
+      v-if="!isRowLayout && showTopLabel"
       :for="elementId"
       class="q-input__label"
       style="line-height: 15px; margin-top: 3px; margin-bottom: 2px"
@@ -102,12 +120,12 @@ const internalValue = computed({
       {{ props.label }}
     </label>
 
-    <!-- Toggle principal -->
+    <!-- Toggle: en layout row, `order` lo manda a izquierda o derecha del bloque de texto -->
     <q-toggle
       v-bind="{
         ...attrs,
         class: null, // evita duplicidad de clase
-        label: checkboxLabel,
+        label: isRowLayout ? undefined : checkboxLabel,
         for: elementId,
         dense: true
       }"
@@ -115,15 +133,25 @@ const internalValue = computed({
       :color="color"
       :disable="disable"
       :indeterminate-value="indeterminateValue"
-      style="line-height: 40px; height: 40px">
+      :style="isRowLayout
+        ? { order: toggleOrder, flexShrink: 0 }
+        : 'line-height: 40px; height: 40px'">
       <!-- Tooltip si está definido -->
       <q-tooltip v-if="hasTooltip" :class="tooltipColor">
         {{ tooltipText }}
       </q-tooltip>
     </q-toggle>
 
-    <!-- Texto de ayuda debajo del toggle -->
-    <slot name="hint" v-if="hint">
+    <!-- Layout row: label + hint como bloque de texto aparte, centrado contra el toggle -->
+    <div v-if="isRowLayout" class="col" :style="{ order: toggleOrder === 0 ? 1 : 0 }">
+      <div v-if="label" class="text-body2 text-weight-medium">{{ label }}</div>
+      <slot name="hint" v-if="hint">
+        <div class="text-caption text-secondary">{{ hint }}</div>
+      </slot>
+    </div>
+
+    <!-- Layout inline: texto de ayuda debajo del toggle -->
+    <slot v-if="!isRowLayout && hint" name="hint">
       <div class="q-mt-sm text-caption text-secondary">{{ hint }}</div>
     </slot>
   </div>
