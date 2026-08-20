@@ -16,10 +16,12 @@ A flexible wrapper for Quasar's `QBanner` with predefined semantic styles for su
 
 ## 🔧 Props
 
-| Prop     | Type   | Default     | Description                                                |
-|----------|--------|-------------|------------------------------------------------------------|
-| `label`  | String | `''`        | Text content displayed in the banner                      |
-| `type`   | String | `'success'` | Semantic type that defines the color scheme               |
+| Prop        | Type   | Default     | Description                                             |
+|-------------|--------|-------------|---------------------------------------------------------|
+| `label`     | String | `''`        | Text content displayed in the banner                    |
+| `type`      | String | `'success'` | Semantic type that defines the color scheme             |
+| `bgColor`   | String | `null`      | Fondo propio; pisa al del `type`                        |
+| `textColor` | String | `null`      | Color de texto propio; pisa al del `type`               |
 
 ---
 
@@ -30,7 +32,29 @@ A flexible wrapper for Quasar's `QBanner` with predefined semantic styles for su
 | `success`    | `green-10`   | `green-11`       |
 | `error`      | `red-10`     | `red-2`          |
 | `information`| `blue-10`    | `blue-3`         |
-| `warning`    | `yellow-10`  | `yellow-7`       |
+| `warning`    | `orange-10`  | `orange-2`       |
+
+> `warning` usaba `yellow-7` (#FBC02D), un amarillo de señalización mucho más
+> saturado que el resto de la escala — gritaba más que un `error`, que es el estado
+> más grave. Desde v2.19.0 sigue el mismo patrón que los demás: fondo claro, texto
+> oscuro.
+
+### Colores propios
+
+Para el caso puntual que no entra en ningún `type`, sin tocar el paquete:
+
+```vue
+<!-- nombre de la paleta de Quasar -->
+<XBanner bg-color="grey-3" text-color="grey-9">Aviso neutro</XBanner>
+
+<!-- color CSS: hexadecimal, rgb() o una variable de tema -->
+<XBanner bg-color="#FFF8E1" text-color="#8D6E63">Con hexa</XBanner>
+<XBanner bg-color="var(--x-brand-light)" text-color="var(--x-brand)">Del tema</XBanner>
+```
+
+Los helpers `bg-*` / `text-*` de Quasar son clases generadas para SU paleta y **no
+aceptan un hexadecimal**, así que el componente distingue: si el valor arranca con
+`#`, `rgb`, `hsl` o `var(`, lo aplica como estilo inline; si no, como clase.
 
 ---
 
