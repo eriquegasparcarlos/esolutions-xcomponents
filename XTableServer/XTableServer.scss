@@ -96,11 +96,34 @@
 // Columna izquierda y derecha con ancho FIJO proporcional (no adaptativo).
 // Asi todas las filas tienen la misma estructura visual.
 // --------------------------------------------------------------------------
+// __content ahora es una COLUMNA: [top opcional] / [middle: left-right-menu] / [bottom opcional].
+// Sin top/bottom, es una columna con un solo hijo (__middle) → se ve igual que antes.
 .x-table-mobile-row__content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  min-width: 0;
+}
+
+// Fila del medio: la estructura izquierda/derecha/menu de siempre.
+.x-table-mobile-row__middle {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
+  min-width: 0;
+}
+
+// Secciones a ancho completo (correo, direccion, etc.). min-width:0 para que el
+// ellipsis interno recorte en vez de desbordar la fila.
+.x-table-mobile-row__top,
+.x-table-mobile-row__bottom {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .x-table-mobile-row__left {

@@ -183,7 +183,11 @@ public function initDataTable(): array
 | `enabled` | `Boolean` | Habilita la configuracion personalizada |
 | `titleField` | `String` | Nombre del campo a mostrar como titulo en el bottom sheet |
 | `subtitleField` | `String` | Nombre del campo a mostrar como subtitulo en el bottom sheet |
-| `primaryFields` | `Array` | Lista de campos a mostrar en la vista compacta |
+| `primaryFields` | `Array` | Lista de campos a mostrar en la vista compacta (fila izquierda/derecha) |
+| `topFields` | `Array` | Opcional: campos a mostrar en una seccion a **ancho completo ARRIBA** de la fila left/right. Util para campos largos (correo, direccion) que en columna desbordarian. Cada item: `{ field, align? }` |
+| `bottomFields` | `Array` | Opcional: igual que `topFields` pero en una seccion a ancho completo **DEBAJO**. Cada item: `{ field, align? }` |
+
+Sin `topFields`/`bottomFields`, la tarjeta se ve igual que antes (solo left/right) — el cambio es retrocompatible.
 
 ### Estructura de primaryFields
 

@@ -371,6 +371,12 @@ const mobileRightFields = computed(
   () => mobileConfig.value.primaryFields?.filter((f) => f.position === 'right') || [],
 )
 
+// Secciones opcionales a ancho completo (arriba/abajo de la fila left/right). Sirven
+// para campos anchos (correo, direccion) que no entran bien en las columnas. Si el
+// backend no las define, la tarjeta se ve igual que antes (retrocompatible).
+const mobileTopFields = computed(() => mobileConfig.value.topFields || [])
+const mobileBottomFields = computed(() => mobileConfig.value.bottomFields || [])
+
 /**
  * Ancho de la columna izquierda en mobile. Por default 60% (mayor que la derecha
  * porque tipicamente contiene el dato principal: nombre, titulo, etc.).
@@ -1206,29 +1212,48 @@ defineExpose({
         >
           <q-td colspan="100%" class="q-py-sm">
             <div class="x-table-mobile-row__content">
-              <!-- Columna izquierda (ancho configurable, mismo para todas las filas) -->
-              <div class="x-table-mobile-row__left" :style="{ flexBasis: mobileLeftWidth }">
-                <template v-for="(field, idx) in mobileLeftFields" :key="idx">
+              <!-- TOP: ancho completo (opcional). Para campos anchos como correo/nombre. -->
+              <div v-if="mobileTopFields.length" class="x-table-mobile-row__top">
+                <template v-for="(field, idx) in mobileTopFields" :key="'t' + idx">
                   <div class="ellipsis" :class="`text-${field.align || 'left'}`">
                     <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
                   </div>
                 </template>
               </div>
-              <!-- Columna derecha (toma el resto, mismo para todas las filas) -->
-              <div class="x-table-mobile-row__right">
-                <template v-for="(field, idx) in mobileRightFields" :key="idx">
-                  <div
-                    class="ellipsis"
-                    :class="`text-${field.align || 'right'}`"
-                    :style="field.truncate ? { maxWidth: field.truncate + 'px' } : {}"
-                  >
+              <!-- MEDIO: izquierda / derecha / icono de menu -->
+              <div class="x-table-mobile-row__middle">
+                <!-- Columna izquierda (ancho configurable, mismo para todas las filas) -->
+                <div class="x-table-mobile-row__left" :style="{ flexBasis: mobileLeftWidth }">
+                  <template v-for="(field, idx) in mobileLeftFields" :key="idx">
+                    <div class="ellipsis" :class="`text-${field.align || 'left'}`">
+                      <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
+                    </div>
+                  </template>
+                </div>
+                <!-- Columna derecha (toma el resto, mismo para todas las filas) -->
+                <div class="x-table-mobile-row__right">
+                  <template v-for="(field, idx) in mobileRightFields" :key="idx">
+                    <div
+                      class="ellipsis"
+                      :class="`text-${field.align || 'right'}`"
+                      :style="field.truncate ? { maxWidth: field.truncate + 'px' } : {}"
+                    >
+                      <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
+                    </div>
+                  </template>
+                </div>
+                <!-- Icono de menu -->
+                <div class="x-table-mobile-row__action">
+                  <q-icon class="cursor-pointer" size="1.25em" :name="ic('menu')" color="grey-7" />
+                </div>
+              </div>
+              <!-- BOTTOM: ancho completo (opcional). -->
+              <div v-if="mobileBottomFields.length" class="x-table-mobile-row__bottom">
+                <template v-for="(field, idx) in mobileBottomFields" :key="'b' + idx">
+                  <div class="ellipsis" :class="`text-${field.align || 'left'}`">
                     <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
                   </div>
                 </template>
-              </div>
-              <!-- Icono de menu -->
-              <div class="x-table-mobile-row__action">
-                <q-icon class="cursor-pointer" size="1.25em" :name="ic('menu')" color="grey-7" />
               </div>
             </div>
           </q-td>
