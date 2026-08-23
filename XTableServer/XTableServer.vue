@@ -988,7 +988,7 @@ defineExpose({
              header lo perdió y rompió silenciosamente a quienes lo usaban). -->
         <slot name="header-buttons" />
 
-        <q-btn flat round no-caps :icon="ic('columns')">
+        <q-btn v-if="!isMobileView" flat round no-caps :icon="ic('columns')">
           <q-menu class="column-visibility-menu">
             <q-list dense style="min-width: 180px; max-height: 320px; overflow-y: auto;">
               <q-item-label header class="text-caption text-weight-medium q-pb-xs">{{ $t('common.columns') }}</q-item-label>
