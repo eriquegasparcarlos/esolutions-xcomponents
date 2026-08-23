@@ -96,17 +96,26 @@
 // Columna izquierda y derecha con ancho FIJO proporcional (no adaptativo).
 // Asi todas las filas tienen la misma estructura visual.
 // --------------------------------------------------------------------------
-// __content ahora es una COLUMNA: [top opcional] / [middle: left-right-menu] / [bottom opcional].
-// Sin top/bottom, es una columna con un solo hijo (__middle) → se ve igual que antes.
+// __content = FILA de 2 columnas: [datos (ancho auto) | chevron (30px)].
+// align-items:center centra el chevron verticalmente respecto de todo el bloque de datos.
 .x-table-mobile-row__content {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: 8px;
   width: 100%;
   min-width: 0;
 }
 
-// Fila del medio: la estructura izquierda/derecha/menu de siempre.
+// Bloque de datos: COLUMNA [top opcional] / [middle: left-right] / [bottom opcional].
+.x-table-mobile-row__data {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+// Fila del medio: la estructura izquierda/derecha de siempre.
 .x-table-mobile-row__middle {
   display: flex;
   align-items: center;
@@ -145,11 +154,11 @@
 }
 
 .x-table-mobile-row__action {
-  flex: 0 0 auto;
+  flex: 0 0 30px;
+  width: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
 }
 
 .x-menu-item-label {

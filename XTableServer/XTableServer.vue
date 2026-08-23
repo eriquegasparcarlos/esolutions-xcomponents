@@ -1211,49 +1211,53 @@ defineExpose({
           @click="openMobileActions(props.row)"
         >
           <q-td colspan="100%" class="q-py-sm">
+            <!-- Fila = 2 columnas: datos (ancho auto) + chevron (30px, centrado vertical).
+                 Toda la fila abre el menu; el chevron es solo pista visual. -->
             <div class="x-table-mobile-row__content">
-              <!-- TOP: ancho completo (opcional). Para campos anchos como correo/nombre. -->
-              <div v-if="mobileTopFields.length" class="x-table-mobile-row__top">
-                <template v-for="(field, idx) in mobileTopFields" :key="'t' + idx">
-                  <div class="ellipsis" :class="`text-${field.align || 'left'}`">
-                    <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
-                  </div>
-                </template>
-              </div>
-              <!-- MEDIO: izquierda / derecha / icono de menu -->
-              <div class="x-table-mobile-row__middle">
-                <!-- Columna izquierda (ancho configurable, mismo para todas las filas) -->
-                <div class="x-table-mobile-row__left" :style="{ flexBasis: mobileLeftWidth }">
-                  <template v-for="(field, idx) in mobileLeftFields" :key="idx">
+              <div class="x-table-mobile-row__data">
+                <!-- TOP: ancho completo (opcional). Para campos anchos como correo/nombre. -->
+                <div v-if="mobileTopFields.length" class="x-table-mobile-row__top">
+                  <template v-for="(field, idx) in mobileTopFields" :key="'t' + idx">
                     <div class="ellipsis" :class="`text-${field.align || 'left'}`">
                       <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
                     </div>
                   </template>
                 </div>
-                <!-- Columna derecha (toma el resto, mismo para todas las filas) -->
-                <div class="x-table-mobile-row__right">
-                  <template v-for="(field, idx) in mobileRightFields" :key="idx">
-                    <div
-                      class="ellipsis"
-                      :class="`text-${field.align || 'right'}`"
-                      :style="field.truncate ? { maxWidth: field.truncate + 'px' } : {}"
-                    >
+                <!-- MEDIO: izquierda / derecha -->
+                <div class="x-table-mobile-row__middle">
+                  <!-- Columna izquierda (ancho configurable, mismo para todas las filas) -->
+                  <div class="x-table-mobile-row__left" :style="{ flexBasis: mobileLeftWidth }">
+                    <template v-for="(field, idx) in mobileLeftFields" :key="idx">
+                      <div class="ellipsis" :class="`text-${field.align || 'left'}`">
+                        <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
+                      </div>
+                    </template>
+                  </div>
+                  <!-- Columna derecha (toma el resto, mismo para todas las filas) -->
+                  <div class="x-table-mobile-row__right">
+                    <template v-for="(field, idx) in mobileRightFields" :key="idx">
+                      <div
+                        class="ellipsis"
+                        :class="`text-${field.align || 'right'}`"
+                        :style="field.truncate ? { maxWidth: field.truncate + 'px' } : {}"
+                      >
+                        <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
+                      </div>
+                    </template>
+                  </div>
+                </div>
+                <!-- BOTTOM: ancho completo (opcional). -->
+                <div v-if="mobileBottomFields.length" class="x-table-mobile-row__bottom">
+                  <template v-for="(field, idx) in mobileBottomFields" :key="'b' + idx">
+                    <div class="ellipsis" :class="`text-${field.align || 'left'}`">
                       <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
                     </div>
                   </template>
                 </div>
-                <!-- Icono de menu -->
-                <div class="x-table-mobile-row__action">
-                  <q-icon class="cursor-pointer" size="1.25em" :name="ic('menu')" color="grey-7" />
-                </div>
               </div>
-              <!-- BOTTOM: ancho completo (opcional). -->
-              <div v-if="mobileBottomFields.length" class="x-table-mobile-row__bottom">
-                <template v-for="(field, idx) in mobileBottomFields" :key="'b' + idx">
-                  <div class="ellipsis" :class="`text-${field.align || 'left'}`">
-                    <x-cell-renderer :cell="getMobileFieldValue(props.row, field)" />
-                  </div>
-                </template>
+              <!-- Chevron: pista de "fila tocable". 30px, centrado verticalmente. -->
+              <div class="x-table-mobile-row__action">
+                <q-icon size="1.25em" :name="ic('next')" color="grey-6" />
               </div>
             </div>
           </q-td>
