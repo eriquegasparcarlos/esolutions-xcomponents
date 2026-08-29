@@ -44,6 +44,10 @@ Igual que `XTableServer`. Para un `resource="app-api/reports/kardex"` el backend
 | `POST` | `{resource}/export` | Blob Excel (opcional) |
 | `POST` | `{resource}/update-visible-columns` | ok (opcional) |
 
+> `meta.total` es lo que alimenta el pie de la tabla y los controles de página. Si el
+> backend lo omite —o lo pisa al agregar sus propias claves a `meta`— el pie no puede decir
+> cuántos registros hay y la paginación queda muerta.
+
 En Laravel se genera con el trait `PaginationTenantTrait` de `esolutions/datatable` (`initTable` /
 `getRecords` / `export` / `updateVisibleColumns`). Los filtros mandan su ancho responsive en `class`
 (grid de 24 col, ej. `col-24 col-sm-6`).

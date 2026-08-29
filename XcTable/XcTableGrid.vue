@@ -13,6 +13,15 @@ function onRequest (req) {
   const { page, rowsPerPage, sortBy, descending } = req.pagination
   ctx.setPagination({ page, rowsPerPage, sortBy, descending })
 }
+
+/*
+| `@update:pagination` NO es opcional aunque la paginación sea del servidor: sin ningún
+| listener, QTable ignora la prop `pagination` por completo y trabaja sobre la copia que
+| tomó al montarse — cuando `rowsNumber` todavía valía 0, porque la respuesta no había
+| llegado. El resultado era un pie que decía siempre "1-0 de 0" y controles de página
+| muertos, con la tabla mostrando bien sus filas. Es el mismo motivo por el que
+| XTableServer usa `v-model:pagination`.
+*/
 </script>
 
 <template>
@@ -26,6 +35,7 @@ function onRequest (req) {
     :pagination="ctx.pagination"
     :rows-per-page-options="ctx.pagination.pageSizes"
     @request="onRequest"
+    @update:pagination="(value) => Object.assign(ctx.pagination, value)"
   >
     <!--
       Las celdas llegan FORMATEADAS desde el backend ({ type_input, value, ... }), no como
