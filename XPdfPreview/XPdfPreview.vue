@@ -1,7 +1,20 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, h, defineAsyncComponent } from 'vue'
+import { QSpinner } from 'quasar'
 import XDialog from '../XDialog/XDialog.vue'
-import XPdfViewer from '../XPdfViewer/XPdfViewer.vue'
+
+// XPdfViewer arrastra el motor PDFium en WebAssembly (~4.6 MB) + su JS (~1 MB).
+// Con import estatico ese chunk se descarga al cargar cualquier pagina que use
+// este dialogo, aunque el usuario nunca abra un PDF. Async: se pide recien al
+// abrir la vista previa. El spinner de `loading` ya cubre esa espera.
+const XPdfViewer = defineAsyncComponent({
+  loader: () => import('../XPdfViewer/XPdfViewer.vue'),
+  // Mismo spinner que mientras se descarga el PDF: la espera del chunk no deja el dialogo en blanco
+  loadingComponent: {
+    render: () => h('div', { class: 'x-pdf-preview__fill' }, [h(QSpinner, { size: '32px', color: 'primary' })]),
+  },
+  delay: 0,
+})
 
 /**
  * XPdfPreview — diálogo de previsualización de PDF (right full-height).
