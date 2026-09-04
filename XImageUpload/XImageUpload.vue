@@ -12,9 +12,24 @@ const props = defineProps({
   hint:        { type: String, default: '' },
   accept:      { type: String, default: 'image/png,image/jpeg,image/webp,image/svg+xml' },
   maxSizeMb:   { type: Number, default: 2 },
+
+  /*
+  | Permite BORRAR la imagen ya guardada (la de `previewUrl`), no solo descartar el archivo
+  | recién elegido.
+  |
+  | Son dos acciones distintas y antes solo existía la primera: el consumidor que necesitaba
+  | la segunda —borrarla del servidor— tenía que poner un botón propio al lado, y mientras
+  | había un archivo pendiente se veían las dos equis juntas, con significados distintos.
+  |
+  | El componente no borra nada por su cuenta: emite `remove` y quien lo usa decide (llamar a
+  | su API, limpiar el estado). `removeLabel` es el texto del confirm, para que se pueda
+  | decir "Quitar el logo" en vez de un genérico.
+  */
+  deletable:   { type: Boolean, default: false },
+  removeLabel: { type: String, default: 'Quitar la imagen guardada' },
 })
 
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'remove'])
 
 const $q      = useQuasar()
 const fileInput = ref(null)
@@ -62,9 +77,22 @@ function onFileSelected(e) {
   e.target.value = ''
 }
 
+/** Descarta el archivo recién elegido; la imagen guardada no se toca. */
 function clear(e) {
   e.stopPropagation()
   emit('update:modelValue', null)
+}
+
+/**
+ * Borra la imagen guardada. Solo se ofrece cuando NO hay un archivo pendiente: con uno
+ * elegido, guardar va a reemplazar la anterior de todos modos, y mostrar las dos acciones a
+ * la vez son dos equis que significan cosas distintas.
+ */
+const canRemove = computed(() => props.deletable && !props.modelValue && !!props.previewUrl)
+
+function remove(e) {
+  e.stopPropagation()
+  emit('remove')
 }
 </script>
 
@@ -83,7 +111,7 @@ function clear(e) {
         <div class="x-image-upload__hint">{{ hintText }}</div>
       </div>
 
-      <!-- Botón limpiar -->
+      <!-- Descartar el archivo recién elegido -->
       <q-btn
         v-if="modelValue"
         flat round dense
@@ -91,7 +119,21 @@ function clear(e) {
         size="sm"
         color="grey-6"
         @click="clear"
-      />
+      >
+        <q-tooltip>Descartar el archivo elegido</q-tooltip>
+      </q-btn>
+
+      <!-- Borrar la imagen ya guardada (opt-in con `deletable`) -->
+      <q-btn
+        v-if="canRemove"
+        flat round dense
+        :icon="ic('delete')"
+        size="sm"
+        color="negative"
+        @click="remove"
+      >
+        <q-tooltip>{{ removeLabel }}</q-tooltip>
+      </q-btn>
     </div>
 
     <input

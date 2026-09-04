@@ -42,12 +42,38 @@ async function uploadLogo() {
 | `hint`       | `String` | `''`                                             | Texto secundario (auto si vacío)      |
 | `accept`     | `String` | `'image/png,image/jpeg,image/webp,image/svg+xml'`| MIME types aceptados                  |
 | `maxSizeMb`  | `Number` | `2`                                              | Tamaño máximo en MB                   |
+| `deletable`  | `Boolean`| `false`                                          | Ofrece borrar la imagen **guardada**  |
+| `removeLabel`| `String` | `'Quitar la imagen guardada'`                    | Tooltip del botón de borrar           |
 
 ## Eventos
 
 | Evento              | Payload | Descripción                         |
 |---------------------|---------|-------------------------------------|
 | `update:modelValue` | `File`  | Archivo seleccionado y validado     |
+| `remove`            | —       | Se pidió borrar la imagen guardada  |
+
+## Descartar vs. borrar
+
+Son dos acciones distintas y el componente distingue una de otra:
+
+- La **×** aparece cuando hay un archivo recién elegido y **descarta esa selección**
+  (`update:modelValue` con `null`). La imagen guardada no se toca.
+- El **tacho** aparece solo con `deletable` y cuando hay una imagen guardada (`previewUrl`)
+  **sin** archivo pendiente: emite `remove` y **el consumidor decide qué hacer** — el
+  componente no llama a ninguna API.
+
+Los dos nunca se muestran a la vez: con un archivo elegido, guardar va a reemplazar el
+anterior de todos modos, y dos íconos parecidos con significados distintos se confunden.
+
+```vue
+<XImageUpload
+  v-model="file"
+  :preview-url="logoUrl"
+  deletable
+  remove-label="Quitar el logo guardado"
+  @remove="borrarEnElServidor"
+/>
+```
 
 ## Notas
 
