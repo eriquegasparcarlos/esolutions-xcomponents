@@ -54,9 +54,19 @@
   color: color.adjust($x-info, $lightness: -15%) !important;
 }
 
+/*
+| El unico badge que es de MARCA: sigue el color del tenant, no el del build.
+|
+| Los demas son semanticos (info, exito, error) y esos NO varian: un error en rosa porque la
+| marca es rosa se lee peor, aunque sea mas coherente.
+|
+| El fondo translucido va por `--x-brand-rgb` porque `rgba(var(--x-brand), .15)` no es CSS
+| valido; sin esos canales sueltos este fondo quedaba con el color del build por debajo del
+| elegido.
+*/
 .x-badge-primary {
-  background-color: rgba($x-primary, 0.15) !important;
-  color: $x-primary !important;
+  background-color: rgba(var(--x-brand-rgb, #{color.channel($x-primary, "red", $space: rgb)}, #{color.channel($x-primary, "green", $space: rgb)}, #{color.channel($x-primary, "blue", $space: rgb)}), 0.15) !important;
+  color: var(--x-brand, #{$x-primary}) !important;
 }
 
 .x-badge-secondary {
@@ -94,8 +104,8 @@
     color: #ffffff !important;
   }
   &.x-badge-primary {
-    background-color: $x-primary !important;
-    color: #ffffff !important;
+    background-color: var(--x-brand, #{$x-primary}) !important;
+    color: var(--x-brand-contrast, #ffffff) !important;
   }
   &.x-badge-secondary {
     background-color: $x-secondary !important;

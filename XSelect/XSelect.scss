@@ -9,7 +9,7 @@
 .x-select {
   --x-select-height: #{$x-select-height};
   --x-select-border-color: #{$x-border-color};
-  --x-select-border-color-focus: #{$x-border-color-focus};
+  --x-select-border-color-focus: var(--x-brand, #{$x-border-color-focus});
   --x-select-border-color-error: #{$x-border-color-error};
   --x-select-border-radius: var(--x-radius, #{$x-border-radius});
   --x-select-label-color: #{$x-input-label-color};

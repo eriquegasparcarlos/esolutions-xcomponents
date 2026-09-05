@@ -26,6 +26,7 @@
 // ---------------------------------------
 //   :root { --x-brand: #0e8f5e; --x-radius: 10px; }
 // ==========================================================================
+@use "sass:color";
 @import "./variables";
 
 :root {
@@ -34,6 +35,15 @@
   // ------------------------------------------------------------------------
   --x-brand: #{$x-primary};
   --x-brand-contrast: #ffffff;
+
+  /*
+   * Los canales sueltos de la marca, para los `rgba()` con transparencia.
+   *
+   * Hay que publicarlos APARTE: `rgba(var(--x-brand), .15)` no es CSS valido, asi que un
+   * fondo translucido no puede salir de `--x-brand` y terminaba escrito con el color del
+   * build. El consumidor que aplica su paleta en runtime tiene que setear los dos.
+   */
+  --x-brand-rgb: #{color.channel($x-primary, "red", $space: rgb)}, #{color.channel($x-primary, "green", $space: rgb)}, #{color.channel($x-primary, "blue", $space: rgb)};
 
   // ------------------------------------------------------------------------
   // Escala neutral. Estos 10 grises estaban repetidos y hardcodeados 24 veces

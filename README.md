@@ -70,6 +70,7 @@ todos los componentes que lo usan, **en runtime y sin recompilar Sass**:
 // app.scss del consumidor — después del @import del paquete
 :root {
   --x-brand: #0e8f5e;   // toggle, checkbox, datepicker, file…
+  --x-brand-rgb: 14, 143, 94;  // los MISMOS canales, para los rgba() con transparencia
   --x-radius: 10px;     // input, select, botón, card, checkbox…
   --x-radius-md: 10px;  // diálogos
   --x-radius-lg: 14px;  // menús desplegables

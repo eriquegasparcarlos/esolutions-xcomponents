@@ -10,7 +10,7 @@
   --x-input-height: #{$x-input-height};
   --x-input-height-dense: #{$x-input-height-dense};
   --x-input-border-color: #{$x-border-color};
-  --x-input-border-color-focus: #{$x-border-color-focus};
+  --x-input-border-color-focus: var(--x-brand, #{$x-border-color-focus});
   --x-input-border-color-error: #{$x-border-color-error};
   --x-input-border-radius: var(--x-radius, #{$x-border-radius});
   --x-input-label-color: #{$x-input-label-color};
