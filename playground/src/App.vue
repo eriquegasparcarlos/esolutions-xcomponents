@@ -142,7 +142,7 @@ async function copiar () {
       <CmpXBanner />
       <CmpXInputOtp />
       <CmpXPdfReport />
-      <GalleryData :key="recargaTabla" />
+      <CmpXTableServer :key="recargaTabla" />
     </main>
   </div>
 </template>

@@ -15,6 +15,8 @@ import XTableServer from '@/components/XTableServer/XTableServer.vue'
 | Prop | Tipo | Default | Descripcion |
 |------|------|---------|-------------|
 | `resource` | `String` | *required* | Ruta base del recurso API (ej: `'users'`, `'documents'`) |
+| `hideHeaderWhenEmpty` | `Boolean` | `true` | Oculta botones y filtros cuando la tabla esta vacia *de origen* (sin registros y sin filtros activos) |
+| `mobileBreakpoint` | `String \| Number` | `'md'` | Ancho por debajo del cual se dibujan TARJETAS. Breakpoint de Quasar (`'sm'`/`'md'`/`'lg'`/`'xl'`) o px |
 
 ## Eventos
 
@@ -131,6 +133,33 @@ Retorna los datos paginados.
   }
 }
 ```
+
+## Cuando aparece la vista de tarjetas
+
+Dos condiciones, cualquiera de las dos basta:
+
+- `$q.platform.is.mobile` — un movil o tablet real, al margen del ancho.
+- La **ventana** mide menos que `mobileBreakpoint`. Por defecto `'md'`, o sea
+  **< 1024 px**.
+
+```vue
+<!-- el corte por defecto: tarjetas bajo 1024 px -->
+<x-table-server resource="documents" />
+
+<!-- una tabla ancha que necesita mas sitio -->
+<x-table-server resource="documents" mobile-breakpoint="lg" />
+
+<!-- o un ancho exacto -->
+<x-table-server resource="documents" :mobile-breakpoint="1180" />
+```
+
+Se mide la **ventana**, no la tabla: un drawer abierto le resta ancho real sin
+que el breakpoint se entere. Si la tabla convive con un drawer fijo, sube el
+numero por lo que ocupe.
+
+> Hasta v2.23.0 el corte estaba fijo en `'lg'` (< 1440 px), que dejaba en
+> tarjetas a los portatiles de 1366 y 1440 — la mayoria. Para conservar ese
+> comportamiento: `mobile-breakpoint="lg"`.
 
 ## Configuracion Mobile (mobileConfig)
 

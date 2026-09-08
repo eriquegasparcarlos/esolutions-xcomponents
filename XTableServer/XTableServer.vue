@@ -32,6 +32,19 @@ const props = defineProps({
    * Si el usuario filtra y no hay match, se sigue mostrando el header.
    */
   hideHeaderWhenEmpty: { type: Boolean, default: true },
+  /**
+   * Ancho por debajo del cual la tabla se dibuja como TARJETAS en vez de filas.
+   * Acepta un breakpoint de Quasar ('sm' | 'md' | 'lg' | 'xl') o un ancho en px.
+   *
+   * Por defecto 'md' (< 1024 px), el corte convencional entre tablet y
+   * escritorio. Antes era 'lg' (< 1440) y dejaba en tarjetas a los portatiles
+   * de 1366 y 1440, que son la mayoria. Ojo al calibrarlo: se mide la VENTANA,
+   * no la tabla, asi que un drawer abierto le resta ancho real sin que este
+   * numero se entere.
+   *
+   * `$q.platform.is.mobile` sigue forzando tarjetas al margen del ancho.
+   */
+  mobileBreakpoint: { type: [String, Number], default: 'md' },
 })
 
 const { proxy } = getCurrentInstance()
@@ -254,7 +267,17 @@ const suppressFilterFetch = ref(false)
 // -------------------------
 // Mobile responsive
 // -------------------------
-const isMobileView = computed(() => $q.platform.is.mobile || $q.screen.lt.lg)
+const mobileMaxWidth = computed(() => {
+  const bp = props.mobileBreakpoint
+  if (typeof bp === 'number') return bp
+  // Un nombre que no existe caeria en NaN y dejaria la tabla en modo
+  // escritorio para siempre, sin aviso: mejor volver al default.
+  return $q.screen.sizes[bp] ?? $q.screen.sizes.md
+})
+
+const isMobileView = computed(
+  () => $q.platform.is.mobile || $q.screen.width < mobileMaxWidth.value
+)
 
 /**
  * Indica si hay al menos un filtro con valor REAL (input, select, fecha, etc.).
