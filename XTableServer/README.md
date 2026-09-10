@@ -23,6 +23,7 @@ import XTableServer from '@/components/XTableServer/XTableServer.vue'
 | Evento | Payload | Descripcion |
 |--------|---------|-------------|
 | `actions` | `{ action, id, url }` | Emitido cuando se ejecuta una accion personalizada |
+| `export-file` | `{ format, title, filename, fetch }` | El usuario exporto en un formato que no se descarga (p. ej. PDF). Ver **Exportar en varios formatos**. |
 
 ## Metodos Expuestos
 
@@ -38,6 +39,51 @@ tableRef.value.filterData()
 // cuantas filas activas hay, y eso decide si un boton debe mostrarse).
 tableRef.value.fetchColumnsAndData()
 ```
+
+## Exportar en varios formatos (v2.25.0)
+
+El dialogo de exportar pregunta **que columnas** y, si el backend lo declara,
+tambien **en que formato**. Asi no hacen falta dos botones en el header.
+
+El backend anade `exportFormats` a la respuesta de `init-data-table`:
+
+```json
+{ "exportFormats": ["xlsx", "pdf"] }
+```
+
+- Con **un** formato (o sin la clave) no se dibuja el selector: la tabla se
+  comporta igual que siempre y baja el Excel.
+- Con **varios**, el usuario elige, y el formato viaja en el body de
+  `POST {resource}/export` como `format`.
+
+El **Excel se descarga solo**. Cualquier otro formato se entrega a la pagina por
+el evento `export-file`, porque un PDF normalmente se quiere **ver**, no bajar:
+
+| Campo | Descripcion |
+|-------|-------------|
+| `format` | el elegido en el dialogo (`'pdf'`, ...) |
+| `title` | el `tableTitle` del backend |
+| `filename` | nombre sugerido |
+| `fetch()` | promesa que resuelve el `Blob`, ya con las columnas y filtros elegidos |
+
+```vue
+<x-table-server :resource="resource" @export-file="onExportFile" />
+<x-pdf-preview ref="pdfRef" />
+```
+
+```javascript
+const onExportFile = ({ format, title, filename, fetch }) => {
+  if (format !== 'pdf') return
+  pdfRef.value?.open({ title, filename, fetcher: fetch })
+}
+```
+
+Si nadie escucha `export-file`, el archivo se descarga: nunca queda en nada.
+
+> El visor **no** se monta dentro de la tabla a proposito. `XPdfPreview` depende
+> de peers **opcionales** (`@embedpdf/vue-pdf-viewer`, `pdfjs-dist`) y hay
+> proyectos que usan esta tabla sin tenerlos instalados; importarlo desde aqui
+> los volveria obligatorios para todos.
 
 ## Uso Basico
 

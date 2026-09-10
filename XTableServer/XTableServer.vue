@@ -47,9 +47,10 @@ const props = defineProps({
   mobileBreakpoint: { type: [String, Number], default: 'md' },
 })
 
-const { proxy } = getCurrentInstance()
+const instancia = getCurrentInstance()
+const { proxy } = instancia
 const $q = useQuasar()
-const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action', 'loaded'])
+const emit = defineEmits(['actions', 'ready', 'selection-change', 'bulk-action', 'loaded', 'export-file'])
 
 // --- Bulk actions config (viene del backend en initTableBase) ---
 const bulkActions = ref([])
@@ -158,6 +159,24 @@ const refDialogActiveForm = ref()
 // Desacopla las columnas a exportar de las visibles en pantalla: el usuario
 // elige en un diálogo qué campos van al archivo, sin recargar/scrollear la tabla.
 const showExportDialog = ref(false)
+
+// Formato elegido en el dialogo de exportar. El selector solo se dibuja si el
+// backend declara mas de uno (`exportFormats` en init-data-table); con uno solo
+// esto se queda en 'xlsx' y la tabla se comporta como siempre.
+const exportFormats = ref(['xlsx'])
+const exportFormat = ref('xlsx')
+const formatOptions = computed(() =>
+  (exportFormats.value || ['xlsx']).map((f) => ({
+    value: f,
+    label: f === 'pdf' ? 'PDF' : 'Excel',
+  }))
+)
+const hasFormatChoice = computed(() => formatOptions.value.length > 1)
+// ¿La pagina escucha @export-file? Si no, mejor descargar que no hacer nada.
+const tieneOyenteDeArchivo = () => !!instancia?.vnode?.props?.onExportFile
+const exportDialogTitle = computed(() =>
+  hasFormatChoice.value ? 'Exportar' : 'Exportar a Excel'
+)
 // Indica que se está generando/descargando el Excel (loading del modal + botón).
 const exporting = ref(false)
 // Selección de columnas de export guardada por el usuario (viene del backend),
@@ -208,7 +227,29 @@ const confirmExport = async () => {
   if (!exportSelectedColumns.value.length) return
   // Snapshot de la selección en el ORDEN actual de la lista.
   const selected = exportSelectedColumns.value.slice()
-  const ok = await exportTableData(selected)
+
+  // Un formato que no sea Excel se entrega a la pagina en vez de bajarlo: asi
+  // un PDF puede abrirse en el visor lateral, que es donde el usuario espera
+  // verlo. Si nadie escucha el evento se descarga, para que nunca quede en nada.
+  //
+  // El visor NO se monta aqui a proposito: XPdfPreview depende de peers
+  // OPCIONALES (@embedpdf/vue-pdf-viewer, pdfjs-dist) y esta tabla la usan
+  // proyectos que no los tienen instalados. Importarlo desde aqui los volveria
+  // obligatorios para todos.
+  if (exportFormat.value !== 'xlsx' && tieneOyenteDeArchivo()) {
+    showExportDialog.value = false
+    savedExportColumns.value = selected
+
+    emit('export-file', {
+      format: exportFormat.value,
+      title: tableTitle.value || '',
+      filename: `${tableName.value || 'export'}.${exportFormat.value}`,
+      fetch: () => exportBlob(selected, exportFormat.value).then((r) => r.blob),
+    })
+    return
+  }
+
+  const ok = await exportTableData(selected, exportFormat.value)
   if (ok) {
     // El diálogo NO se cierra: el usuario puede reexportar con otra selección.
     // Reflejamos localmente la selección+orden para que, si reabre el diálogo
@@ -576,6 +617,9 @@ const fetchColumnsAndData = async () => {
     // sino quedan con sus defaults.
     if (response.data.selectionLabel) selectionLabel.value = response.data.selectionLabel
     if (response.data.noDataLabel)    noDataLabel.value    = response.data.noDataLabel
+    exportFormats.value = Array.isArray(response.data.exportFormats) && response.data.exportFormats.length
+      ? response.data.exportFormats
+      : ['xlsx']
     if (response.data.noDataSubtitle) noDataSubtitle.value = response.data.noDataSubtitle
     if (response.data.noDataIcon)     noDataIcon.value     = response.data.noDataIcon
 
@@ -740,7 +784,14 @@ const fetchData = async () => {
 // -------------------------
 // Export + acciones
 // -------------------------
-const exportTableData = async (exportColumns = null) => {
+/**
+ * Pide el archivo al backend y devuelve el binario sin tocarlo.
+ *
+ * Existe aparte de `exportTableData` porque no todo formato se descarga: el PDF
+ * se abre en el visor, y bajarlo obligaria a salir de la pantalla para ver lo
+ * que se acaba de pedir.
+ */
+const exportBlob = async (exportColumns = null, format = 'xlsx') => {
   exporting.value = true
   try {
     const { sortBy, descending } = pagination.value
@@ -756,17 +807,32 @@ const exportTableData = async (exportColumns = null) => {
         visibleColumns: visibleColumns.value,
         sortBy,
         descending,
+        format,
       },
       { responseType: 'blob' },
     )
 
-    let filename = `${tableName.value || 'export'}.xlsx`
+    let filename = `${tableName.value || 'export'}.${format === 'pdf' ? 'pdf' : 'xlsx'}`
     const disposition = response.headers['content-disposition']
     if (disposition && disposition.includes('filename=')) {
       filename = disposition.split('filename=')[1].split(';')[0].replace(/['"]/g, '').trim()
     }
 
-    const urlBlob = window.URL.createObjectURL(new Blob([response.data]))
+    return { ok: true, blob: new Blob([response.data]), filename }
+  } catch {
+    $q.notify({ type: 'error', message: proxy.$t('common.exportExcelError') })
+    return { ok: false, blob: null, filename: '' }
+  } finally {
+    exporting.value = false
+  }
+}
+
+const exportTableData = async (exportColumns = null, format = 'xlsx') => {
+  try {
+    const { ok, blob, filename } = await exportBlob(exportColumns, format)
+    if (!ok) return false
+
+    const urlBlob = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = urlBlob
     link.setAttribute('download', filename)
@@ -776,10 +842,8 @@ const exportTableData = async (exportColumns = null) => {
     window.URL.revokeObjectURL(urlBlob)
     return true
   } catch {
-    $q.notify({ type: 'error', message: proxy.$t('common.exportExcelError') })
+    // El aviso de error ya lo dio exportBlob; aqui solo queda no romper.
     return false
-  } finally {
-    exporting.value = false
   }
 }
 
@@ -809,6 +873,7 @@ const performHeaderAction = (button) => {
     // Abre el selector de columnas (default: todas las exportables).
     // Construye la lista reordenable (respeta orden+selección guardados).
     buildExportItems()
+    exportFormat.value = formatOptions.value[0]?.value ?? 'xlsx'
     showExportDialog.value = true
     return
   }
@@ -1495,14 +1560,30 @@ defineExpose({
     <!-- Exportar: selección de columnas (desacoplada de las visibles) -->
     <x-dialog
       v-model="showExportDialog"
-      title="Exportar a Excel"
+      :title="exportDialogTitle"
       width="420px"
       show-button-close
       @action-button-close="showExportDialog = false"
     >
       <template #content>
         <div class="relative-position">
-        <q-inner-loading :showing="exporting" label="Generando Excel…" color="primary" style="z-index: 10;" />
+        <q-inner-loading :showing="exporting"
+                         :label="exportFormat === 'pdf' ? 'Generando PDF…' : 'Generando Excel…'"
+                         color="primary" style="z-index: 10;" />
+
+        <!-- Selector de formato: solo si el backend declara mas de uno. -->
+        <div v-if="hasFormatChoice" class="q-mb-sm">
+          <q-btn-toggle
+            v-model="exportFormat"
+            :options="formatOptions"
+            unelevated dense no-caps
+            toggle-color="primary"
+            color="grey-3"
+            text-color="grey-8"
+            spread
+          />
+        </div>
+
         <div class="row items-center justify-between q-mb-xs">
           <q-checkbox
             :model-value="exportAllChecked"

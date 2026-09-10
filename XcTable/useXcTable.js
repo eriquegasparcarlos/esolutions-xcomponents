@@ -21,6 +21,9 @@ export function useXcTable (resource, onLoaded, http) {
   const columnOptions = ref([])    // crudas (value/label/exportable/onlyExport/locked) — para menú columnas y export
   const visibleColumns = ref([])   // nombres visibles
   const savedExportColumns = ref([]) // selección de export persistida por el backend
+  // Formatos que ofrece el backend en el diálogo de exportar. Con uno solo el
+  // selector no se dibuja, que es como se comportan las tablas de siempre.
+  const exportFormats = ref(['xlsx'])
   const exporting = ref(false)     // loading del modal/botón de export
   const headerButtons = ref([])    // botones del header definidos por el backend (icon-only o icon+label)
   const filters = ref([])          // config de filtros (cada uno con su .value)
@@ -30,6 +33,17 @@ export function useXcTable (resource, onLoaded, http) {
   // Handler de acción de headerButton, inyectado por el provider (XcTable emite 'action').
   let actionCb = null
   function setActionHandler (fn) { actionCb = fn }
+
+  // Igual que el anterior, pero para el archivo exportado en un formato que no
+  // se descarga (p. ej. un PDF que la pagina quiere abrir en su visor).
+  // Devuelve false si nadie escucha, para poder caer a la descarga.
+  let exportFileCb = null
+  function setExportFileHandler (fn) { exportFileCb = fn }
+  function performExportFile (payload) {
+    if (typeof exportFileCb !== 'function') return false
+    exportFileCb(payload)
+    return true
+  }
   function performHeaderAction (button) {
     if (typeof actionCb === 'function') {
       actionCb({ action: button.action, url: button.url, button })
@@ -51,6 +65,9 @@ export function useXcTable (resource, onLoaded, http) {
       config.tableTitle = data.tableTitle || ''
       config.tableSubtitle = data.tableSubtitle || ''
       if (data.noDataLabel) config.noDataLabel = data.noDataLabel
+      exportFormats.value = Array.isArray(data.exportFormats) && data.exportFormats.length
+        ? data.exportFormats
+        : ['xlsx']
 
       pagination.rowsPerPage = data.pagination?.perPage ?? 10
       pagination.descending = !!data.pagination?.descending
@@ -142,9 +159,18 @@ export function useXcTable (resource, onLoaded, http) {
     fetch()
   }
 
-  // Exporta a Excel. `exportColumns` = selección del diálogo (en orden); si viene vacío,
-  // el backend usa las visibles. Mismo payload/flujo que el XTableServer.
-  async function exportData (exportColumns = null) {
+  /**
+   * Pide el archivo al backend y devuelve el binario sin tocarlo.
+   *
+   * Existe aparte de `exportData` porque no todo formato se descarga: el PDF se
+   * abre en el visor, y descargarlo obligaria al usuario a salir de la pantalla
+   * para ver lo que acaba de pedir.
+   *
+   * @param {string[]|null} exportColumns  selección del diálogo, en orden
+   * @param {string} format                'xlsx' | 'pdf' | lo que declare el backend
+   * @returns {Promise<{ok: boolean, blob: Blob|null, filename: string}>}
+   */
+  async function exportBlob (exportColumns = null, format = 'xlsx') {
     exporting.value = true
     try {
       const cols = (exportColumns && exportColumns.length) ? exportColumns : visibleColumns.value
@@ -154,33 +180,44 @@ export function useXcTable (resource, onLoaded, http) {
         visibleColumns: visibleColumns.value,
         sortBy: pagination.sortBy,
         descending: pagination.descending,
+        format,
       }, { responseType: 'blob' })
 
-      let filename = `${config.tableName || 'export'}.xlsx`
+      let filename = `${config.tableName || 'export'}.${format === 'pdf' ? 'pdf' : 'xlsx'}`
       const disposition = res.headers['content-disposition']
       if (disposition && disposition.includes('filename=')) {
         filename = disposition.split('filename=')[1].split(';')[0].replace(/['"]/g, '').trim()
       }
 
-      const url = URL.createObjectURL(new Blob([res.data]))
-      const a = document.createElement('a')
-      a.href = url
-      a.setAttribute('download', filename)
-      a.click()
-      URL.revokeObjectURL(url)
-      return true
+      return { ok: true, blob: new Blob([res.data]), filename }
     } catch (err) {
       error.value = err?.message || 'Error al exportar'
-      return false
+      return { ok: false, blob: null, filename: '' }
     } finally {
       exporting.value = false
     }
   }
 
+  // Exporta y descarga. `exportColumns` = selección del diálogo (en orden); si viene
+  // vacío, el backend usa las visibles. Mismo payload/flujo que el XTableServer.
+  async function exportData (exportColumns = null, format = 'xlsx') {
+    const { ok, blob, filename } = await exportBlob(exportColumns, format)
+    if (!ok) return false
+
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.setAttribute('download', filename)
+    a.click()
+    URL.revokeObjectURL(url)
+
+    return true
+  }
+
   return {
     loading, error, initialized, exporting, config, columns, columnOptions,
-    visibleColumns, savedExportColumns, headerButtons, filters, rows, meta, pagination,
-    init, fetch, setFilter, setPagination, clearFilters, exportData,
-    setActionHandler, performHeaderAction,
+    visibleColumns, savedExportColumns, exportFormats, headerButtons, filters, rows, meta, pagination,
+    init, fetch, setFilter, setPagination, clearFilters, exportData, exportBlob,
+    setActionHandler, performHeaderAction, setExportFileHandler, performExportFile,
   }
 }

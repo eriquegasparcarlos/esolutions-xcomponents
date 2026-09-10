@@ -28,6 +28,20 @@ function toggleColumn (name) {
 const showExportDialog = ref(false)
 const exportColumnItems = ref([])
 
+// Formato elegido en el diálogo. El selector solo se dibuja si el backend
+// declara más de uno; con uno solo esto se queda en 'xlsx' y no cambia nada.
+const exportFormat = ref('xlsx')
+const formatOptions = computed(() =>
+  (ctx.exportFormats.value || ['xlsx']).map((f) => ({
+    value: f,
+    label: f === 'pdf' ? 'PDF' : 'Excel',
+  }))
+)
+const hasFormatChoice = computed(() => formatOptions.value.length > 1)
+const exportDialogTitle = computed(() =>
+  hasFormatChoice.value ? 'Exportar' : 'Exportar a Excel'
+)
+
 const exportableColumns = computed(() =>
   (ctx.columnOptions.value || []).filter((c) => c.exportable !== false)
 )
@@ -52,6 +66,7 @@ function buildExportItems () {
 }
 function openExport () {
   buildExportItems()
+  exportFormat.value = formatOptions.value[0]?.value ?? 'xlsx'
   showExportDialog.value = true
 }
 function toggleExportAll (val) {
@@ -63,7 +78,30 @@ function exportOnlyVisible () {
 async function confirmExport () {
   if (!exportSelectedColumns.value.length) return
   const selected = exportSelectedColumns.value.slice()
-  const ok = await ctx.exportData(selected)
+
+  // Un formato que no sea Excel se entrega a la pagina en vez de bajarlo: asi
+  // un PDF puede abrirse en el visor lateral. Si nadie escucha @export-file se
+  // descarga, para que nunca quede en nada.
+  //
+  // El visor NO se monta aqui a proposito: XPdfPreview depende de peers
+  // OPCIONALES (@embedpdf/vue-pdf-viewer, pdfjs-dist) y hay proyectos que usan
+  // estas tablas sin tenerlos. Importarlo desde aqui los volveria obligatorios.
+  if (exportFormat.value !== 'xlsx') {
+    const entregado = ctx.performExportFile({
+      format: exportFormat.value,
+      title: ctx.config.tableTitle || '',
+      filename: `${ctx.config.tableName || 'export'}.${exportFormat.value}`,
+      fetch: () => ctx.exportBlob(selected, exportFormat.value).then((r) => r.blob),
+    })
+
+    if (entregado) {
+      showExportDialog.value = false
+      ctx.savedExportColumns.value = selected
+      return
+    }
+  }
+
+  const ok = await ctx.exportData(selected, exportFormat.value)
   if (ok) ctx.savedExportColumns.value = selected  // el diálogo queda abierto para reexportar
 }
 
@@ -152,14 +190,30 @@ function onHeaderAction (button) {
   <!-- Exportar: selección + orden de columnas (movido del XTableServer) -->
   <x-dialog
     v-model="showExportDialog"
-    title="Exportar a Excel"
+    :title="exportDialogTitle"
     width="420px"
     show-button-close
     @action-button-close="showExportDialog = false"
   >
     <template #content>
       <div class="relative-position">
-        <q-inner-loading :showing="ctx.exporting.value" label="Generando Excel…" color="primary" style="z-index: 10;" />
+        <q-inner-loading :showing="ctx.exporting.value"
+                         :label="exportFormat === 'pdf' ? 'Generando PDF…' : 'Generando Excel…'"
+                         color="primary" style="z-index: 10;" />
+
+        <!-- Selector de formato: solo si el backend declara mas de uno. -->
+        <div v-if="hasFormatChoice" class="q-mb-sm">
+          <q-btn-toggle
+            v-model="exportFormat"
+            :options="formatOptions"
+            unelevated dense no-caps
+            toggle-color="primary"
+            color="grey-3"
+            text-color="grey-8"
+            spread
+          />
+        </div>
+
         <div class="row items-center justify-between q-mb-xs">
           <q-checkbox
             :model-value="exportAllChecked"

@@ -14,7 +14,7 @@ import { useXcTable } from './useXcTable.js'
 const props = defineProps({
   resource: { type: String, required: true },
 })
-const emit = defineEmits(['loaded', 'action'])
+const emit = defineEmits(['loaded', 'action', 'export-file'])
 
 // http client: el app registra `$api` como propiedad global (boot/axios). Desacopla
 // el composable del paquete de cualquier import de `boot/*` del consumidor.
@@ -22,6 +22,7 @@ const { proxy } = getCurrentInstance()
 const ctx = useXcTable(props.resource, (data) => emit('loaded', data), proxy.$api)
 // Los headerButtons del backend emiten su acción al consumidor (misma semántica que XTableServer).
 ctx.setActionHandler((payload) => emit('action', payload))
+ctx.setExportFileHandler((payload) => emit('export-file', payload))
 provide('xctable', ctx)
 
 onMounted(() => ctx.init())

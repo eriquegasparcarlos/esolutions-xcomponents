@@ -41,7 +41,7 @@ Igual que `XTableServer`. Para un `resource="app-api/reports/kardex"` el backend
 |--------|----------|----------|
 | `GET`  | `{resource}/init-data-table` | `{ tableName, tableTitle, tableSubtitle, columns[], filters[], visibleColumns[], exportColumns[], pagination, headerButtons[] }` |
 | `POST` | `{resource}/records` | `{ data[], meta: { total, summary? }, widgets? }` (body: `{ tableName, page, rowsPerPage, sortBy, descending, filters }`) |
-| `POST` | `{resource}/export` | Blob Excel (opcional) |
+| `POST` | `{resource}/export` | Blob del archivo (opcional). Body incluye `format` cuando hay varios; ver **Exportar en varios formatos** |
 | `POST` | `{resource}/update-visible-columns` | ok (opcional) |
 
 > `meta.total` es lo que alimenta el pie de la tabla y los controles de página. Si el
@@ -64,15 +64,61 @@ En Laravel se genera con el trait `PaginationTenantTrait` de `esolutions/datatab
 |--------|---------|-------------|
 | `loaded` | `data` (respuesta completa `records`: `{ data, meta, widgets }`) | Tras cada carga. Úsalo para armar **KPIs/gráficos sin consulta extra** (leé `data.meta.summary`). |
 | `action` | `{ action, url, button }` | Cuando el usuario toca un `headerButton` del backend (excepto `refresh`/`export`, que se manejan solos). |
+| `export-file` | `{ format, title, filename, fetch }` | El usuario exportó en un formato que no se descarga (p. ej. PDF). Ver **Exportar en varios formatos**. |
 
 ## Métodos expuestos (`XcTable`)
 
 ```javascript
 const t = ref(null)
 t.value.refresh()      // recarga con los filtros actuales
-t.value.exportData()   // exporta a Excel
+t.value.exportData()   // exporta y descarga (por defecto Excel)
 t.value.clearFilters() // limpia filtros y recarga
 ```
+
+## Exportar en varios formatos
+
+El diálogo de exportar pregunta **qué columnas** y, si el backend lo declara,
+también **en qué formato**. Así no hacen falta dos botones en el header.
+
+El backend añade `exportFormats` a la respuesta de `init-data-table`:
+
+```json
+{ "exportFormats": ["xlsx", "pdf"] }
+```
+
+- Con **un** formato (o sin la clave) no se dibuja el selector: la tabla se
+  comporta igual que siempre y baja el Excel.
+- Con **varios**, el usuario elige, y el formato viaja en el body de
+  `POST {resource}/export` como `format`.
+
+El **Excel se descarga solo**. Cualquier otro formato se entrega a la página por
+el evento `export-file`, porque un PDF normalmente se quiere **ver**, no bajar:
+
+| Campo | Descripción |
+|-------|-------------|
+| `format` | el elegido en el diálogo (`'pdf'`, …) |
+| `title` | el `tableTitle` del backend |
+| `filename` | nombre sugerido |
+| `fetch()` | promesa que resuelve el `Blob`, ya con las columnas y filtros elegidos |
+
+```vue
+<XcTable :resource="resource" @export-file="onExportFile" />
+<XPdfPreview ref="pdfRef" />
+```
+
+```javascript
+const onExportFile = ({ format, title, filename, fetch }) => {
+  if (format !== 'pdf') return
+  pdfRef.value?.open({ title, filename, fetcher: fetch })
+}
+```
+
+Si nadie escucha `export-file`, el archivo se descarga: nunca queda en nada.
+
+> El visor **no** se monta dentro de la tabla a propósito. `XPdfPreview` depende
+> de peers **opcionales** (`@embedpdf/vue-pdf-viewer`, `pdfjs-dist`) y hay
+> proyectos que usan estas tablas sin tenerlos instalados; importarlo desde aquí
+> los volvería obligatorios para todos.
 
 ## Uso básico
 
