@@ -17,7 +17,7 @@ import XInput from '@/components/XInput/XInput.vue'
 | `modelValue` | `String \| Number` | `''` | Valor del input (v-model) |
 | `isClassic` | `Boolean` | `false` | Usa label flotante dentro del input |
 | `dense` | `Boolean` | `true` | Modo compacto |
-| `error` | `String` | `null` | Mensaje de error a mostrar |
+| `error` | `String \| Array` | `null` | Mensaje de error. Acepta array (formato Laravel 422) y toma el primero. Se oculta al escribir y reaparece cuando cambia |
 | `autofocus` | `Boolean` | `false` | Auto-focus al montar |
 | `isRequired` | `Boolean` | `false` | Muestra asterisco de requerido |
 
@@ -98,9 +98,12 @@ El componente automaticamente agrega el toggle de visibilidad para inputs tipo p
   v-model="email"
   label="Email"
   :error="errors.email"
-  @focus="errors.email = null"
 />
 ```
+
+El error se **oculta solo en cuanto el usuario corrige el campo**, y vuelve a mostrarse
+cuando llega uno nuevo desde fuera. No hace falta limpiarlo a mano desde el padre.
+
 
 ### Input requerido
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, useAttrs, ref, toValue } from 'vue'
+import { computed, useAttrs, ref, toValue, watch } from 'vue'
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
 import { ic } from '../icons/index.js'
@@ -40,8 +40,24 @@ const elementId = computed(() => (attrs.id ? `app-q-input-${attrs.id}` : fallbac
 const elementLabel = computed(() => (props.isClassic ? attrs.label : undefined))
 const label = computed(() => (props.isClassic ? null : attrs.label))
 
+// Al escribir, el campo deja de marcar el error: seguir en rojo mientras el
+// usuario lo esta corrigiendo es ruido, y el mensaje ya no describe lo que hay
+// escrito. Vuelve a mostrarse cuando llega uno NUEVO desde fuera —el watch mira
+// la identidad de la prop, y una respuesta 422 siempre trae objetos nuevos—, no
+// al perder el foco ni por tiempo.
+const errorSilenciado = ref(false)
+
+watch(() => props.error, () => { errorSilenciado.value = false })
+
+function alEscribir (val) {
+  errorSilenciado.value = true
+  emit('update:modelValue', val)
+}
+
 // Normaliza error: acepta String o Array (formato Laravel 422)
 const errorMessage = computed(() => {
+  if (errorSilenciado.value) return null
+
   const e = toValue(props.error)
   if (!e) return null
   return Array.isArray(e) ? e[0] : e
@@ -94,7 +110,7 @@ const filteredAttrs = computed(() => {
       no-error-icon
       :hide-bottom-space="!errorMessage"
       :label-slot="!!elementLabel"
-      @update:model-value="val => emit('update:modelValue', val)"
+      @update:model-value="alEscribir"
       @input="e => emit('input', e)"
       @change="e => emit('change', e)"
     >

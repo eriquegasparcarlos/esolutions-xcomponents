@@ -1,5 +1,5 @@
 <script setup>
-import { computed, getCurrentInstance, ref, useAttrs, nextTick, toValue } from 'vue';
+import { computed, getCurrentInstance, ref, useAttrs, nextTick, toValue, watch } from 'vue';
 import { formDefaults } from '@esolutions/js-utils'
 import XHelpTip from '../XHelpTip/XHelpTip.vue'
 import { ic } from '../icons/index.js'
@@ -93,8 +93,19 @@ const props = defineProps({
 const helpInLabel = computed(() => !!props.help && props.helpPosition === 'label');
 const helpInAppend = computed(() => !!props.help && props.helpPosition === 'append');
 
+// Al escribir, el campo deja de marcar el error: seguir en rojo mientras el
+// usuario lo esta corrigiendo es ruido, y el mensaje ya no describe lo que hay
+// escrito. Vuelve a mostrarse cuando llega uno NUEVO desde fuera —el watch mira
+// la identidad de la prop, y una respuesta 422 siempre trae objetos nuevos—, no
+// al perder el foco ni por tiempo.
+const errorSilenciado = ref(false);
+
+watch(() => props.error, () => { errorSilenciado.value = false; });
+
 // Normaliza error: acepta String o Array (formato Laravel 422)
 const errorMessage = computed(() => {
+  if (errorSilenciado.value) return null;
+
   const e = toValue(props.error);
   if (!e) return null;
   return Array.isArray(e) ? e[0] : e;
@@ -294,6 +305,9 @@ function onSelect(val) {
     rawOptions.find(o => String(o?.[props.optionValue]) === String(val)) ||
     (optionsToShow.value || []).find(o => o.value === val) ||
     null;
+
+  // Elegir una opcion cuenta como corregir el campo.
+  errorSilenciado.value = true;
 
   // Mantén v-model con ID
   emit('update:modelValue', val);

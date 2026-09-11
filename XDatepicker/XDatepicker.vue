@@ -1,6 +1,6 @@
 <!-- src/components/XDatepicker/XDatepicker.vue -->
 <script setup>
-import { computed, ref, useAttrs } from 'vue'
+import { computed, ref, useAttrs, watch } from 'vue'
 import { date as DateUtils } from 'quasar'
 import { formDefaults } from '@esolutions/js-utils'
 import { ic } from '../icons/index.js'
@@ -20,7 +20,12 @@ const props = defineProps({
   // visible para no alterar el layout, pero no abre el popup ni deja limpiar.
   readonly: { type: Boolean, default: false },
 
-  error: { type: String, default: null },
+  // String o el array de Laravel 422, igual que XInput y XSelect: pasarle
+  // `errors.campo` tal cual no tenia por que fallar solo en este componente.
+  error: { type: [String, Array], default: null },
+
+  /** Solo muestra el asterisco, no activa validacion nativa */
+  isRequired: { type: Boolean, default: false },
 
   valueMask: { type: String, default: 'YYYY-MM-DD' },   // lo que guardas (v-model)
   displayMask: { type: String, default: 'DD/MM/YYYY' }, // lo que muestras
@@ -46,7 +51,22 @@ const elementId = computed(() => {
 const elementLabel = computed(() => (props.isClassic ? attrs.label : undefined))
 const label = computed(() => (props.isClassic ? null : attrs.label))
 
-const hasError = computed(() => !!props.error)
+// El error deja de verse en cuanto se elige una fecha, y vuelve si el servidor
+// manda uno nuevo. Mismo criterio que XInput y XSelect.
+const errorSilenciado = ref(false)
+
+watch(() => props.error, () => { errorSilenciado.value = false })
+
+const errorMessage = computed(() => {
+  if (errorSilenciado.value) return null
+
+  const e = props.error
+  if (!e) return null
+
+  return Array.isArray(e) ? e[0] : e
+})
+
+const hasError = computed(() => !!errorMessage.value)
 
 // normaliza null -> ''
 const normalizedValue = computed(() => (props.modelValue ?? ''))
@@ -63,6 +83,7 @@ const displayValue = computed(() => {
 
 function updateFromPicker(val) {
   const next = val ?? ''
+  errorSilenciado.value = true
   emit('update:modelValue', next)
   emit('change', next)
   if (props.autoClose) {
@@ -84,7 +105,7 @@ function clear() {
       class="q-input__label mb-1"
       style="line-height: 15px;"
     >
-      {{ label }}
+      {{ label }} <span v-if="props.isRequired" class="text-negative" aria-hidden="true">*</span>
     </label>
 
     <q-input
@@ -99,7 +120,7 @@ function clear() {
         readonly: true,
         clearable: props.clearable && !props.readonly,
         error: hasError,
-        errorMessage: props.error || undefined,
+        errorMessage: errorMessage || undefined,
         noErrorIcon: true,
         hideBottomSpace: !hasError
       }"

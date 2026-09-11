@@ -19,7 +19,8 @@ import XDatepicker from '@/components/XDatepicker/XDatepicker.vue'
 | `dense` | `Boolean` | `true` | Modo compacto |
 | `outlined` | `Boolean` | `true` | Estilo outlined |
 | `clearable` | `Boolean` | `false` | Mostrar boton para limpiar |
-| `error` | `String` | `null` | Mensaje de error |
+| `error` | `String \| Array` | `null` | Mensaje de error. Acepta array (formato Laravel 422) y toma el primero. Se oculta al elegir fecha y reaparece cuando cambia |
+| `isRequired` | `Boolean` | `false` | Muestra el asterisco de campo obligatorio (no valida) |
 | `valueMask` | `String` | `'YYYY-MM-DD'` | Formato del valor (v-model) |
 | `displayMask` | `String` | `'DD/MM/YYYY'` | Formato de visualizacion |
 | `options` | `Function` | `null` | Funcion para habilitar/deshabilitar fechas |
