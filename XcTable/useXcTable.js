@@ -104,6 +104,12 @@ export function useXcTable (resource, onLoaded, http) {
         value: f.value ?? f.default ?? (f.includeAllOption ? 'all' : null),
       }))
 
+      // Los filtros que dependen de otro nacen vacios y deshabilitados: sus
+      // opciones se piden cuando el padre tiene valor.
+      for (const f of filters.value) {
+        if (f.dependsOn) await loadDependentOptions(f)
+      }
+
       initialized.value = true
       await fetch()
     } catch (err) {
@@ -214,7 +220,143 @@ export function useXcTable (resource, onLoaded, http) {
     return true
   }
 
+  // ───────────────────────────────────────────────────────────────────────────
+  // Filtros que piden datos al servidor
+  //
+  // Dos casos distintos que el backend ya sabia describir y aqui no se leian:
+  //
+  //   searchUrl  el filtro es un buscador: no trae opciones, las va pidiendo
+  //              segun lo que se escribe. Un catalogo de miles de productos no
+  //              cabe en un desplegable, asi que sin esto el filtro salia vacio.
+  //   dependsOn  las opciones del filtro dependen del valor de otro (los
+  //              usuarios de un establecimiento, por ejemplo). Hasta que el
+  //              padre no tiene valor, el hijo va deshabilitado.
+  // ───────────────────────────────────────────────────────────────────────────
+
+  /** Evita que la cascada dispare una consulta por cada hijo que se recarga. */
+  let cascadaEnCurso = false
+
+  function findFilter (name) {
+    return filters.value.find((f) => f.name === name)
+  }
+
+  function getDependents (parentName) {
+    return filters.value.filter((f) => f.dependsOn === parentName)
+  }
+
+  /**
+   * Lee la lista de opciones de una respuesta de filtro.
+   *
+   * Los endpoints de reportes responden `{data: [...]}` y algunos
+   * `{options: [...]}`; se aceptan ambos, y tambien un array pelado.
+   */
+  function leerOpciones (cuerpo) {
+    if (Array.isArray(cuerpo)) return cuerpo
+    if (Array.isArray(cuerpo?.data)) return cuerpo.data
+    if (Array.isArray(cuerpo?.options)) return cuerpo.options
+
+    return []
+  }
+
+  /**
+   * Recarga las opciones de un filtro hijo segun el valor de su padre.
+   * No consulta los registros: de eso se encarga quien la llama.
+   */
+  async function loadDependentOptions (child) {
+    if (!child?.dependsOn || !child?.remote?.url) return
+
+    const parent = findFilter(child.dependsOn)
+    const parentValue = parent?.value
+    const sinPadre = !parentValue || parentValue === 'all'
+
+    child.disabled = child.disableWhenParentEmpty !== false && sinPadre
+
+    if (child.disabled) {
+      child.options = []
+      if (child.resetOnParentChange !== false) child.value = 'all'
+      return
+    }
+
+    // El backend marca con '$parent' donde va el valor del padre.
+    const params = { ...(child.remote.params || {}) }
+    Object.keys(params).forEach((k) => {
+      if (params[k] === '$parent') params[k] = parentValue
+    })
+
+    child.loading = true
+
+    try {
+      const method = (child.remote.method || 'get').toLowerCase()
+      const res = method === 'get'
+        ? await http.get(child.remote.url, { params })
+        : await http[method](child.remote.url, params)
+
+      child.options = leerOpciones(res.data)
+      if (child.resetOnParentChange !== false) child.value = 'all'
+    } catch {
+      child.options = []
+    } finally {
+      child.loading = false
+    }
+  }
+
+  /**
+   * Busca opciones de un filtro con `searchUrl` segun lo tecleado.
+   * Devuelve la lista, para que el control la meta dentro de su `update()`.
+   *
+   * @param {object} filter
+   * @param {string} texto
+   * @returns {Promise<Array>}
+   */
+  async function searchFilterOptions (filter, texto) {
+    if (!filter?.searchUrl) return []
+
+    filter.loading = true
+
+    try {
+      const { data } = await http.get(filter.searchUrl, {
+        params: { search: texto, input: texto },
+      })
+
+      return leerOpciones(data)
+    } catch {
+      return []
+    } finally {
+      filter.loading = false
+    }
+  }
+
+  /**
+   * Cambio de un filtro: si tiene hijos, se recargan y se consulta UNA vez al
+   * final; si no, consulta directa.
+   */
+  async function onFilterChange (filter) {
+    if (cascadaEnCurso) return
+
+    const hijos = getDependents(filter.name)
+
+    if (hijos.length === 0) {
+      pagination.page = 1
+      await fetch()
+      return
+    }
+
+    cascadaEnCurso = true
+
+    try {
+      for (const hijo of hijos) {
+        await loadDependentOptions(hijo)
+      }
+    } finally {
+      cascadaEnCurso = false
+    }
+
+    pagination.page = 1
+    await fetch()
+  }
+
   return {
+    onFilterChange, searchFilterOptions, loadDependentOptions,
     loading, error, initialized, exporting, config, columns, columnOptions,
     visibleColumns, savedExportColumns, exportFormats, headerButtons, filters, rows, meta, pagination,
     init, fetch, setFilter, setPagination, clearFilters, exportData, exportBlob,

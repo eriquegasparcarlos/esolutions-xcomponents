@@ -20,6 +20,34 @@ function filterData () {
   ctx.pagination.page = 1
   ctx.fetch()
 }
+
+/**
+ * Cambio de filtro. Pasa por el contexto porque un filtro puede tener hijos
+ * cuyas opciones dependen de él: entonces se recargan y se consulta una sola
+ * vez al final, en vez de una por cada hijo.
+ */
+function onChange (filter) {
+  ctx.onFilterChange(filter)
+}
+
+/**
+ * Búsqueda remota de un filtro con `searchUrl`.
+ *
+ * Contrato de Quasar: (texto, update, abort). Con menos de dos caracteres no se
+ * consulta —el endpoint devolvería medio catálogo— y se aborta.
+ */
+function buscar (filter, texto, update, abort) {
+  const consulta = (texto || '').trim()
+
+  if (consulta.length < (filter.minChars ?? 2)) {
+    abort()
+    return
+  }
+
+  ctx.searchFilterOptions(filter, consulta).then((opciones) => {
+    update(() => { filter.options = opciones })
+  }).catch(abort)
+}
 </script>
 
 <template>
@@ -79,6 +107,28 @@ function filterData () {
         </div>
       </div>
 
+      <!-- Filtro buscador: no trae opciones, las pide segun lo tecleado. Va antes
+           del select normal porque tambien es de tipo 'select'. -->
+      <x-select
+        v-else-if="filter.type === 'select' && filter.searchUrl"
+        v-model="filter.value"
+        :label="filter.label"
+        :options="filter.options"
+        :disable="filter.disabled"
+        :loading="filter.loading"
+        :include-all-option="false"
+        :placeholder="filter.placeholder || 'Escriba para buscar'"
+        stack-label
+        use-input
+        clearable
+        option-value="id"
+        :option-label="filter.optionLabel || 'name'"
+        emit-value
+        map-options
+        @filter="(texto, update, abort) => buscar(filter, texto, update, abort)"
+        @update:model-value="onChange(filter)"
+      />
+
       <x-select
         v-else-if="filter.type === 'select'"
         v-model="filter.value"
@@ -90,7 +140,7 @@ function filterData () {
         :include-all-option="filter.hasOwnProperty('includeAllOption') ? filter.includeAllOption : false"
         :placeholder="filter.placeholder || undefined"
         :stack-label="!!filter.placeholder"
-        @update:model-value="filterData"
+        @update:model-value="onChange(filter)"
       />
 
       <x-tree-select
@@ -107,7 +157,7 @@ function filterData () {
         :option-value="filter.optionValue || 'id'"
         :option-label="filter.optionLabel || 'label'"
         :option-children="filter.optionChildren || 'children'"
-        @update:model-value="filterData"
+        @update:model-value="onChange(filter)"
       />
     </div>
   </div>

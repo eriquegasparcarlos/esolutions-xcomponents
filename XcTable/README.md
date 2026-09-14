@@ -52,6 +52,22 @@ En Laravel se genera con el trait `PaginationTenantTrait` de `esolutions/datatab
 `getRecords` / `export` / `updateVisibleColumns`). Los filtros mandan su ancho responsive en `class`
 (grid de 24 col, ej. `col-24 col-sm-6`).
 
+### Filtros que piden datos al servidor
+
+Dos casos que el `Filter` de `esolutions/datatable` ya sabía describir:
+
+| Clave del filtro | Qué hace |
+|---|---|
+| `searchUrl` | El filtro es un **buscador**: llega sin opciones y las pide según lo que se escribe. Para catálogos que no caben en un desplegable (productos, clientes). Se construye con `Filter::makeSearch($name, $label, $url, $class)`. |
+| `dependsOn` + `remote` | Las opciones **dependen de otro filtro** (los usuarios de un establecimiento, por ejemplo). Hasta que el padre no tiene valor el hijo va deshabilitado, y al cambiar el padre se recarga y se consulta **una sola vez**. Se construye con `->dependsOn('padre')->remoteOptions($url, 'get', ['padre' => '$parent'])`. |
+
+Los endpoints de búsqueda reciben el texto en `search` **y** en `input` —hay reportes que leen
+uno y reportes que leen el otro— y pueden responder `{data: [...]}`, `{options: [...]}` o un
+array pelado: se aceptan las tres formas. Cada opción es `{id, name}`; con otra etiqueta, el
+filtro manda `optionLabel`.
+
+Un buscador pide a partir de **dos** caracteres; se cambia con `minChars` en el filtro.
+
 ## Props (`XcTable`)
 
 | Prop | Tipo | Default | Descripción |
@@ -73,6 +89,8 @@ const t = ref(null)
 t.value.refresh()      // recarga con los filtros actuales
 t.value.exportData()   // exporta y descarga (por defecto Excel)
 t.value.clearFilters() // limpia filtros y recarga
+t.value.filters.value  // filtros vivos (para salidas propias de la pagina)
+t.value.meta.value     // meta de la ultima consulta (total, etc.)
 ```
 
 ## Exportar en varios formatos

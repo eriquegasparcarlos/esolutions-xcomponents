@@ -558,7 +558,13 @@ async function loadDependentOptions(child) {
         ? await proxy.$api.get(child.remote.url, { params })
         : await proxy.$api[method](child.remote.url, params)
 
-    child.options = res.data.options || []
+    // Los endpoints de reportes responden `{data: [...]}` y algunos
+    // `{options: [...]}`. Leer solo `options` dejaba el filtro hijo vacio
+    // contra los primeros, sin ningun aviso.
+    const cuerpo = res.data
+    child.options = Array.isArray(cuerpo)
+      ? cuerpo
+      : (cuerpo?.options || cuerpo?.data || [])
     if (child.resetOnParentChange !== false) child.value = 'all'
   } catch {
     child.options = []

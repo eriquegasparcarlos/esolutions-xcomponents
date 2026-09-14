@@ -28,7 +28,18 @@ provide('xctable', ctx)
 onMounted(() => ctx.init())
 
 // Exponer para el consumidor (refrescar/exportar desde afuera si lo necesita).
-defineExpose({ refresh: ctx.fetch, exportData: ctx.exportData, clearFilters: ctx.clearFilters })
+//
+// `filters` y `meta` van fuera porque una pagina puede tener salidas propias que
+// el compound no conoce —un PDF alternativo, un envio por correo, una
+// exportacion en cola— y todas necesitan mandar los MISMOS filtros que la tabla
+// esta usando. Sin esto habria que duplicar el estado de los filtros fuera.
+defineExpose({
+  refresh: ctx.fetch,
+  exportData: ctx.exportData,
+  clearFilters: ctx.clearFilters,
+  filters: ctx.filters,
+  meta: ctx.meta,
+})
 </script>
 
 <template>
