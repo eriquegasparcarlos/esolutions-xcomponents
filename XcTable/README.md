@@ -42,7 +42,7 @@ Igual que `XTableServer`. Para un `resource="app-api/reports/kardex"` el backend
 | `GET`  | `{resource}/init-data-table` | `{ tableName, tableTitle, tableSubtitle, columns[], filters[], visibleColumns[], exportColumns[], pagination, headerButtons[] }` |
 | `POST` | `{resource}/records` | `{ data[], meta: { total, summary? }, widgets? }` (body: `{ tableName, page, rowsPerPage, sortBy, descending, filters }`) |
 | `POST` | `{resource}/export` | Blob del archivo (opcional). Body incluye `format` cuando hay varios; ver **Exportar en varios formatos** |
-| `POST` | `{resource}/update-visible-columns` | ok (opcional) |
+| `POST` | `{resource}/update-visible-columns` | ok. Lo llama el menú de columnas de `XcTableToolbar` en cada cambio, con `{ table_name, visible_columns }` —el mismo cuerpo que XTableServer—, para que la elección del usuario sobreviva a recargar la página. |
 
 > `meta.total` es lo que alimenta el pie de la tabla y los controles de página. Si el
 > backend lo omite —o lo pisa al agregar sus propias claves a `meta`— el pie no puede decir

@@ -22,6 +22,8 @@ function toggleColumn (name) {
   if (set.has(name)) set.delete(name)
   else set.add(name)
   ctx.visibleColumns.value = [...set]
+  // Se guarda por usuario, como en XTableServer; antes se perdía al recargar.
+  ctx.saveVisibleColumns()
 }
 
 /* ── Diálogo de exportación (selección + orden de columnas) ────────────── */

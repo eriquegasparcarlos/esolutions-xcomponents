@@ -142,6 +142,25 @@ export function useXcTable (resource, onLoaded, http) {
     }
   }
 
+  /**
+   * Guarda las columnas visibles del usuario, igual que XTableServer.
+   *
+   * Sin esto el menú de columnas solo cambiaba la tabla en pantalla: al recargar
+   * `init-data-table` devolvía lo guardado y las columnas volvían a como estaban.
+   * Si falla no se avisa: la tabla ya muestra lo elegido y el próximo cambio
+   * vuelve a intentarlo.
+   */
+  async function saveVisibleColumns () {
+    try {
+      await http.post(`${resource}/update-visible-columns`, {
+        table_name: config.tableName,
+        visible_columns: visibleColumns.value,
+      })
+    } catch {
+      // sin aviso: ver arriba
+    }
+  }
+
   // Cambia el valor de un filtro (por nombre) y re-consulta desde la página 1.
   function setFilter (name, value) {
     const f = filters.value.find((x) => x.name === name)
@@ -359,7 +378,7 @@ export function useXcTable (resource, onLoaded, http) {
     onFilterChange, searchFilterOptions, loadDependentOptions,
     loading, error, initialized, exporting, config, columns, columnOptions,
     visibleColumns, savedExportColumns, exportFormats, headerButtons, filters, rows, meta, pagination,
-    init, fetch, setFilter, setPagination, clearFilters, exportData, exportBlob,
+    init, fetch, setFilter, setPagination, clearFilters, exportData, exportBlob, saveVisibleColumns,
     setActionHandler, performHeaderAction, setExportFileHandler, performExportFile,
   }
 }
