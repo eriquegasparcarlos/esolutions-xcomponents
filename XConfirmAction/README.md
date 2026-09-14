@@ -69,6 +69,37 @@ function handleAction({ action, id, _raw }) {
 }
 ```
 
+## Celdas interactivas de `XTableServer`
+
+`XCellColumnRenderer` usa este diálogo cuando la acción de una celda interactiva
+(`Cell::actionSelect`, `actionToggle`, `actionInput`...) trae `confirm`. **No se envía nada
+hasta confirmar**: mientras el diálogo está abierto el componente sigue mostrando el valor
+vigente, y cancelar o cerrar no deja un valor sin guardar.
+
+```php
+Cell::actionSelect($row->state_type_id, $opciones, [
+    'type'       => 'api',
+    'method'     => 'post',
+    'url'        => 'app-api/quotation-list/{id}/state',
+    'data'       => ['state_type_id' => '$value'],
+    'confirm'    => [
+        'variant'      => 'primary',
+        'title'        => 'Cambiar estado',
+        'message'      => '¿Cambiar el estado de <b>COT-3</b> a <b>{label}</b>?',
+        'confirmLabel' => 'Cambiar estado',
+    ],
+    'showNotify' => true,
+    'refresh'    => true,
+]);
+```
+
+- `{label}` y `{value}` en `title`/`message` se reemplazan por la opción elegida (escapados:
+  el mensaje se pinta como HTML).
+- Una respuesta `200` con `success: false` también devuelve el componente al valor anterior.
+
+Antes de v2.28.0 la celda hacía `await $q.dialog(...)`, que no es una promesa: el cambio se
+guardaba al instante, sin esperar la confirmación.
+
 ## Diferencia con `XDialogAction`
 
 | | `XDialogAction` | `XConfirmAction` |
