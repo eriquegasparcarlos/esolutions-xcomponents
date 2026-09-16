@@ -80,6 +80,7 @@ Un buscador pide a partir de **dos** caracteres; se cambia con `minChars` en el 
 |--------|---------|-------------|
 | `loaded` | `data` (respuesta completa `records`: `{ data, meta, widgets }`) | Tras cada carga. Úsalo para armar **KPIs/gráficos sin consulta extra** (leé `data.meta.summary`). |
 | `action` | `{ action, url, button }` | Cuando el usuario toca un `headerButton` del backend (excepto `refresh`/`export`, que se manejan solos). |
+| `action` | `{ action, id, url, row }` | Cuando el usuario toca un botón de la columna `actions` de una fila (`Column::actions()` en el backend), igual que el `actions` de XTableServer. |
 | `export-file` | `{ format, title, filename, fetch }` | El usuario exportó en un formato que no se descarga (p. ej. PDF). Ver **Exportar en varios formatos**. |
 
 ## Métodos expuestos (`XcTable`)

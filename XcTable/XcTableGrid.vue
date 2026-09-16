@@ -48,6 +48,53 @@ function onRequest (req) {
       </q-td>
     </template>
 
+    <!--
+      Columna `actions` (Column::actions() del backend): los mismos botones y grupos
+      que pinta XTableServer. Sin este slot la celda llega como una lista de botones
+      que el renderer no sabe dibujar y un reporte no podía tener acciones por fila.
+      El clic sale por el `action` de XcTable con la fila.
+    -->
+    <template #body-cell-actions="props">
+      <q-td :props="props" :class="props.row._row_class">
+        <template v-for="(action, idx) in (props.row.actions || []).filter(Boolean)" :key="idx">
+          <q-btn
+            v-if="action.type === 'group' && Array.isArray(action.buttons) && action.buttons.length > 0"
+            flat round no-caps
+            :size="action.size"
+            :icon="ic(action.icon)"
+          >
+            <q-menu auto-close>
+              <q-list>
+                <template v-for="(subBtn, j) in (action.buttons || []).filter(Boolean)" :key="j">
+                  <q-separator v-if="subBtn.type === 'separator'" />
+                  <q-item v-else clickable @click="ctx.performRowAction(subBtn, props.row)">
+                    <q-item-section avatar style="min-width: 32px !important">
+                      <q-icon :name="ic(subBtn.icon)" size="20px" :color="subBtn.color" />
+                    </q-item-section>
+                    <q-item-section>
+                      <div class="x-menu-item-label" :title="subBtn.label">{{ subBtn.label }}</div>
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-list>
+            </q-menu>
+          </q-btn>
+
+          <q-btn
+            v-else
+            flat round
+            :icon="ic(action.icon)"
+            :label="action.label"
+            :color="action.color"
+            :disable="action.disable"
+            :size="action.size"
+            :title="action.tooltip"
+            @click="ctx.performRowAction(action, props.row)"
+          />
+        </template>
+      </q-td>
+    </template>
+
     <template #no-data>
       <div class="full-width text-center q-pa-xl text-grey-6">
         <q-icon :name="ic('empty')" size="2.5em" color="grey-4" />

@@ -50,6 +50,15 @@ export function useXcTable (resource, onLoaded, http) {
     }
   }
 
+  // Botón de la columna `actions` de una fila (Column::actions() en el backend):
+  // sale por el mismo `action` de XcTable, con la fila. Mismo payload que el
+  // `actions` de XTableServer: { action, id, url, row }.
+  function performRowAction (button, row) {
+    if (typeof actionCb === 'function') {
+      actionCb({ action: button.action, id: row?.id, url: button.url, row })
+    }
+  }
+
   const pagination = reactive({
     page: 1, rowsPerPage: 10, sortBy: null, descending: false,
     rowsNumber: 0, pageSizes: [10, 20, 50],
@@ -379,6 +388,6 @@ export function useXcTable (resource, onLoaded, http) {
     loading, error, initialized, exporting, config, columns, columnOptions,
     visibleColumns, savedExportColumns, exportFormats, headerButtons, filters, rows, meta, pagination,
     init, fetch, setFilter, setPagination, clearFilters, exportData, exportBlob, saveVisibleColumns,
-    setActionHandler, performHeaderAction, setExportFileHandler, performExportFile,
+    setActionHandler, performHeaderAction, performRowAction, setExportFileHandler, performExportFile,
   }
 }
