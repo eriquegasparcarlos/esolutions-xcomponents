@@ -1,5 +1,5 @@
 <script setup>
-import { ref, h, defineAsyncComponent } from 'vue'
+import { ref, computed, h, defineAsyncComponent } from 'vue'
 import { QSpinner } from 'quasar'
 import XDialog from '../XDialog/XDialog.vue'
 
@@ -29,12 +29,23 @@ const XPdfViewer = defineAsyncComponent({
  *   refPdf.value.open({
  *     title:    'Traslado T001-25',
  *     filename: 'traslado.pdf',
- *     formats:  [{ value: 'a4', label: 'A4' }, { value: 'ticket', label: 'Ticket' }], // opcional
+ *     zoom:     'fit-width',                                   // opcional
+ *     formats:  [
+ *       { value: 'a4',     label: 'A4' },
+ *       { value: 'ticket', label: 'Ticket', zoom: 'fit-page' }, // opcional, por formato
+ *     ],
  *     fetcher:  async (format) => (await axios.get(url, { params: { format }, responseType: 'blob' })).data,
  *   })
  *
  * `fetcher(format)` puede resolver un Blob (se convierte a object URL) o un
  * string (URL directa, p. ej. firmada). Cambiar de formato re-invoca el fetcher.
+ *
+ * ── Zoom ──────────────────────────────────────────────────────────────────
+ * XPdfViewer admite 'fit-width' | 'fit-page' | un número, y por defecto ajusta
+ * al ancho. En A4 está bien, pero un ticket de 70 mm estirado a todo el ancho
+ * del diálogo se ve enorme y hay que alejarlo a mano cada vez. Por eso el zoom
+ * se puede fijar por formato: el del formato activo manda, si no el general de
+ * `open()`, y si no el del visor.
  */
 
 const visible      = ref(false)
@@ -45,6 +56,13 @@ const title        = ref('Documento')
 const filename     = ref('documento.pdf')
 const formats      = ref([])
 const activeFormat = ref(null)
+const baseZoom     = ref(undefined)
+
+/** Zoom del formato activo; si no define uno, el general del `open()`. */
+const zoom = computed(() => {
+  const fmt = formats.value.find(f => f.value === activeFormat.value)
+  return fmt?.zoom ?? baseZoom.value
+})
 
 let fetcher = null
 
@@ -54,6 +72,7 @@ async function open(opts = {}) {
   filename.value     = opts.filename ?? 'documento.pdf'
   formats.value      = opts.formats ?? []
   activeFormat.value = formats.value[0]?.value ?? null
+  baseZoom.value     = opts.zoom
   errorMsg.value     = ''
   releaseSrc()
   visible.value = true
@@ -119,6 +138,7 @@ function close() {
           v-else-if="src"
           :src="src"
           :filename="filename"
+          v-bind="zoom ? { zoom } : {}"
           :formats="formats"
           :active-format="activeFormat"
           :show-header="false"
