@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import { computed, ref, nextTick, watch } from 'vue'
+import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
 
 /**
@@ -231,13 +231,37 @@ const viewportRef = ref(null)
 const registryRef = ref(null)
 const zoomLevel   = ref(1)
 const docReady    = ref(false)
+let zoomSyncTimers = []
+
+// Los repasos del porcentaje no deben sobrevivir al componente.
+onBeforeUnmount(() => {
+  zoomSyncTimers.forEach(clearTimeout)
+  zoomSyncTimers = []
+})
 
 // El PDFViewer se remonta con cada src/zoom (via :key): resetear el estado
 // para que el loading vuelva a mostrarse y el tracking se re-enganche.
 watch(() => `${props.src}::${props.zoom}`, () => {
   docReady.value = false
   registryRef.value = null
+  zoomSyncTimers.forEach(clearTimeout)
+  zoomSyncTimers = []
 })
+
+/**
+ * Sincroniza el porcentaje con la escala que el plugin tiene aplicada.
+ *
+ * Se llama también un rato después de cargar porque con un MODO
+ * ('fit-width' / 'fit-page') el zoom no es el que se pidió: el plugin calcula
+ * la escala efectiva cuando ya conoce el tamaño de la página y del viewport,
+ * y ese cálculo puede ocurrir antes de que lleguemos a suscribirnos. Sin esto,
+ * el indicador se quedaba en el 100% inicial mientras el documento se veía a
+ * otra escala — desconcertante, sobre todo en tickets.
+ */
+function syncZoomLevel(capability) {
+  const z = capability?.getState?.()?.currentZoomLevel
+  if (typeof z === 'number' && z > 0) zoomLevel.value = z
+}
 
 /**
  * Espera a que el documento esté realmente cargado (el plugin de zoom recién
@@ -258,6 +282,11 @@ function initZoomTracking(registry, retriesLeft = 30) {
       const z = typeof state === 'number' ? state : state?.currentZoomLevel
       if (typeof z === 'number') zoomLevel.value = z
     })
+
+    // Repasos por si el recálculo del modo ya había pasado: el plugin no vuelve
+    // a avisar de un cambio que ocurrió antes de la suscripción.
+    zoomSyncTimers.forEach(clearTimeout)
+    zoomSyncTimers = [120, 400, 900].map(ms => setTimeout(() => syncZoomLevel(capability), ms))
   } catch {
     if (retriesLeft > 0) {
       setTimeout(() => initZoomTracking(registry, retriesLeft - 1), 150)
