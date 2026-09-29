@@ -135,7 +135,7 @@ const internalValue = computed({
       :indeterminate-value="indeterminateValue"
       :style="isRowLayout
         ? { order: toggleOrder, flexShrink: 0 }
-        : 'line-height: 40px; height: 40px'">
+        : 'min-height: 40px; line-height: 1.35'">
       <!-- Tooltip si está definido -->
       <q-tooltip v-if="hasTooltip" :class="tooltipColor">
         {{ tooltipText }}

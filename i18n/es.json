@@ -19,6 +19,23 @@
     "monthFrom": "Mes desde",
     "monthTo": "Mes hasta",
     "dialogLoadError": "Error al cargar el contenido",
-    "pdfLoadError": "Error al cargar el PDF"
+    "pdfLoadError": "Error al cargar el PDF",
+    "period": "Periodo",
+    "date": "Fecha",
+    "month": "Mes",
+    "periodModes": {
+      "date": "Por fecha",
+      "between_dates": "Entre fechas",
+      "month": "Por mes",
+      "between_months": "Entre meses",
+      "all": "Todas las fechas"
+    },
+    "callout": {
+      "note": "Nota",
+      "tip": "Consejo",
+      "important": "Importante",
+      "warning": "Advertencia",
+      "caution": "Cuidado"
+    }
   }
 }

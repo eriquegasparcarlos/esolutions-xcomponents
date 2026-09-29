@@ -117,7 +117,11 @@ const elementLabel = computed(() => (props.isClassic ? attrs.label : undefined))
 const label = computed(() => (props.isClassic ? null : attrs.label));
 const popupContentClass = computed(() => {
   const base = 'app-inner-list app-select__content v-select__content';
-  return attrs.multiple !== undefined ? `${base} v-list-select-multiple` : base;
+  const cls = attrs.multiple !== undefined ? `${base} v-list-select-multiple` : base;
+  // La clase que manda el padre se FUSIONA: el binding explícito de abajo la pisaba y las
+  // clases externas nunca llegaban al menú (portado del fork de QuiroSys, e8e4970).
+  const ext = attrs['popup-content-class'] || attrs.popupContentClass || '';
+  return ext ? `${cls} ${ext}` : cls;
 });
 
 const truncateStyle = computed(() => {

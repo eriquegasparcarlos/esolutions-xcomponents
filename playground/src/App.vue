@@ -18,6 +18,7 @@ import CmpXBanner from './componentes/XBanner.vue'
 import CmpXInputOtp from './componentes/XInputOtp.vue'
 import CmpXPdfReport from './componentes/XPdfReport.vue'
 import CmpXTableServer from './componentes/XTableServer.vue'
+import CmpXTablero from './componentes/XTablero.vue'
 
 const $q = useQuasar()
 const { global, setVar, getVar, reset, scss, totalCambios } = useTheme()
@@ -140,6 +141,7 @@ async function copiar () {
       <CmpXSeleccion />
       <CmpXButton />
       <CmpXBanner />
+      <CmpXTablero />
       <CmpXInputOtp />
       <CmpXPdfReport />
       <CmpXTableServer :key="recargaTabla" />

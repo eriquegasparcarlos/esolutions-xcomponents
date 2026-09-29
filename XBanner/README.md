@@ -7,7 +7,9 @@ A flexible wrapper for Quasar's `QBanner` with predefined semantic styles for su
 ## ✅ Features
 
 - Automatically applies color schemes based on `type`
-- Supports semantic types: `success`, `error`, `warning`, `information`
+- Supports semantic types: `success`, `error`, `warning`, `information` (alias `info`), `neutral`
+- Un `type` que no está en el mapa cae a `neutral` (gris), nunca a `success`: un tipo mal
+  escrito no puede leerse como una buena noticia. Sin `type`, sigue siendo `success`
 - Dynamic `text-*` and `bg-*` class bindings
 - Optional custom attributes passed via `v-bind="attrs"`
 - Supports label via prop and custom content via slot
@@ -33,6 +35,7 @@ A flexible wrapper for Quasar's `QBanner` with predefined semantic styles for su
 | `error`      | `red-10`     | `red-2`          |
 | `information`| `blue-10`    | `blue-3`         |
 | `warning`    | `orange-10`  | `orange-2`       |
+| `neutral`    | `grey-9`     | `grey-3`         |
 
 > `warning` usaba `yellow-7` (#FBC02D), un amarillo de señalización mucho más
 > saturado que el resto de la escala — gritaba más que un `error`, que es el estado

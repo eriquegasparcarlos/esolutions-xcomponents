@@ -56,6 +56,36 @@
       }
     }
   },
+  "XCallout": {
+    "selector": ".x-callout",
+    "variantes": [],
+    "vars": {
+      "--x-callout-note": {
+        "control": "color",
+        "def": "#0969da"
+      },
+      "--x-callout-tip": {
+        "control": "color",
+        "def": "#1a7f37"
+      },
+      "--x-callout-important": {
+        "control": "color",
+        "def": "#8250df"
+      },
+      "--x-callout-warning": {
+        "control": "color",
+        "def": "#9a6700"
+      },
+      "--x-callout-caution": {
+        "control": "color",
+        "def": "#cf222e"
+      },
+      "--x-callout-color": {
+        "control": "derivado",
+        "def": "var(--x-callout-note)"
+      }
+    }
+  },
   "XCard": {
     "selector": ".x-card",
     "variantes": [],
@@ -103,8 +133,8 @@
         "def": 14
       },
       "--x-checkbox-hint-color": {
-        "control": "color",
-        "def": "#757575"
+        "control": "derivado",
+        "def": "var(--x-text-muted, #{$x-text-secondary})"
       },
       "--x-checkbox-transition": {
         "control": "derivado",
@@ -127,8 +157,8 @@
         "def": "#"
       },
       "--x-datepicker-border-color-focus": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-datepicker-border-color-error": {
         "control": "texto",
@@ -143,8 +173,8 @@
         "def": "#"
       },
       "--x-datepicker-icon-color": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-datepicker-font-size": {
         "control": "texto",
@@ -279,8 +309,8 @@
         "def": "#"
       },
       "--x-file-border-color-focus": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-file-border-color-error": {
         "control": "texto",
@@ -295,8 +325,8 @@
         "def": "#"
       },
       "--x-file-icon-color": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-file-font-size": {
         "control": "texto",
@@ -329,8 +359,8 @@
         "def": "#"
       },
       "--x-input-border-color-focus": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-input-border-color-error": {
         "control": "texto",
@@ -415,8 +445,8 @@
         "def": "#"
       },
       "--x-otp-border-color-focus": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-otp-border-color-error": {
         "control": "texto",
@@ -547,8 +577,8 @@
         "def": "#"
       },
       "--x-select-border-color-focus": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-brand, #)"
       },
       "--x-select-border-color-error": {
         "control": "texto",
@@ -573,6 +603,52 @@
       "--x-select-transition": {
         "control": "derivado",
         "def": "var(--x-duration, #) var(--x-ease, #)"
+      }
+    }
+  },
+  "XStatCard": {
+    "selector": ".x-stat-card",
+    "variantes": [],
+    "vars": {
+      "--x-stat-primary": {
+        "control": "derivado",
+        "def": "var(--x-brand, #1a56db)"
+      },
+      "--x-stat-purple": {
+        "control": "color",
+        "def": "#7b1fa2"
+      },
+      "--x-stat-orange": {
+        "control": "color",
+        "def": "#c2410c"
+      },
+      "--x-stat-green": {
+        "control": "color",
+        "def": "#15803d"
+      },
+      "--x-stat-red": {
+        "control": "color",
+        "def": "#b91c1c"
+      },
+      "--x-stat-amber": {
+        "control": "color",
+        "def": "#a16207"
+      },
+      "--x-stat-teal": {
+        "control": "color",
+        "def": "#00796b"
+      },
+      "--x-stat-grey": {
+        "control": "derivado",
+        "def": "var(--x-gray-600, #475467)"
+      },
+      "--x-stat-tone": {
+        "control": "derivado",
+        "def": "var(--x-stat-primary)"
+      },
+      "--x-stat-delta": {
+        "control": "derivado",
+        "def": "var(--x-gray-600, #475467)"
       }
     }
   },
@@ -702,8 +778,8 @@
         "def": "#"
       },
       "--x-toggle-hint-color": {
-        "control": "texto",
-        "def": "#"
+        "control": "derivado",
+        "def": "var(--x-text-muted, #)"
       },
       "--x-toggle-transition": {
         "control": "derivado",

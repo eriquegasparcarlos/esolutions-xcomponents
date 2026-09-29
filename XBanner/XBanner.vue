@@ -14,7 +14,7 @@ const props = defineProps({
   },
   type: {
     type: String,
-    default: 'success' // opciones válidas: success, error, warning, information
+    default: 'success' // opciones válidas: success, error, warning, information (alias info), neutral
   },
   /**
    * Colores propios, para el caso puntual que no entra en ningún `type`. Pisan al
@@ -50,13 +50,25 @@ const colorMap = {
   success:     { text: 'green-10', bg: 'green-11' },
   error:       { text: 'red-10',   bg: 'red-2' },
   information: { text: 'blue-10',  bg: 'blue-3' },
-  warning:     { text: 'orange-10', bg: 'orange-2' }
+  warning:     { text: 'orange-10', bg: 'orange-2' },
+  // Una situación cerrada o sin nada que hacer: no es error ni advertencia, y tampoco una
+  // buena noticia. Gris a propósito.
+  neutral:     { text: 'grey-9',    bg: 'grey-3' }
 }
 
 /** Un color CSS va por `style`; un nombre de la paleta de Quasar, por clase. */
 const isCssColor = (value) => /^(#|rgb|hsl|var\()/i.test(String(value ?? ''))
 
-const defaults = computed(() => colorMap[props.type] || colorMap.success)
+/*
+| Un tipo que no está en el mapa cae a `neutral`, no a `success`: pintar de verde un aviso
+| cuyo tipo se escribió mal es el peor error posible, porque se lee como una buena noticia.
+| Y `info` es alias de `information`, que es como varias vistas ya lo escribían. Un banner
+| SIN type sigue siendo verde: el default del prop no cambia. (Portado del fork de QuiroSys.)
+*/
+const defaults = computed(() => {
+  const type = props.type === 'info' ? 'information' : props.type
+  return colorMap[type] || colorMap.neutral
+})
 
 const bg = computed(() => props.bgColor ?? defaults.value.bg)
 const text = computed(() => props.textColor ?? defaults.value.text)

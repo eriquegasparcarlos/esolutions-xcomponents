@@ -171,7 +171,8 @@ Estos son los tropiezos más frecuentes:
 | `XSelect` | Pasarle un array de **strings**: el desplegable abre con las filas **en blanco**, sin ningún error en consola. Internamente mapea `opt[optionValue]` / `opt[optionLabel]`, que sobre un string dan `undefined`. | Objetos. Por defecto lee `id` como valor y `name` como label; para otra forma, `option-value` / `option-label`. |
 | `XDropdownMenu` | Poner el disparador en `#trigger` sin más: el menú **nunca abre**. | El slot expone `open`: `<template #trigger="{ open }">` y `@click="open"` en el disparador. |
 | `XDropdownItem` | Marcar el ítem destructivo con una clase. | Prop `variant="danger"`. |
-| `XBanner` | `message` + `type="info"`. | `label` + `type="information"` (válidos: `success`, `error`, `warning`, `information`). |
+| `XBanner` | `message` en vez de `label`. | `label` + `type` (válidos: `success`, `error`, `warning`, `information` —o su alias `info`—, `neutral`). Desde v2.31.0 un `type` desconocido sale **gris**, no verde. |
+| `XToggle` / `XCheckbox` | Pintar la descripción con `text-secondary` propio o armarla a mano al lado. | Prop `hint`. Desde v2.30.2 sale en `--x-text-muted`; con `layout="left"` queda como fila de ajustes con el interruptor a la izquierda. |
 | `XTableServer` | Esperar que funcione suelto. | Requiere `$api` global, el alias `stores/data.js` del consumidor y un backend que cumpla el contrato (ver `playground/src/mock/api.js`). |
 | `XTableServer` (filtros) | Que el backend mande `filter.options` como `{label, value}`: el filtro sale **con las opciones en blanco**. Los pasa a un `XSelect` **sin** `option-value`/`option-label`, así que valen los defaults. | El backend debe mandarlas como `{id, name}`. |
 | `XReportView` | Montarlo suelto: usa `<q-page>` incondicionalmente y avisa *"QPage needs to be a deep child of QLayout"*. Además importa `vue-router` (peer **opcional** desde v2.9.2). | Dentro de un `q-layout` > `q-page-container`, y con un router instalado. |

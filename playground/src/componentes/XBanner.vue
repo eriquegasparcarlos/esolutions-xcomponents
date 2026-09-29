@@ -5,12 +5,19 @@ import XBanner from '@x/XBanner/XBanner.vue'
 </script>
 
 <template>
-  <Seccion titulo="XBanner · tipos" nota="success / warning / error / information" :cubre="['XBanner']">
+  <Seccion
+    titulo="XBanner · tipos"
+    nota="success / warning / error / information (alias info) / neutral; un tipo desconocido sale gris, no verde"
+    :cubre="['XBanner']"
+  >
     <div style="display:flex; flex-direction:column; gap:10px">
       <XBanner type="success" label="Comprobante aceptado por SUNAT." />
       <XBanner type="warning" label="El certificado vence en 15 dias." />
       <XBanner type="error" label="Rechazado: el RUC del receptor no existe." />
       <XBanner type="information" label="Los tokens se aplican en runtime, sin recompilar Sass." />
+      <XBanner type="info" label="Alias info: el mismo azul que information." />
+      <XBanner type="neutral" label="Neutral: una situación cerrada, sin nada que hacer." />
+      <XBanner type="inventado" label="Tipo mal escrito: gris, nunca verde." />
     </div>
   </Seccion>
 

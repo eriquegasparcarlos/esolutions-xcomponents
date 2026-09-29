@@ -2,15 +2,14 @@
 /**
  * Bloque de filtros del compound XcTable.
  * NO reinventa controles: reutiliza los MISMOS x-components que el XTableServer
- * (x-input, x-select, x-datepicker, x-datepicker-month, x-tree-select). El markup
+ * (x-input, x-select, x-period-filter-inline, x-tree-select). El markup
  * es el del XTableServer movido tal cual; sólo cambia el origen del estado (ctx) y
  * el disparo de la consulta (ctx.fetch reiniciando la página).
  */
 import { inject } from 'vue'
 import XInput from '../XInput/XInput.vue'
 import XSelect from '../XSelect/XSelect.vue'
-import XDatepicker from '../XDatepicker/XDatepicker.vue'
-import XDatepickerMonth from '../XDatepicker/XDatepickerMonth.vue'
+import XPeriodFilterInline from '../XPeriodFilter/XPeriodFilterInline.vue'
 import XTreeSelect from '../XTreeSelect/XTreeSelect.vue'
 
 const ctx = inject('xctable')
@@ -28,6 +27,14 @@ function filterData () {
  */
 function onChange (filter) {
   ctx.onFilterChange(filter)
+}
+
+/** Período: aplica solo los campos que cambiaron y consulta una vez. */
+function onPeriodChange (filter, value) {
+  for (const key of ['value', 'dateStart', 'dateEnd', 'monthStart', 'monthEnd']) {
+    if (filter[key] !== value[key]) filter[key] = value[key]
+  }
+  filterData()
 }
 
 /**
@@ -62,50 +69,14 @@ function buscar (filter, texto, update, abort) {
         @update:model-value="filterData"
       />
 
-      <div v-else-if="filter.name === 'period'">
-        <div class="row q-col-gutter-x-sm q-col-gutter-y-sm">
-          <div class="col" v-if="filter.options.length > 1">
-            <x-select
-              v-model="filter.value"
-              :label="filter.label"
-              :options="filter.options"
-              @update:model-value="filterData"
-            />
-          </div>
-
-          <div class="col" v-if="filter.value === 'date' || filter.value === 'between_dates'">
-            <x-datepicker
-              v-model="filter.dateStart"
-              :label="$t('components.dateFrom')"
-              @update:model-value="filterData"
-            />
-          </div>
-
-          <div class="col" v-if="filter.value === 'between_dates'">
-            <x-datepicker
-              v-model="filter.dateEnd"
-              :label="$t('components.dateTo')"
-              @update:model-value="filterData"
-            />
-          </div>
-
-          <div class="col" v-if="filter.value === 'month' || filter.value === 'between_months'">
-            <x-datepicker-month
-              v-model="filter.monthStart"
-              :label="$t('components.monthFrom')"
-              @update:model-value="filterData"
-            />
-          </div>
-
-          <div class="col" v-if="filter.value === 'between_months'">
-            <x-datepicker-month
-              v-model="filter.monthEnd"
-              :label="$t('components.monthTo')"
-              @update:model-value="filterData"
-            />
-          </div>
-        </div>
-      </div>
+      <!-- El mismo componente que usa XTableServer: antes cada tabla tenía su copia. -->
+      <x-period-filter-inline
+        v-else-if="filter.name === 'period'"
+        :model-value="filter"
+        :options="filter.options"
+        :label="filter.label"
+        @update:model-value="(v) => onPeriodChange(filter, v)"
+      />
 
       <!-- Filtro buscador: no trae opciones, las pide segun lo tecleado. Va antes
            del select normal porque tambien es de tipo 'select'. -->

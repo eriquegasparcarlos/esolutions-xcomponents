@@ -19,6 +19,23 @@
     "monthFrom": "Month from",
     "monthTo": "Month to",
     "dialogLoadError": "Error loading content",
-    "pdfLoadError": "Error loading PDF"
+    "pdfLoadError": "Error loading PDF",
+    "period": "Period",
+    "date": "Date",
+    "month": "Month",
+    "periodModes": {
+      "date": "By date",
+      "between_dates": "Between dates",
+      "month": "By month",
+      "between_months": "Between months",
+      "all": "All dates"
+    },
+    "callout": {
+      "note": "Note",
+      "tip": "Tip",
+      "important": "Important",
+      "warning": "Warning",
+      "caution": "Caution"
+    }
   }
 }

@@ -37,6 +37,10 @@ export { default as XTracking } from './XTracking/XTracking.vue'
 export { default as XTreeSelect } from './XTreeSelect/XTreeSelect.vue'
 export { default as XSettingToggle } from './XSettingToggle/XSettingToggle.vue'
 export { default as XHelpTip } from './XHelpTip/XHelpTip.vue'
+// Portados del fork de QuiroSys (sep-2026)
+export { default as XStatCard } from './XStatCard/XStatCard.vue'
+export { default as XCallout } from './XCallout/XCallout.vue'
+export { default as XPeriodFilterInline } from './XPeriodFilter/XPeriodFilterInline.vue'
 
 // Select variants
 export { default as XSelectCountry } from './select/XSelectCountry.vue'
@@ -56,6 +60,7 @@ export { ic, resolveIcon, setXIcons, resetXIcons, configureXIcons, xIconRoles } 
 
 // i18n
 export { default as xComponentsMessages } from './i18n/index.js'
+export { useXT } from './i18n/useXT.js'
 
 // Reportes: plantilla de página + compound datatable headless (ago-2026)
 export { default as XReportView } from './XReportView/XReportView.vue'
