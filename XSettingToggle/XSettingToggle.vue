@@ -2,8 +2,8 @@
 import { ic } from '../icons/index.js'
 /**
  * XSettingToggle — fila de ajuste: [ícono] título + descripción a la izquierda,
- * switch a la derecha. Renderiza su propia descripción con color legible (el
- * `hint` nativo de XToggle usa text-secondary, casi invisible).
+ * switch a la derecha. Para el switch a la IZQUIERDA con el mismo bloque de texto,
+ * usar `<XToggle layout="left" label hint>`.
  *
  * Props:
  *  - label / description: título y texto de ayuda (debajo del título).

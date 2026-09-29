@@ -188,7 +188,7 @@ El componente expone variables CSS para personalizacion:
   --x-toggle-border-radius: 10px;
   --x-toggle-label-color: #1d1d1d;
   --x-toggle-label-font-size: 14px;
-  --x-toggle-hint-color: #757575;
+  --x-toggle-hint-color: var(--x-text-muted, #757575); /* sigue al modo oscuro */
   --x-toggle-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 ```

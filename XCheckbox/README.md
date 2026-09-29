@@ -181,7 +181,7 @@ El componente expone variables CSS para personalizacion:
   --x-checkbox-border-radius: 4px;
   --x-checkbox-label-color: #1d1d1d;
   --x-checkbox-label-font-size: 14px;
-  --x-checkbox-hint-color: #757575;
+  --x-checkbox-hint-color: var(--x-text-muted, #757575); /* sigue al modo oscuro */
   --x-checkbox-transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 ```

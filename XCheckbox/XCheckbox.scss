@@ -13,7 +13,8 @@
   --x-checkbox-border-radius: var(--x-radius, #{$x-border-radius});
   --x-checkbox-label-color: #{$x-text-primary};
   --x-checkbox-label-font-size: #{$x-font-size-md};
-  --x-checkbox-hint-color: #{$x-text-secondary};
+  // El rol de texto atenuado de los tokens: ya se reasigna solo en modo oscuro.
+  --x-checkbox-hint-color: var(--x-text-muted, #{$x-text-secondary});
   --x-checkbox-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
@@ -107,10 +108,12 @@
   // --------------------------------------------------------------------------
   // Hint
   // --------------------------------------------------------------------------
-  .text-caption.text-secondary {
+  // Clase propia y no `text-secondary`: esa utilidad de Quasar lleva `!important` y pinta
+  // con el color `secondary` del tema, que en shadcn es un FONDO casi blanco (#f4f4f5).
+  .x-checkbox__hint {
     color: var(--x-checkbox-hint-color);
     font-size: $x-font-size-sm;
-    margin-top: $x-spacing-xs;
+    line-height: 1.3;
   }
 }
 

@@ -15,7 +15,8 @@
   --x-toggle-border-radius: 10px;
   --x-toggle-label-color: #{$x-text-primary};
   --x-toggle-label-font-size: #{$x-font-size-md};
-  --x-toggle-hint-color: #{$x-text-secondary};
+  // El rol de texto atenuado de los tokens: ya se reasigna solo en modo oscuro.
+  --x-toggle-hint-color: var(--x-text-muted, #{$x-text-secondary});
   --x-toggle-transition: var(--x-duration, #{$x-transition-duration}) var(--x-ease, #{$x-transition-timing});
 
   // --------------------------------------------------------------------------
@@ -123,10 +124,13 @@
   // --------------------------------------------------------------------------
   // Hint
   // --------------------------------------------------------------------------
-  .text-caption.text-secondary {
+  // Clase propia y no `text-secondary`: esa utilidad de Quasar lleva `!important` y pinta
+  // con el color `secondary` del tema, que en shadcn es un FONDO casi blanco (#f4f4f5).
+  // La descripción salía invisible y esta regla nunca llegaba a aplicarse.
+  .x-toggle__hint {
     color: var(--x-toggle-hint-color);
     font-size: $x-font-size-sm;
-    margin-top: $x-spacing-xs;
+    line-height: 1.3;
   }
 }
 

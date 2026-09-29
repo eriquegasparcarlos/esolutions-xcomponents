@@ -117,7 +117,7 @@ const hasTooltip = computed(() => !!props.tooltipText);
 
     <!-- Mensaje de ayuda opcional -->
     <slot name="hint" v-if="hint">
-      <div class="q-mt-sm text-caption text-secondary">{{ hint }}</div>
+      <div class="q-mt-sm text-caption x-checkbox__hint">{{ hint }}</div>
     </slot>
   </div>
 </template>

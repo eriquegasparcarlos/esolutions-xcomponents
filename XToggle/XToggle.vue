@@ -146,13 +146,13 @@ const internalValue = computed({
     <div v-if="isRowLayout" class="col" :style="{ order: toggleOrder === 0 ? 1 : 0 }">
       <div v-if="label" class="text-body2 text-weight-medium">{{ label }}</div>
       <slot name="hint" v-if="hint">
-        <div class="text-caption text-secondary">{{ hint }}</div>
+        <div class="text-caption x-toggle__hint q-mt-xs">{{ hint }}</div>
       </slot>
     </div>
 
     <!-- Layout inline: texto de ayuda debajo del toggle -->
     <slot v-if="!isRowLayout && hint" name="hint">
-      <div class="q-mt-sm text-caption text-secondary">{{ hint }}</div>
+      <div class="q-mt-sm text-caption x-toggle__hint">{{ hint }}</div>
     </slot>
   </div>
 </template>
