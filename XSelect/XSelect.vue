@@ -235,9 +235,12 @@ function normalizeForFilter (str) {
 function handleLocalFilter(val, update) {
   const fromAttrs = attrs.options || [];
   const needle = normalizeForFilter(val);
+  // Se conserva la opción COMPLETA (`...opt`), igual que en computedOptions: un #option
+  // propio del consumidor lee sus campos (nombre, logo, badges) y reducirla a {value,label}
+  // dejaba la lista en blanco — el filtro corre también al abrir, con el texto vacío.
   let filtered = fromAttrs
     .filter(opt => normalizeForFilter(opt[props.optionLabel]).includes(needle))
-    .map(opt => ({ value: opt[props.optionValue], label: opt[props.optionLabel] }));
+    .map(opt => ({ ...opt, value: opt[props.optionValue], label: opt[props.optionLabel] }));
 
   if (!val && props.includeAllOption) {
     filtered = [{ label: 'Todos', value: 'all' }, ...filtered];

@@ -110,6 +110,20 @@ const opciones = [
 />
 ```
 
+Las opciones filtradas conservan todos sus campos (además de `value` y `label`), así que un
+slot `#option` propio puede leer lo que necesite:
+
+```vue
+<XSelect v-model="bancoId" :options="bancos" filter-local option-label="name">
+  <template #option="scope">
+    <q-item v-bind="scope.itemProps">
+      <q-item-section avatar><img :src="scope.opt.logo_url" /></q-item-section>
+      <q-item-section>{{ scope.opt.name }}</q-item-section>
+    </q-item>
+  </template>
+</XSelect>
+```
+
 ### Select con busqueda remota
 
 ```vue
