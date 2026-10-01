@@ -1,3 +1,5 @@
+@use 'sass:color';
+
 // ==========================================================================
 // Variables globales para componentes X
 // Hereda de las variables de Quasar definidas en quasar.variables.scss
@@ -127,3 +129,21 @@ $x-toggle-height: 20px !default;
 
 // XFile
 $x-file-icon-color: $x-primary !default;
+
+// --------------------------------------------------------------------------
+// Color de marca en RUNTIME
+//
+// `$x-primary` se fija al compilar el paquete: un componente que lo use directo queda
+// con el color del build aunque el consumidor aplique otra paleta (`applyTheme` publica
+// `--x-brand` y `--x-brand-rgb` sobre body). Estas funciones leen la variable CSS y caen
+// al valor del build solo si nadie la publicó.
+// --------------------------------------------------------------------------
+@function x-brand() {
+  @return var(--x-brand, #{$x-primary});
+}
+
+/// Marca con transparencia. Va por `--x-brand-rgb` porque `rgba(var(--x-brand), .1)` no es
+/// CSS valido.
+@function x-brand-a($alpha) {
+  @return rgba(var(--x-brand-rgb, #{color.channel($x-primary, "red", $space: rgb)}, #{color.channel($x-primary, "green", $space: rgb)}, #{color.channel($x-primary, "blue", $space: rgb)}), $alpha);
+}

@@ -144,8 +144,8 @@
     right: 0;
     font-size: $x-font-size-xs;
     padding: 2px 6px;
-    background-color: rgba($x-primary, 0.1);
-    color: $x-primary;
+    background-color: x-brand-a(0.1);
+    color: x-brand();
     border-radius: $x-border-radius;
     font-weight: 500;
   }

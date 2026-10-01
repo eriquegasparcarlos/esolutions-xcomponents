@@ -99,7 +99,7 @@
   }
 
   .q-field--focused .q-select__dropdown-icon {
-    color: $x-primary;
+    color: x-brand();
   }
 }
 
@@ -119,12 +119,12 @@
     transition: background-color $x-transition-duration $x-transition-timing;
 
     &:hover {
-      background-color: rgba($x-primary, 0.08);
+      background-color: x-brand-a(0.08);
     }
 
     &.q-item--active,
     &.q-manual-focusable--focused {
-      background-color: rgba($x-primary, 0.12);
+      background-color: x-brand-a(0.12);
     }
   }
 

@@ -130,7 +130,7 @@ function clear() {
               @update:model-value="updateFromPicker"
             >
               <div class="row items-center justify-end q-gutter-sm">
-                <q-btn v-close-popup label="Cerrar" flat />
+                <q-btn v-close-popup label="Cerrar" color="primary" flat no-caps />
               </div>
             </q-date>
           </q-popup-proxy>

@@ -96,6 +96,19 @@ Cada componente usa `var(--x-token, <valor histórico>)`, con fallback. Por eso 
 `.scss` importado suelto (sin `index.scss`, que es quien emite el `:root`) sigue
 renderizando exactamente igual.
 
+**Al escribir un componente, el color de marca va por `x-brand()` / `x-brand-a($alfa)`**
+(definidas en `_variables.scss`), nunca por `$x-primary` directo: esa variable se fija al
+compilar el paquete, y el componente quedaría con el color del build aunque el consumidor
+aplique otra paleta en runtime (pasó con el encabezado del calendario, el resaltado del
+XSelect y el dropzone de XFile hasta v2.31.2).
+
+```scss
+.mi-componente {
+  color: x-brand();                       // var(--x-brand, <build>)
+  background-color: x-brand-a(0.1);       // rgba(var(--x-brand-rgb, <build>), 0.1)
+}
+```
+
 ### 4. Tema SCSS (opcional desde v2.8.0)
 
 Para adoptar la identidad visual de un tema, en `src/css/quasar.variables.scss`:

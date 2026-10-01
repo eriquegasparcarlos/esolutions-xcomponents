@@ -22,10 +22,10 @@
   // no habia forma de cambiar el color del texto en runtime.
   --x-otp-color: var(--x-text, #{$x-text-primary});
   --x-otp-font-weight: 700;
-  --x-otp-caret-color: var(--x-brand, #{$x-primary});
+  --x-otp-caret-color: var(--x-brand, #{x-brand()});
   --x-otp-placeholder-color: #{$x-text-hint};
   --x-otp-bg: transparent;
-  --x-otp-focus-ring: #{rgba($x-primary, 0.15)};
+  --x-otp-focus-ring: #{x-brand-a(0.15)};
   --x-otp-focus-ring-width: 3px;
   --x-otp-border-width-focus: 2px;
 }
@@ -125,7 +125,7 @@
 // --------------------------------------------------------------------------
 .x-input-otp-filled {
   .q-field__control::before {
-    border-color: $x-primary;
+    border-color: x-brand();
   }
 }
 

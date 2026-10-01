@@ -98,7 +98,7 @@
   // Password toggle icon
   .q-field__append .cursor-pointer {
     &:hover {
-      color: $x-primary;
+      color: x-brand();
     }
   }
 

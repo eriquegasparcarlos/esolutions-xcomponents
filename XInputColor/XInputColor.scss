@@ -36,11 +36,12 @@
 .x-input-color {
   .q-icon[name="colorize"] {
     font-size: var(--x-input-color-icon-size);
-    color: $x-primary;
+    color: x-brand();
     transition: color var(--x-input-color-transition);
 
     &:hover {
-      color: color.adjust($x-primary, $lightness: -10%);
+      color: x-brand();
+      filter: brightness(0.85);
     }
   }
 }

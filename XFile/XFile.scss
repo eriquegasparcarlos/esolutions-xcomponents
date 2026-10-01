@@ -99,7 +99,8 @@
     }
 
     .q-icon:hover {
-      color: color.adjust($x-primary, $lightness: -10%);
+      color: x-brand();
+      filter: brightness(0.85);
       transform: rotate(15deg);
     }
   }
@@ -159,7 +160,7 @@
   .q-field__control {
     min-height: 120px;
     border: 2px dashed var(--x-file-border-color);
-    background-color: rgba($x-primary, 0.02);
+    background-color: x-brand-a(0.02);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -167,13 +168,13 @@
 
     &:hover {
       border-color: var(--x-file-border-color-focus);
-      background-color: rgba($x-primary, 0.05);
+      background-color: x-brand-a(0.05);
     }
   }
 
   &.x-file-dragover .q-field__control {
-    border-color: $x-primary;
-    background-color: rgba($x-primary, 0.1);
+    border-color: x-brand();
+    background-color: x-brand-a(0.1);
   }
 }
 

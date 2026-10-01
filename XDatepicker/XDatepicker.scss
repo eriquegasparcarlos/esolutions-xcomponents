@@ -79,7 +79,8 @@
       transition: color var(--x-datepicker-transition), transform var(--x-datepicker-transition);
 
       &:hover {
-        color: color.adjust($x-primary, $lightness: -10%);
+        color: x-brand();
+        filter: brightness(0.85);
         transform: scale(1.1);
       }
     }
@@ -110,7 +111,7 @@
 
   // Header
   .q-date__header {
-    background-color: $x-primary;
+    background-color: x-brand();
     color: white;
     border-radius: $x-border-radius $x-border-radius 0 0;
   }
@@ -126,7 +127,7 @@
   // Dia seleccionado
   .q-date__calendar-item--active {
     .q-btn {
-      background-color: $x-primary !important;
+      background-color: x-brand() !important;
       color: white !important;
     }
   }
@@ -134,7 +135,7 @@
   // Hover en dias
   .q-date__calendar-item:not(.q-date__calendar-item--active) {
     .q-btn:hover {
-      background-color: rgba($x-primary, 0.1);
+      background-color: x-brand-a(0.1);
     }
   }
 
