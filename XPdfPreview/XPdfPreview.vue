@@ -30,6 +30,8 @@ const XPdfViewer = defineAsyncComponent({
  *     title:    'Traslado T001-25',
  *     filename: 'traslado.pdf',
  *     zoom:     'fit-width',                                   // opcional
+ *     width:    '50vw',                                        // opcional, default 820px
+ *     viewerHeader: true,                                      // opcional, ver abajo
  *     formats:  [
  *       { value: 'a4',     label: 'A4' },
  *       { value: 'ticket', label: 'Ticket', zoom: 'fit-page' }, // opcional, por formato
@@ -40,6 +42,15 @@ const XPdfViewer = defineAsyncComponent({
  * `fetcher(format)` puede resolver un Blob (se convierte a object URL) o un
  * string (URL directa, p. ej. firmada). Cambiar de formato re-invoca el fetcher.
  *
+ * ── Cabecera (`viewerHeader`) ─────────────────────────────────────────────
+ * Solo una de las dos cabeceras se dibuja, nunca ambas:
+ *   false (default) → la del diálogo, con el `title`. El visor va sin cabecera.
+ *   true            → la del visor (nombre del archivo + cerrar); el diálogo va
+ *                     sin título. El overlay de acciones (zoom, imprimir,
+ *                     descargar) se apoya sobre esa barra en vez de flotar
+ *                     sobre el documento, que es como se ve en los proyectos
+ *                     que montan XPdfViewer a mano.
+ *
  * ── Zoom ──────────────────────────────────────────────────────────────────
  * XPdfViewer admite 'fit-width' | 'fit-page' | un número, y por defecto ajusta
  * al ancho. En A4 está bien, pero un ticket de 70 mm estirado a todo el ancho
@@ -47,6 +58,8 @@ const XPdfViewer = defineAsyncComponent({
  * se puede fijar por formato: el del formato activo manda, si no el general de
  * `open()`, y si no el del visor.
  */
+
+const DEFAULT_WIDTH = '820px'
 
 const visible      = ref(false)
 const loading      = ref(false)
@@ -57,6 +70,8 @@ const filename     = ref('documento.pdf')
 const formats      = ref([])
 const activeFormat = ref(null)
 const baseZoom     = ref(undefined)
+const dialogWidth  = ref(DEFAULT_WIDTH)
+const viewerHeader = ref(false)
 
 /** Zoom del formato activo; si no define uno, el general del `open()`. */
 const zoom = computed(() => {
@@ -73,6 +88,8 @@ async function open(opts = {}) {
   formats.value      = opts.formats ?? []
   activeFormat.value = formats.value[0]?.value ?? null
   baseZoom.value     = opts.zoom
+  dialogWidth.value  = opts.width ?? DEFAULT_WIDTH
+  viewerHeader.value = opts.viewerHeader === true
   errorMsg.value     = ''
   releaseSrc()
   visible.value = true
@@ -122,8 +139,8 @@ function close() {
 <template>
   <XDialog
     v-model="visible"
-    :title="title"
-    width="820px"
+    :title="viewerHeader ? '' : title"
+    :width="dialogWidth"
     position="right"
     is-full-height
     content-flush
@@ -141,7 +158,8 @@ function close() {
           v-bind="zoom ? { zoom } : {}"
           :formats="formats"
           :active-format="activeFormat"
-          :show-header="false"
+          :show-header="viewerHeader"
+          @close="close"
           @update:active-format="onFormatChange"
         />
         <div v-else class="x-pdf-preview__fill">
