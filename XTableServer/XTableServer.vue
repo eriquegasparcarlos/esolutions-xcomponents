@@ -622,9 +622,16 @@ async function onFilterChange(filter) {
 // -------------------------
 // Fetch init + data
 // -------------------------
+/**
+ * true mientras `init-data-table` esta en vuelo. Sin configuracion no se piden filas:
+ * ver fetchData().
+ */
+let initializing = false
+
 const fetchColumnsAndData = async () => {
   loading.value = true
   error.value = null
+  initializing = true
 
   try {
     const response = await proxy.$api.get(`${props.resource}/init-data-table`)
@@ -704,10 +711,12 @@ const fetchColumnsAndData = async () => {
     }
 
     emit('ready')
+    initializing = false
     await fetchData()
   } catch (err) {
     error.value = err.message
   } finally {
+    initializing = false
     loading.value = false
     initialLoadDone.value = true
   }
@@ -756,6 +765,16 @@ const updateVisibleColumns = (selectedColumns) => {
 }
 
 const fetchData = async () => {
+  /*
+   * Mientras la configuracion esta en vuelo NO se piden filas. El consumidor puede
+   * llamar a filterData() apenas monta la tabla (un `reload()` en su onMounted, un
+   * refresco general de la pagina), y ese pedido salia con `tableName` vacio, sin
+   * columnas ni filtros: el backend lo rechazaba con un 500 y la tabla mostraba un
+   * error que se iba solo al segundo intento. No se pierde nada con saltarlo: la
+   * carga inicial termina pidiendo las filas, ya con todo en su lugar.
+   */
+  if (initializing) return
+
   loading.value = true
   error.value = null
 
