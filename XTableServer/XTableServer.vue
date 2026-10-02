@@ -26,11 +26,18 @@ const dataStore = useDataStore()
 const props = defineProps({
   resource: { type: String, required: true },
   /**
-   * Oculta botones del header y filtros cuando la tabla esta vacia "de origen"
-   * (sin registros y sin filtros activos). El empty-state queda como unico foco.
-   * Si el usuario filtra y no hay match, se sigue mostrando el header.
+   * Oculta titulo, botones del header y filtros cuando la tabla esta vacia "de
+   * origen" (sin registros y sin filtros activos): el empty-state queda como unico
+   * foco, con el boton "nuevo" en el centro.
+   *
+   * Apagado por defecto desde v2.32.0. Con el header oculto se perdian las acciones
+   * que no son "nuevo" (importar, opciones, un menu de grupo) justo cuando la tabla
+   * esta vacia y mas se necesitan, y la pantalla se veia distinta de la que el
+   * usuario conoce. Ahora la tabla vacia conserva su header y dice "No hay
+   * registros" en el cuerpo. Quien quiera el comportamiento anterior lo pide con
+   * `hide-header-when-empty`.
    */
-  hideHeaderWhenEmpty: { type: Boolean, default: true },
+  hideHeaderWhenEmpty: { type: Boolean, default: false },
   /**
    * Ancho por debajo del cual la tabla se dibuja como TARJETAS en vez de filas.
    * Acepta un breakpoint de Quasar ('sm' | 'md' | 'lg' | 'xl') o un ancho en px.
@@ -1420,8 +1427,13 @@ defineExpose({
                 usuario crear el primer registro sin que el consumidor tenga
                 que cablear un slot custom.
               -->
+              <!--
+                Solo cuando el header esta OCULTO (hideHeaderWhenEmpty): con el header a
+                la vista el boton "nuevo" ya esta arriba, y repetirlo en el centro lo
+                mostraba dos veces.
+              -->
               <q-btn
-                v-if="newActionButton"
+                v-if="newActionButton && isTrulyEmpty"
                 :color="newActionButton.color || 'primary'"
                 unelevated
                 no-caps

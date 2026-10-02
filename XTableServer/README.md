@@ -15,8 +15,20 @@ import XTableServer from '@/components/XTableServer/XTableServer.vue'
 | Prop | Tipo | Default | Descripcion |
 |------|------|---------|-------------|
 | `resource` | `String` | *required* | Ruta base del recurso API (ej: `'users'`, `'documents'`) |
-| `hideHeaderWhenEmpty` | `Boolean` | `true` | Oculta botones y filtros cuando la tabla esta vacia *de origen* (sin registros y sin filtros activos) |
+| `hideHeaderWhenEmpty` | `Boolean` | `false` | Oculta titulo, botones y filtros cuando la tabla esta vacia *de origen* (sin registros y sin filtros activos) y deja el boton "nuevo" en el centro. Apagado por defecto desde v2.32.0: la tabla vacia conserva su header y sus acciones. Ver **Tabla vacia**. |
 | `mobileBreakpoint` | `String \| Number` | `'md'` | Ancho por debajo del cual se dibujan TARJETAS. Breakpoint de Quasar (`'sm'`/`'md'`/`'lg'`/`'xl'`) o px |
+
+## Tabla vacia
+
+Una tabla sin registros conserva su titulo, sus botones y sus filtros, y dice "No hay registros" en el cuerpo. Asi no se pierden las acciones del header que no son "nuevo" (importar, opciones, un menu de grupo) ni cambia la pantalla que el usuario conoce.
+
+Con `hide-header-when-empty` se vuelve al comportamiento anterior a v2.32.0: si la tabla esta vacia *de origen* (el backend lo informa en `meta.unfiltered_total`), se ocultan header y filtros y el empty-state muestra en el centro el boton `action: 'new'` de `headerButtons`. Ese boton central solo aparece en ese modo: con el header a la vista ya esta arriba.
+
+```vue
+<x-table-server resource="/api/items" hide-header-when-empty />
+```
+
+El slot `#no-data` sigue recibiendo `newAction` y `performAction` para armar un empty-state propio.
 
 ## Eventos
 
