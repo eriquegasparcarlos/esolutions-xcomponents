@@ -401,6 +401,16 @@ const newActionButton = computed(() => {
   return flat.find((b) => b?.action === 'new') ?? null
 })
 
+/**
+ * Colores con los que un boton de header con TEXTO se dibuja relleno. Cualquier otro
+ * (el `default` con el que nace `Button::make()` en esolutions/datatable, o ninguno)
+ * no existe en la paleta de Quasar: relleno salia con fondo transparente y texto
+ * blanco, o sea invisible. Esos van contorneados, como accion secundaria.
+ */
+const SOLID_BUTTON_COLORS = ['primary', 'secondary', 'accent', 'positive', 'negative', 'info', 'warning', 'dark']
+
+const isSolidButton = (button) => SOLID_BUTTON_COLORS.includes(button?.color)
+
 const showMobileActions = ref(false)
 const selectedRow = ref(null)
 const mobileConfigBackend = ref(null)
@@ -1035,7 +1045,8 @@ defineExpose({
           <template v-else>
             <q-btn
               v-if="button.label && !isMobileView"
-              :color="button.color"
+              :color="isSolidButton(button) ? button.color : undefined"
+              :outline="!isSolidButton(button)"
               :disable="button.disable"
               unelevated
               no-caps
