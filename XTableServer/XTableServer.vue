@@ -30,7 +30,7 @@ const props = defineProps({
    * origen" (sin registros y sin filtros activos): el empty-state queda como unico
    * foco, con el boton "nuevo" en el centro.
    *
-   * Apagado por defecto desde v2.32.0. Con el header oculto se perdian las acciones
+   * Apagado por defecto desde v2.33.0. Con el header oculto se perdian las acciones
    * que no son "nuevo" (importar, opciones, un menu de grupo) justo cuando la tabla
    * esta vacia y mas se necesitan, y la pantalla se veia distinta de la que el
    * usuario conoce. Ahora la tabla vacia conserva su header y dice "No hay
@@ -402,14 +402,16 @@ const newActionButton = computed(() => {
 })
 
 /**
- * Colores con los que un boton de header con TEXTO se dibuja relleno. Cualquier otro
- * (el `default` con el que nace `Button::make()` en esolutions/datatable, o ninguno)
- * no existe en la paleta de Quasar: relleno salia con fondo transparente y texto
- * blanco, o sea invisible. Esos van contorneados, como accion secundaria.
+ * Un boton de header con TEXTO se dibuja relleno si declara un color. Sin color —o con
+ * el `default` con el que nacia `Button::make()` en esolutions/datatable antes de
+ * v2.4.4, que no existe en la paleta de Quasar— relleno salia con fondo transparente y
+ * texto blanco, o sea invisible: esos van contorneados, como accion secundaria.
+ *
+ * No se compara contra una lista de colores "validos": Quasar acepta toda su paleta
+ * (teal, green, grey-8...) y cualquier color de marca que defina el proyecto. Con una
+ * lista cerrada, un boton `teal` que ya se veia bien pasaba a contorneado y sin color.
  */
-const SOLID_BUTTON_COLORS = ['primary', 'secondary', 'accent', 'positive', 'negative', 'info', 'warning', 'dark']
-
-const isSolidButton = (button) => SOLID_BUTTON_COLORS.includes(button?.color)
+const isSolidButton = (button) => !!button?.color && button.color !== 'default'
 
 const showMobileActions = ref(false)
 const selectedRow = ref(null)
