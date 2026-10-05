@@ -66,6 +66,9 @@ const modeOptions = computed(() => (props.options?.length ? props.options : DEFA
 const mode = computed(() => current.value.value)
 const isDateMode = computed(() => mode.value === 'date' || mode.value === 'between_dates')
 const isMonthMode = computed(() => mode.value === 'month' || mode.value === 'between_months')
+// Un solo campo (un día o un mes): el grupo pide el ancho de UNO, no el de un rango. Si
+// pidiera el de dos, en una columna mediana la fecha bajaba de línea teniendo lugar al lado.
+const isSingle = computed(() => mode.value === 'date' || mode.value === 'month')
 
 const labels = computed(() => ({
   mode: props.label || xt('components.period', 'Periodo'),
@@ -107,7 +110,10 @@ function set (field, val) {
     <div
       v-if="isDateMode || isMonthMode"
       class="x-period-filter-inline__range"
-      :class="{ 'x-period-filter-inline__range--month': isMonthMode }"
+      :class="{
+        'x-period-filter-inline__range--month': isMonthMode,
+        'x-period-filter-inline__range--single': isSingle,
+      }"
     >
       <template v-if="isDateMode">
         <div class="x-period-filter-inline__field">
@@ -162,9 +168,11 @@ function set (field, val) {
   width: 100%;
 }
 
+// Mínimos al ancho de lo que muestran ("Por mes", "10/2026", "05/10/2026"): con más, en
+// una columna de un cuarto de pantalla el modo y la fecha ya no entraban en una línea.
 .x-period-filter-inline__mode {
-  flex: 1 1 145px;
-  min-width: 145px;
+  flex: 1 1 110px;
+  min-width: 110px;
 }
 
 // El grupo de fechas pide lugar para sus dos campos: si no entra al lado del modo, baja
@@ -189,6 +197,28 @@ function set (field, val) {
   .x-period-filter-inline__field {
     flex-basis: 120px;
     min-width: 120px;
+  }
+}
+
+// Un solo campo: el grupo mide lo que su campo, y queda al lado del modo. Una fecha completa
+// (dd/mm/aaaa) necesita 140 px: en una columna más angosta baja de línea antes que cortarse.
+.x-period-filter-inline__range--single {
+  flex: 1 1 140px;
+  min-width: 140px;
+
+  .x-period-filter-inline__field {
+    flex-basis: 140px;
+    min-width: 140px;
+  }
+
+  &.x-period-filter-inline__range--month {
+    flex-basis: 100px;
+    min-width: 100px;
+
+    .x-period-filter-inline__field {
+      flex-basis: 100px;
+      min-width: 100px;
+    }
   }
 }
 

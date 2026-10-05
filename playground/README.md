@@ -99,8 +99,7 @@ Cada sección declara qué componentes cubre:
 Cosas que un consumidor **debe** proveer y que hoy no están documentadas fuera de aquí:
 
 - **`$api` global** — la usan `XSelect`, `XSelectLocation`, `XcTable`,
-  `XDialogAction`, `XInputSearchPerson`, `XCellColumnRenderer`, `XTableServer`,
-  `XPdfViewerBackup`.
+  `XDialogAction`, `XInputSearchPerson`, `XCellColumnRenderer`, `XTableServer`.
 - **Alias `stores/data.js`** — `XTableServer` lo importa asumiendo el alias del
   consumidor, y solo usa `dataStore.appName`. Candidato claro a volverse una prop
   con default y eliminar la dependencia. El stub está en `src/stores/data.js`.

@@ -4,6 +4,8 @@ Visor de PDF embebido basado en [`@embedpdf/vue-pdf-viewer`](https://www.embedpd
 
 > **Motor:** PDFium/WASM vía `@embedpdf/vue-pdf-viewer`. **No usa pdf.js.**
 
+> **Sin internet (desde v2.34):** el visor no pide nada a servicios externos. El WASM de PDFium (~4,6 MB) se importa de `@embedpdf/pdfium/pdfium.wasm?url`, así que Vite lo emite como asset del build del consumidor y se descarga recién al montar el visor. Se apagan además las fuentes de respaldo, la tipografía de la interfaz (Google Fonts) y los sellos de ejemplo, que embedpdf baja de cdn.jsdelivr.net por defecto. Sin esto, con una red lenta o sin acceso al CDN el visor se quedaba en "cargando" para siempre. Si el motor igual no abre el documento en `fallbackTimeout` ms (o lo marca con error), el PDF se muestra con el **visor nativo del navegador**, conservando Imprimir y Descargar.
+
 ## Instalación
 
 ```vue
@@ -62,6 +64,15 @@ La URL de `src` tiene que devolver el **PDF crudo**, no un envoltorio:
 | Prop | Tipo | Default | Descripción |
 |------|------|---------|-------------|
 | `zoom` | `String \| Number` | `'fit-width'` | Modo `'fit-width'` / `'fit-page'` / `'automatic'` (ZoomMode de embedpdf) o un **número** como factor (`2` = 200%). Útil porque `fit-width` se ve bien en A4 pero es enorme en un ticket de ~70 mm. |
+| `compactZoom` | `Boolean` | `true` | `true`: el zoom del toolbar de embedpdf (porcentaje con menú de niveles, − y +). `false`: se oculta y se dibujan botones −/%/+ propios en el overlay. |
+| `locale` | `String` | `'es'` | Idioma del toolbar (`i18n.defaultLocale` de embedpdf, que trae en, es, de, fr…). |
+
+#### Motor y respaldo
+| Prop | Tipo | Default | Descripción |
+|------|------|---------|-------------|
+| `wasmUrl` | `String` | `null` | URL del `pdfium.wasm`. Sin valor, el del build (`@embedpdf/pdfium`). Se convierte a absoluta: el motor corre en un web worker. |
+| `fontFallback` | `Object` | `null` | Respaldo de fuentes de embedpdf (`null` = apagado). Solo hace falta para PDF con fuentes **no incrustadas** fuera de las 14 estándar; los que generan wkhtmltopdf, dompdf o mpdf las incrustan. |
+| `fallbackTimeout` | `Number` | `15000` | Milisegundos de espera al motor antes de pasar al visor nativo del navegador. `0` lo desactiva. |
 
 #### Toolbar de embedpdf (opt-in — todas `false` por defecto)
 Activan secciones del toolbar interno que vienen ocultas:

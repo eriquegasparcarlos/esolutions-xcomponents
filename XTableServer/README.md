@@ -93,7 +93,7 @@ const onExportFile = ({ format, title, filename, fetch }) => {
 Si nadie escucha `export-file`, el archivo se descarga: nunca queda en nada.
 
 > El visor **no** se monta dentro de la tabla a proposito. `XPdfPreview` depende
-> de peers **opcionales** (`@embedpdf/vue-pdf-viewer`, `pdfjs-dist`) y hay
+> de peers **opcionales** (`@embedpdf/vue-pdf-viewer`) y hay
 > proyectos que usan esta tabla sin tenerlos instalados; importarlo desde aqui
 > los volveria obligatorios para todos.
 

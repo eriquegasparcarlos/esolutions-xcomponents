@@ -36,6 +36,7 @@ const XPdfViewer = defineAsyncComponent({
  *       { value: 'a4',     label: 'A4' },
  *       { value: 'ticket', label: 'Ticket', zoom: 'fit-page' }, // opcional, por formato
  *     ],
+ *     format:   'ticket',                                      // opcional: con cuál abre
  *     fetcher:  async (format) => (await axios.get(url, { params: { format }, responseType: 'blob' })).data,
  *   })
  *
@@ -86,7 +87,11 @@ async function open(opts = {}) {
   title.value        = opts.title ?? 'Documento'
   filename.value     = opts.filename ?? 'documento.pdf'
   formats.value      = opts.formats ?? []
-  activeFormat.value = formats.value[0]?.value ?? null
+  // `format` elige con cuál abre (p. ej. el ticket en un punto de venta) sin cambiar el
+  // orden de los botones; uno que no está en la lista cae al primero.
+  activeFormat.value = formats.value.some(f => f.value === opts.format)
+    ? opts.format
+    : formats.value[0]?.value ?? null
   baseZoom.value     = opts.zoom
   dialogWidth.value  = opts.width ?? DEFAULT_WIDTH
   viewerHeader.value = opts.viewerHeader === true

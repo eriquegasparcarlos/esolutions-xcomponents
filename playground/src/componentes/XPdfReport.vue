@@ -44,8 +44,8 @@ const kpis = [
 <template>
   <Seccion titulo="XPdfPreview · XPdfViewer" nota="visor en dialogo · requiere peers opcionales" :cubre="['XPdfViewer', 'XPdfPreview']">
     <p style="margin:-6px 0 14px; font-size:12px; color:#64748b">
-      Requiere las peer deps opcionales <code>@embedpdf/vue-pdf-viewer</code> y
-      <code>pdfjs-dist</code>; sin ellas el componente no se puede montar. El PDF
+      Requiere la peer dep opcional <code>@embedpdf/vue-pdf-viewer</code>; sin ella el
+      componente no se puede montar. El PDF
       de muestra se arma en memoria, asi que funciona offline.
     </p>
     <div class="pg-demo">

@@ -239,7 +239,7 @@ const confirmExport = async () => {
   // verlo. Si nadie escucha el evento se descarga, para que nunca quede en nada.
   //
   // El visor NO se monta aqui a proposito: XPdfPreview depende de peers
-  // OPCIONALES (@embedpdf/vue-pdf-viewer, pdfjs-dist) y esta tabla la usan
+  // OPCIONALES (@embedpdf/vue-pdf-viewer) y esta tabla la usan
   // proyectos que no los tienen instalados. Importarlo desde aqui los volveria
   // obligatorios para todos.
   if (exportFormat.value !== 'xlsx' && tieneOyenteDeArchivo()) {

@@ -86,7 +86,7 @@ async function confirmExport () {
   // descarga, para que nunca quede en nada.
   //
   // El visor NO se monta aqui a proposito: XPdfPreview depende de peers
-  // OPCIONALES (@embedpdf/vue-pdf-viewer, pdfjs-dist) y hay proyectos que usan
+  // OPCIONALES (@embedpdf/vue-pdf-viewer) y hay proyectos que usan
   // estas tablas sin tenerlos. Importarlo desde aqui los volveria obligatorios.
   if (exportFormat.value !== 'xlsx') {
     const entregado = ctx.performExportFile({

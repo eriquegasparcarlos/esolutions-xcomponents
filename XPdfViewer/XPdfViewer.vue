@@ -32,21 +32,36 @@
          Forzar la key remonta el visor entero con cada `src`/`zoom` nuevo,
          garantizando que siempre cargue el documento y el zoom correctos. -->
     <div class="x-pdf-viewer__viewport" ref="viewportRef">
-      <PDFViewer v-if="src" :key="`${src}::${zoom}`" :config="config" style="width: 100%; height: 100%" @ready="onEmbedReady" />
+      <!-- Si el motor no termina de cargar a tiempo (red lenta, WASM bloqueado), el
+           documento se muestra con el visor nativo del navegador: un PDF que no se puede
+           ver es un comprobante que no se entrega. -->
+      <iframe
+        v-if="src && nativeFallback"
+        :key="`native::${src}`"
+        :src="src"
+        class="x-pdf-viewer__native"
+        title="PDF"
+      />
+      <PDFViewer
+        v-else-if="src"
+        :key="`${src}::${zoom}::${$q.dark.isActive}`"
+        :config="config"
+        style="width: 100%; height: 100%"
+        @ready="onEmbedReady"
+      />
       <div v-else class="x-pdf-viewer__empty">Sin PDF seleccionado</div>
 
       <!-- Loading propio en español: cubre el "Loading document..." del motor
            hasta que el documento esté realmente listo (estado de zoom disponible). -->
-      <div v-if="src && !docReady" class="x-pdf-viewer__loading">
+      <div v-if="src && !docReady && !nativeFallback" class="x-pdf-viewer__loading">
         <span class="x-pdf-viewer__loading-spinner"></span>
         Cargando documento…
       </div>
 
       <div v-if="showActions" class="x-pdf-actions">
-        <!-- Zoom inline (compactZoom=false, default): botones −/%/+ siempre
-             visibles; el menú de zoom del toolbar interno se oculta.
-             Con compactZoom=true se conserva el menú del motor. -->
-        <div v-if="!compactZoom" class="x-pdf-actions__zoom" role="group" aria-label="Zoom">
+        <!-- Zoom propio (compactZoom=false): botones −/%/+ en el overlay y se oculta
+             el del toolbar interno. Por defecto (true) se usa el del motor. -->
+        <div v-if="!compactZoom && !nativeFallback" class="x-pdf-actions__zoom" role="group" aria-label="Zoom">
           <button
             class="x-pdf-actions__btn"
             type="button"
@@ -122,7 +137,14 @@
 
 <script setup>
 import { computed, ref, nextTick, watch, onBeforeUnmount } from 'vue'
+import { useQuasar } from 'quasar'
 import { PDFViewer } from '@embedpdf/vue-pdf-viewer'
+// El motor PDFium sale del propio build del consumidor (Vite lo emite como asset), no de
+// cdn.jsdelivr.net, que es lo que embedpdf usa si no se le da `wasmUrl`. `@embedpdf/pdfium`
+// es dependencia del visor y exporta `./pdfium.wasm`, así que se resuelve donde esté
+// instalado `@embedpdf/vue-pdf-viewer`. `?url` solo da la dirección: el archivo (4,6 MB)
+// se descarga recién cuando el visor se monta.
+import pdfiumWasm from '@embedpdf/pdfium/pdfium.wasm?url'
 
 /**
  * XPdfViewer — visor PDF basado en @embedpdf/vue-pdf-viewer (PDFium WASM).
@@ -166,10 +188,27 @@ const props = defineProps({
   // formato activo (p. ej. dentro de cada entrada de `formats`).
   zoom:         { type: [String, Number], default: 'fit-width' },
 
-  // — Zoom compacto — false (default): botones −/%/+ siempre visibles en el
-  // overlay y se oculta el menú de zoom del toolbar interno (que requiere un
-  // click para desplegarse). true: se conserva el menú compacto del motor.
-  compactZoom:  { type: Boolean, default: false },
+  // — Zoom — true (default): el del toolbar de embedpdf (porcentaje con menú de niveles,
+  // − y +), que ya trae todo lo necesario. false: se oculta y se dibujan botones −/%/+
+  // propios en el overlay.
+  compactZoom:  { type: Boolean, default: true },
+
+  // — Idioma del toolbar — embedpdf trae traducciones propias (en, es, de, fr…).
+  locale:       { type: String, default: 'es' },
+
+  // — Sin internet —
+  // Por defecto el visor no pide NADA a servicios externos: el WASM sale del build
+  // (`wasmUrl` lo reemplaza, p. ej. para servirlo desde otra ruta) y se apagan las
+  // fuentes de respaldo, la tipografía de la interfaz (Google Fonts) y los sellos de
+  // ejemplo, que embedpdf baja de jsdelivr. `fontFallback` reactiva el respaldo de
+  // fuentes con la configuración de embedpdf — solo hace falta para PDF con fuentes NO
+  // incrustadas fuera de las 14 estándar (los que generan wkhtmltopdf o dompdf las incrustan).
+  wasmUrl:      { type: String, default: null },
+  fontFallback: { type: Object, default: null },
+
+  // — Respaldo — milisegundos que se espera al motor antes de mostrar el documento con el
+  // visor nativo del navegador. 0 lo desactiva.
+  fallbackTimeout: { type: Number, default: 15000 },
 
   // — Toolbar embedpdf (features off por default, opt-in) —
   showDocumentMenu: { type: Boolean, default: false }, // hamburger izquierdo
@@ -208,6 +247,17 @@ const config = computed(() => {
 
   return {
     src: props.src,
+    // Absoluta: el motor corre en un web worker, donde una ruta relativa no resuelve
+    // contra la página.
+    wasmUrl: new URL(props.wasmUrl || pdfiumWasm, window.location.href).href,
+    fontFallback: props.fontFallback,
+    fonts: { ui: null, signature: null },
+    // Los sellos de ejemplo vienen de un manifiesto en jsdelivr (`manifests` del plugin).
+    stamp: { manifests: [] },
+    // Sigue el modo oscuro de la app (Quasar), no el del sistema operativo. embedpdf solo
+    // lo aplica al montar: por eso la `key` del visor lo incluye.
+    theme: { preference: $q.dark.isActive ? 'dark' : 'light' },
+    i18n: { defaultLocale: props.locale },
     disabledCategories: off,
     zoom: {
       // Bug verificado en @embedpdf/plugin-zoom (v2.14.4, dist/index.js,
@@ -224,6 +274,7 @@ const config = computed(() => {
   }
 })
 
+const $q = useQuasar()
 const busy = ref(false)
 const viewportRef = ref(null)
 
@@ -231,6 +282,9 @@ const viewportRef = ref(null)
 const registryRef = ref(null)
 const zoomLevel   = ref(1)
 const docReady    = ref(false)
+// El motor cargó el documento DE VERDAD. `docReady` también se enciende si el tracking se
+// rinde (para no dejar el spinner eterno), así que el respaldo no puede mirar ese.
+const engineReady = ref(false)
 let zoomSyncTimers = []
 
 // Los repasos del porcentaje no deben sobrevivir al componente.
@@ -239,14 +293,35 @@ onBeforeUnmount(() => {
   zoomSyncTimers = []
 })
 
+// — Respaldo al visor nativo —
+const nativeFallback = ref(false)
+let fallbackTimer = null
+
+function armFallback() {
+  clearTimeout(fallbackTimer)
+  nativeFallback.value = false
+  if (!props.src || !(props.fallbackTimeout > 0)) return
+  fallbackTimer = setTimeout(() => {
+    if (engineReady.value) return
+    console.warn(`[XPdfViewer] el motor no cargó en ${props.fallbackTimeout} ms: se usa el visor del navegador`)
+    nativeFallback.value = true
+  }, props.fallbackTimeout)
+}
+
+onBeforeUnmount(() => clearTimeout(fallbackTimer))
+
+watch(engineReady, (ready) => { if (ready) clearTimeout(fallbackTimer) })
+
 // El PDFViewer se remonta con cada src/zoom (via :key): resetear el estado
 // para que el loading vuelva a mostrarse y el tracking se re-enganche.
 watch(() => `${props.src}::${props.zoom}`, () => {
   docReady.value = false
+  engineReady.value = false
   registryRef.value = null
   zoomSyncTimers.forEach(clearTimeout)
   zoomSyncTimers = []
-})
+  armFallback()
+}, { immediate: true })
 
 /**
  * Sincroniza el porcentaje con la escala que el plugin tiene aplicada.
@@ -269,14 +344,42 @@ function syncZoomLevel(capability) {
  * cambios de zoom (menú del motor, ctrl+rueda o nuestros botones) para que
  * el porcentaje mostrado nunca quede desfasado.
  */
-function initZoomTracking(registry, retriesLeft = 30) {
+// Con respaldo, se insiste hasta que venza su plazo: un WASM que baja lento por una red mala
+// no tiene que terminar en el visor nativo si llega a tiempo.
+const trackingRetries = () => (props.fallbackTimeout > 0 ? Math.ceil(props.fallbackTimeout / 150) : 30)
+
+/**
+ * Estado del documento activo según el motor: 'loading' | 'loaded' | 'error'. El estado del
+ * zoom NO sirve para saber si hay documento: existe (con 1) apenas arranca el registro, aunque
+ * el motor no haya podido cargar.
+ */
+function documentStatus(registry) {
+  const core = registry?.getStore?.()?.getState?.()?.core
+  return core?.documents?.[core?.activeDocumentId]?.status ?? null
+}
+
+function initZoomTracking(registry, retriesLeft = trackingRetries()) {
   try {
+    const status = documentStatus(registry)
+    if (status === 'error') {
+      // El motor no pudo abrir el documento: no tiene sentido esperar el plazo.
+      if (props.fallbackTimeout > 0) {
+        clearTimeout(fallbackTimer)
+        console.warn('[XPdfViewer] el motor no pudo abrir el documento: se usa el visor del navegador')
+        nativeFallback.value = true
+      }
+      docReady.value = true
+      return
+    }
+    if (status !== 'loaded') throw new Error('documento aún no cargado')
+
     const capability = registry?.getPlugin?.('zoom')?.provides?.()
     const current    = capability?.getState?.()?.currentZoomLevel
     if (typeof current !== 'number') throw new Error('documento aún no cargado')
 
     zoomLevel.value = current
     docReady.value  = true
+    engineReady.value = true
 
     capability.onZoomChange?.((state) => {
       const z = typeof state === 'number' ? state : state?.currentZoomLevel
@@ -559,6 +662,13 @@ function printPdf() {
   min-height: 0;
   position: relative;
   overflow: hidden;
+}
+
+.x-pdf-viewer__native {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 .x-pdf-viewer__empty {
