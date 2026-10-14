@@ -74,6 +74,25 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
+
+  // Con `header-extra`: el título y la X (si la hay) en la primera fila, lo demás debajo y a
+  // todo el ancho. Grilla y no flex con wrap: con wrap, sin la X, el título y el extra
+  // cabían en la misma línea y el título quedaba en cero. La cabecera crece con su
+  // contenido (el alto fijo pasa a ser el mínimo).
+  &--extended {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    column-gap: 8px;
+    row-gap: 4px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  .x-dialog-title__extra {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
 }
 
 // --------------------------------------------------------------------------
@@ -118,6 +137,12 @@
 // --------------------------------------------------------------------------
 .x-dialog .q-card-section {
   padding: var(--x-dialog-content-padding);
+}
+
+// A alto completo: el contenido llena lo que dejan la cabecera y el pie.
+.x-dialog-body-fill {
+  flex: 1 1 auto;
+  min-height: 0;
 }
 
 .x-dialog-section-full-height {

@@ -50,7 +50,8 @@ import XDialog from '@/components/XDialog/XDialog.vue'
 | Slot | Descripcion |
 |------|-------------|
 | `content` | Contenido principal del dialogo |
-| `content-header` | Header adicional debajo del titulo |
+| `content-header` | Header adicional debajo del titulo (franja de alto fijo, 52px) |
+| `header-extra` | Contenido dentro de la cabecera, debajo del titulo: subtitulo, chips, una fila de acciones. La cabecera crece con lo que traiga (requiere `title`) |
 | `action-buttons` | Botones de accion en el footer |
 
 ## Uso Basico
@@ -117,6 +118,41 @@ function handleSave() {
 
   <template #action-buttons>
     <XButton label="Cerrar" @click="showPanel = false" />
+  </template>
+</XDialog>
+```
+
+### Panel lateral con cabecera extendida y pie propio
+
+`header-extra` va DENTRO de la cabecera, debajo del titulo y con la X a la derecha: sirve
+para lo que describe al registro (subtitulo, estado) y sus acciones. La cabecera crece con
+su contenido, y a alto completo el cuerpo ocupa lo que dejan la cabecera y el pie.
+
+```vue
+<XDialog
+  v-model="showFolio"
+  title="Folio RES-00012"
+  position="right"
+  width="680px"
+  is-full-height
+  show-button-close
+  content-flush
+>
+  <template #header-extra>
+    <div class="text-caption">Ana Torres · hab. 204</div>
+    <div class="row q-gutter-xs q-mt-xs">
+      <XButton flat label="Consumo" />
+      <XButton flat label="Facturar" />
+    </div>
+  </template>
+
+  <template #content>
+    <div class="scroll">...los cargos...</div>
+  </template>
+
+  <template #action-buttons>
+    <div class="col">Saldo S/ 80.00</div>
+    <XButton label="Check-out" />
   </template>
 </XDialog>
 ```
@@ -245,7 +281,7 @@ El dialogo es persistente por defecto, lo que significa que no se cierra al hace
 
 ### Scroll automatico
 
-Cuando `is-full-height` esta activo, el contenido tiene scroll automatico calculado dinamicamente segun la presencia de slots.
+Cuando `is-full-height` esta activo, el contenido ocupa lo que dejan la cabecera y el pie (flex) y scrollea solo. La cabecera puede crecer con `header-extra` y el pie con su contenido o el safe-area de iOS sin que el cuerpo se salga de la pantalla.
 
 ### Posiciones
 

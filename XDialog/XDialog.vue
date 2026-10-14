@@ -155,15 +155,19 @@ const classDialog = computed(() => isFullView.value ? 'x-dialog x-dialog-full-he
 // Detección de slots
 const hasActionButtonsSlot = computed(() => !!slots['action-buttons']);
 const hasContentHeaderSlot = computed(() => !!slots['content-header']);
+const hasHeaderExtraSlot = computed(() => !!slots['header-extra']);
 
-// Altura dinámica del scroll-area: resta las secciones visibles
-const scrollAreaHeight = computed(() => {
-  let usedHeight = 0;
-  if (props.title) usedHeight += TITLE_HEIGHT;
-  if (hasContentHeaderSlot.value) usedHeight += CONTENT_HEADER_HEIGHT;
-  if (hasActionButtonsSlot.value) usedHeight += ACTIONS_HEIGHT;
-  return usedHeight;
-});
+// Con `header-extra` la cabecera crece con lo que traiga (subtítulo, chips, una fila de
+// acciones que baja de línea): el alto fijo queda como mínimo. Sin él, la de siempre.
+const titleStyle = computed(() => hasHeaderExtraSlot.value
+  ? { minHeight: TITLE_HEIGHT + 'px' }
+  : { height: TITLE_HEIGHT + 'px' });
+
+/*
+| A alto completo el contenido ocupa lo que dejan la cabecera y el pie (flex), en vez de
+| restar alturas fijas: así la cabecera puede crecer con `header-extra` y el pie con el
+| safe-area de iOS sin que el contenido se salga de la pantalla.
+*/
 
 // Sincroniza la visibilidad con modelValue
 watchEffect(() => {
@@ -264,9 +268,10 @@ const onCloseButtonClick = () => {
            :class="{
              'x-dialog-title--flat': flatHeader,
              'x-dialog-title--scrolled': flatHeader && isContentScrolled,
+             'x-dialog-title--extended': hasHeaderExtraSlot,
            }"
            v-if="title"
-           :style="{ height: TITLE_HEIGHT + 'px' }">
+           :style="titleStyle">
         <div class="x-dialog-title__text">{{ title }}</div>
         <q-btn v-if="showButtonClose"
                :icon="ic('close')"
@@ -276,6 +281,10 @@ const onCloseButtonClick = () => {
                size="md"
                class="x-dialog-button-close"
                @click="onCloseButtonClick" />
+        <!-- Debajo del título y dentro de la cabecera: subtítulo, estado, acciones. -->
+        <div v-if="hasHeaderExtraSlot" class="x-dialog-title__extra">
+          <slot name="header-extra"/>
+        </div>
       </div>
 
       <!-- Header adicional si se define el slot -->
@@ -287,17 +296,18 @@ const onCloseButtonClick = () => {
       </div>
 
       <!-- Contenido full-view flush: sin scroll-area (el contenido maneja su propio scroll) -->
-      <div v-if="isFullView && contentFlush" :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflow: 'hidden' }">
+      <div v-if="isFullView && contentFlush" class="x-dialog-body-fill" style="overflow: hidden;">
         <q-card-section class="x-dialog-section-full-height content-flush" style="height: 100%;">
           <slot name="content"/>
         </q-card-section>
       </div>
 
-      <!-- Contenido full-view con scroll dinámico -->
+      <!-- Contenido full-view con scroll: ocupa lo que dejan la cabecera y el pie -->
       <div v-else-if="isFullView"
            ref="contentScrollRef"
+           class="x-dialog-body-fill"
            @scroll="onContentScroll"
-           :style="{ height: `calc(100vh - ${scrollAreaHeight}px)`, overflowY: 'auto' }">
+           style="overflow-y: auto;">
         <q-card-section class="q-pa-md">
           <slot name="content"/>
         </q-card-section>
