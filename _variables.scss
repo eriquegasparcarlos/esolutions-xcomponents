@@ -135,15 +135,24 @@ $x-file-icon-color: $x-primary !default;
 //
 // `$x-primary` se fija al compilar el paquete: un componente que lo use directo queda
 // con el color del build aunque el consumidor aplique otra paleta (`applyTheme` publica
-// `--x-brand` y `--x-brand-rgb` sobre body). Estas funciones leen la variable CSS y caen
-// al valor del build solo si nadie la publicó.
+// `--x-brand` y `--x-brand-rgb` sobre body).
+//
+// El orden de respaldo importa, y costó un diagnóstico: hay consumidores que NO usan
+// nuestro `applyTheme` y aplican su paleta con el `setCssVar` de Quasar, que publica
+// `--q-primary` sobre body. Para esos, `--x-brand` no existe nunca y todo lo que la use
+// se quedaba con el color del BUILD: en qpospe2 el calendario salía con el navy
+// compilado mientras los botones de al lado, que son `color="primary"` de Quasar, ya
+// seguían el verde de la empresa. El mismo componente con dos colores.
+//
+// Por eso se cae primero a `--q-primary`, que Quasar siempre define, y solo al valor
+// del build si tampoco está.
 // --------------------------------------------------------------------------
 @function x-brand() {
-  @return var(--x-brand, #{$x-primary});
+  @return var(--x-brand, var(--q-primary, #{$x-primary}));
 }
 
 /// Marca con transparencia. Va por `--x-brand-rgb` porque `rgba(var(--x-brand), .1)` no es
-/// CSS valido.
+/// CSS valido. Mismo respaldo que `x-brand()`: `--q-primary-rgb` antes que el build.
 @function x-brand-a($alpha) {
-  @return rgba(var(--x-brand-rgb, #{color.channel($x-primary, "red", $space: rgb)}, #{color.channel($x-primary, "green", $space: rgb)}, #{color.channel($x-primary, "blue", $space: rgb)}), $alpha);
+  @return rgba(var(--x-brand-rgb, var(--q-primary-rgb, #{color.channel($x-primary, "red", $space: rgb)}, #{color.channel($x-primary, "green", $space: rgb)}, #{color.channel($x-primary, "blue", $space: rgb)})), $alpha);
 }

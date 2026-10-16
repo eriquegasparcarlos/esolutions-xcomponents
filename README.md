@@ -104,10 +104,19 @@ XSelect y el dropzone de XFile hasta v2.31.2).
 
 ```scss
 .mi-componente {
-  color: x-brand();                       // var(--x-brand, <build>)
-  background-color: x-brand-a(0.1);       // rgba(var(--x-brand-rgb, <build>), 0.1)
+  color: x-brand();                       // var(--x-brand, var(--q-primary, <build>))
+  background-color: x-brand-a(0.1);       // rgba(var(--x-brand-rgb, var(--q-primary-rgb, <build>)), 0.1)
 }
 ```
+
+**No hace falta publicar `--x-brand` para que la marca se respete (desde v2.35.1).** Las
+dos funciones caen a **`--q-primary`** antes que al color del build, así que a un
+consumidor que aplique su paleta con el `setCssVar` de Quasar —sin conocer nuestros
+tokens— los componentes le siguen el color igual. Antes no: `--x-brand` no existía nunca
+para él y, por ejemplo, el encabezado del calendario salía con el navy compilado mientras
+los botones de al lado, que son `color="primary"` de Quasar, ya mostraban su color. El
+mismo componente con dos colores. Publicar `--x-brand` sigue siendo lo recomendado:
+desacopla la marca de la paleta de Quasar y gana sobre ella.
 
 ### 4. Tema SCSS (opcional desde v2.8.0)
 
